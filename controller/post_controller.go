@@ -1,4 +1,4 @@
-package routes
+package controller
 
 import (
 	"encoding/json"
@@ -6,13 +6,20 @@ import (
 	"math/rand"
 	"prototype2/entity"
 	repository "prototype2/repository"
+	service "prototype2/service"
 )
+
+type PostController interface {
+	GetPosts(response http.ResponseWriter, request *http.Request)
+	AddPost(response http.ResponseWriter, request (http.Request))
+}
 
 var (
-	repo repository.PostRepository = repository.NewPostRepository()
+	// repo repository.PostRepository = repository.NewPostRepository()
+	postService service.PostService = service.NewPostService()
 )
 
-func GetPosts(resp http.ResponseWriter, req *http.Request  	) {
+func GetPosts(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	posts, err := repo.FindAll()
 	if err != nil {
@@ -35,7 +42,19 @@ func AddPost(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	post.ID = rand.Int63()
-	repo.Save(&post)
+
+	err := postService.Validate(&post)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`"error": "Validation error"`))
+		return
+	}
+	post, err := postService.Create(&post)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`"error": "Error while creating post"`))
+		return
+	}
 	resp.WriteHeader(http.StatusOK)
 	json.NewEncoder(resp).Encode(post)
 }
