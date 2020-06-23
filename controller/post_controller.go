@@ -5,56 +5,50 @@ import (
 	"net/http"
 	"math/rand"
 	"prototype2/entity"
-	repository "prototype2/repository"
 	service "prototype2/service"
+)
+
+type controller struct {}
+
+var (
+	postService service.PostService = service.NewPostService()
 )
 
 type PostController interface {
 	GetPosts(response http.ResponseWriter, request *http.Request)
-	AddPost(response http.ResponseWriter, request (http.Request))
+	AddPost(response http.ResponseWriter, request *http.Request)
 }
 
-var (
-	// repo repository.PostRepository = repository.NewPostRepository()
-	postService service.PostService = service.NewPostService()
-)
+func NewPostController() PostController {
+	return &controller{}
+}
 
-func GetPosts(resp http.ResponseWriter, req *http.Request) {
-	resp.Header().Set("Content-type", "application/json")
-	posts, err := repo.FindAll()
+func (*controller) GetPosts(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-type", "application/json")
+	posts, err := postService.FindAll()
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`"error": Error getting the posts"`))
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`"error": Error getting the posts"`))
 	}
 
-	resp.WriteHeader(http.StatusOK)
-	json.NewEncoder(resp).Encode(posts)
+	response.WriteHeader(http.StatusOK)
+	json.NewEncoder(response).Encode(posts)
 }
 
-func AddPost(resp http.ResponseWriter, req *http.Request) {
-	resp.Header().Set("Content-type", "application/json")	
+func (*controller) AddPost(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-type", "application/json")	
 	var post entity.Post 
-	err := json.NewDecoder(req.Body).Decode(&post)
+	err := json.NewDecoder(request.Body).Decode(&post)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`"error": "Error marshalling the request"`))
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`"error": "Error marshalling the request"`))
 		return
 	}
 
 	post.ID = rand.Int63()
 
-	err := postService.Validate(&post)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`"error": "Validation error"`))
-		return
-	}
-	post, err := postService.Create(&post)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`"error": "Error while creating post"`))
-		return
-	}
-	resp.WriteHeader(http.StatusOK)
-	json.NewEncoder(resp).Encode(post)
+	err = postService.Validate(&post)
+	postService.Create(&post)
+	response.WriteHeader(http.StatusOK)
+	json.NewEncoder(response).Encode(post)
 }
