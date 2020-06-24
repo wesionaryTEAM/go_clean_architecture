@@ -29,7 +29,7 @@ func TestFindAll(t *testing.T) {
 
 	var identifier int64 = 1
 	
-	post := entity.Post{ID: identifier, Title: "A", Text: "B"}
+	post := entity.Post{ID: identifier, Title: "Apple", Text: "Ball"}
 
 	mockRepo.On("FindAll").Return([]entity.Post{post}, nil)
 
@@ -40,6 +40,6 @@ func TestFindAll(t *testing.T) {
 	mockRepo.AssertExpectations(t)
 
 	assert.Equal(t, identifier, result[0].ID)
-	assert.Equal(t, "A", result[0].Title)
-	assert.Equal(t, "B", result[0].Text)
+	assert.Equal(t, "Apple", result[0].Title)
+	assert.Equal(t, "Ball", result[0].Text)
 }
