@@ -2,26 +2,23 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
-	// "encoding/json"
-	// "math/rand"
-	"prototype2/routes"
+	router "prototype2/http"
+	"prototype2/controller"
+)
 
-	// "./entity"
-	// "./repository"
-	"github.com/gorilla/mux"
+var (
+	postController controller.PostController = controller.NewPostController()
+	httpRouter router.Router = router.NewChiRouter()
 )
 
 func main() {
-	router := mux.NewRouter();
 	const port string = ":8000"
-	router.HandleFunc("/", func(resp http.ResponseWriter, req *http.Request) {
+
+	httpRouter.GET("/", func(resp http.ResponseWriter, req *http.Request) {
 		fmt.Fprintln(resp, "Up and running....")
 	})
-	router.HandleFunc("/posts", routes.GetPosts).Methods("GET")
-	router.HandleFunc("/posts", routes.AddPost).Methods("POST")
-	log.Print("server listening on port", port)
-	log.Fatalln(http.ListenAndServe(port, router)) 
-
+	httpRouter.GET("/posts", postController.GetPosts)
+	httpRouter.POST("/posts", postController.AddPost)
+	httpRouter.SERVE(port)
 }
