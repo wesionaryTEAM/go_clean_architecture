@@ -43,3 +43,23 @@ func TestFindAll(t *testing.T) {
 	assert.Equal(t, "Apple", result[0].Title)
 	assert.Equal(t, "Ball", result[0].Text)
 }
+
+
+func TestCreate(t *testing.T){
+	mockRepo := new(MockRepository)
+	post := entity.Post{Title: "Test Title", Text: "Test Text"}
+
+	//Setting up the expectations
+	mockRepo.On("Save").Return(&post, nil)
+
+	testService := NewPostService(mockRepo)
+
+	result, err := testService.Create(&post)
+
+	mockRepo.AssertExpectations(t)
+
+	assert.NotNil(t, result.ID)
+	assert.Equal(t, "Test Title", result.Title)
+	assert.Equal(t, "Test Text", result.Text)
+	assert.Nil(t, err)
+}
