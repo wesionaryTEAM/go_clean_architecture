@@ -9,7 +9,7 @@ import (
 
 var (
 	postController controller.PostController = controller.NewPostController()
-	httpRouter router.Router = router.NewMuxRouter()
+	httpRouter router.Router = router.NewChiRouter()
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 	httpRouter.GET("/", func(resp http.ResponseWriter, req *http.Request) {
 		fmt.Fprintln(resp, "Up and running....")
 	})
-	httpRouter.GET("/posts", postController.GetPosts).Methods("GET")
-	httpRouter.POST("/posts", postController.AddPost).Methods("POST")
+	httpRouter.GET("/posts", postController.GetPosts)
+	httpRouter.POST("/posts", postController.AddPost)
 	httpRouter.SERVE(port)
 }
