@@ -1,14 +1,14 @@
 package service
 
 import (
-	"fmt"
 	"math/rand"
 	"prototype2/entity"
 	repository "prototype2/repository"
+	"errors"
 )
 
 type PostService interface {
-	Validate(post *entity.Post) error 
+	Validate(post *entity.Post) error
 	Create(post  *entity.Post) (*entity.Post, error)
 	FindAll() ([]entity.Post, error)
 }
@@ -16,23 +16,22 @@ type PostService interface {
 type service struct {}
 
 var (
-	repo repository.PostRepository = repository.NewFirestoreRepository()
+	repo repository.PostRepository //= repository.NewFirestoreRepository()
 )
 
-func NewPostService() PostService{	
+func NewPostService(repository repository.PostRepository) PostService{	
+	repo = repository
 	return &service{}
 }
 
 func (*service) Validate(post *entity.Post) error {
 	if(post == nil){
-		fmt.Println("The post is empty")
-		// err := errors.New("The post is empty")
-		// return err
+		err := errors.New("The post is empty")
+		return err
 	}
 	if(post.Title == ""){
-		// err := errors.New("The post title is empty")
-		// return err
-		fmt.Println("The post is empty")
+		err := errors.New("The post title is empty")
+		return err
 	}
 	return nil
 }

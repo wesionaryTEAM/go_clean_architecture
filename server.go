@@ -5,10 +5,14 @@ import (
 	"net/http"
 	router "prototype2/http"
 	"prototype2/controller"
+	"prototype2/service"
+	"prototype2/repository"
 )
 
 var (
-	postController controller.PostController = controller.NewPostController()
+	postRepository repository.PostRepository = repository.NewFirestoreRepository()
+	postService    service.PostService       = service.NewPostService(postRepository)
+	postController controller.PostController = controller.NewPostController(postService)
 	httpRouter router.Router = router.NewChiRouter()
 )
 
