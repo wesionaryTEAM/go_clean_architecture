@@ -1,6 +1,8 @@
 package service
 
 import (
+	"fmt"
+	"math/rand"
 	"prototype2/entity"
 	repository "prototype2/repository"
 )
@@ -23,17 +25,19 @@ func NewPostService() PostService{
 
 func (*service) Validate(post *entity.Post) error {
 	if(post == nil){
-		err := errors.New("The post is empty")
-		return err
+		fmt.Println("The post is empty")
+		// err := errors.New("The post is empty")
+		// return err
 	}
 	if(post.Title == ""){
-		err := errors.New("The post title is empty")
-		return err
+		// err := errors.New("The post title is empty")
+		// return err
+		fmt.Println("The post is empty")
 	}
 	return nil
 }
 
-func (*service) Create(psot  *entity.Post) (*entity.Post, error) {
+func (*service) Create(post  *entity.Post) (*entity.Post, error) {
 	post.ID = rand.Int63()
 	return repo.Save(post)
 }

@@ -1,60 +1,52 @@
 package controller
 
 import (
-	"encoding/json"
-	"net/http"
 	"math/rand"
+	"net/http"
 	"prototype2/entity"
-	repository "prototype2/repository"
 	service "prototype2/service"
+
+	"github.com/gin-gonic/gin"
 )
 
-type PostController interface {
-	GetPosts(response http.ResponseWriter, request *http.Request)
-	AddPost(response http.ResponseWriter, request (http.Request))
-}
+type controller struct{}
 
 var (
-	// repo repository.PostRepository = repository.NewPostRepository()
 	postService service.PostService = service.NewPostService()
 )
 
-func GetPosts(resp http.ResponseWriter, req *http.Request) {
-	resp.Header().Set("Content-type", "application/json")
-	posts, err := repo.FindAll()
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`"error": Error getting the posts"`))
-	}
-
-	resp.WriteHeader(http.StatusOK)
-	json.NewEncoder(resp).Encode(posts)
+type PostController interface {
+	GetPosts(c *gin.Context)
+	AddPost(c *gin.Context)
 }
 
-func AddPost(resp http.ResponseWriter, req *http.Request) {
-	resp.Header().Set("Content-type", "application/json")	
-	var post entity.Post 
-	err := json.NewDecoder(req.Body).Decode(&post)
+func NewPostController() PostController {
+	return &controller{}
+}
+
+func (*controller) GetPosts(c *gin.Context) {
+	posts, err := postService.FindAll()
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`"error": "Error marshalling the request"`))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error getting the posts"})
+		return
+	}
+
+	c.JSON(http.StatusOK, posts)
+}
+
+func (*controller) AddPost(c *gin.Context) {
+	var post entity.Post
+	if err := c.ShouldBindJSON(&post); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	post.ID = rand.Int63()
 
-	err := postService.Validate(&post)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`"error": "Validation error"`))
+	if err1 := postService.Validate(&post); err1 != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
 		return
 	}
-	post, err := postService.Create(&post)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`"error": "Error while creating post"`))
-		return
-	}
-	resp.WriteHeader(http.StatusOK)
-	json.NewEncoder(resp).Encode(post)
+	postService.Create(&post)
+	c.JSON(http.StatusOK, post)
 }

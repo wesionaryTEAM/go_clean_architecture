@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 
+	"prototype2/controller"
 	"prototype2/repository"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +12,8 @@ import (
 )
 
 var (
-	httpRouter router.Router = router.NewGinRouter()
+	postController controller.PostController = controller.NewPostController()
+	httpRouter     router.Router             = router.NewGinRouter()
 )
 
 func main() {
@@ -23,7 +25,7 @@ func main() {
 
 	httpRouter.GET("/users", repository.GetUsers)
 	httpRouter.POST("/users", repository.AddUser)
-
+	httpRouter.GET("/posts", postController.GetPosts)
+	httpRouter.POST("/posts", postController.AddPost)
 	httpRouter.SERVE(port)
-
 }
