@@ -24,8 +24,8 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"data": "Up and Running..."})
 	})
 
-	httpRouter.GET("/users", repository.GetUsers)
-	httpRouter.POST("/users", repository.AddUser)
+	// httpRouter.GET("/users", repository.GetUsers)
+	// httpRouter.POST("/users", repository.AddUser)
 	httpRouter.GET("/posts", postController.GetPosts)
 	httpRouter.POST("/posts", postController.AddPost)
 	httpRouter.SERVE(port)
