@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"math/rand"
 	"net/http"
 	"prototype2/entity"
@@ -26,6 +27,7 @@ func NewPostController(service service.PostService) PostController {
 }
 
 func (*controller) GetPosts(c *gin.Context) {
+	fmt.Println("Into the post controller GetPosts action")
 	posts, err := postService.FindAll()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Error getting the posts"})
