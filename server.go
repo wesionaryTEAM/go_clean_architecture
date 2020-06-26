@@ -26,9 +26,9 @@ func main() {
 
 	db := infrastructure.SetupModels()
 
-	postRepository = repository.NewSqlRepository(db)
+	postRepository = repository.NewPostRepository(db)
 	if err := postRepository.Migrate(); err != nil {
-		log.Fatal("migrate err", err)
+		log.Fatal("post migrate err", err)
 	}
 
 	postService = service.NewPostService(postRepository)
