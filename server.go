@@ -18,7 +18,7 @@ var (
 	postRepository repository.PostRepository
 	postService    service.PostService
 	postController controller.PostController
-	httpRouter     router.Router = router.NewMuxRouter()
+	httpRouter     router.Router = router.NewGinRouter()
 )
 
 func main() {

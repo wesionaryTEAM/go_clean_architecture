@@ -29,21 +29,22 @@ func SetupModels() *gorm.DB {
 }
 
 /**
-* Only for the purpose of integratino testing
+* Only use for the purpose of integratino testing
 */
-func SetupModelsForControllerTest() *gorm.DB {
-	USER := "root"
-	PASS := "password"
-	HOST := "localhost"
-	PORT := "3306"
-	DBNAME := "prototype"
+// func SetupModelsForControllerTest() *gorm.DB {
+// 	//Setup following config with respect to your database
+// 	USER := "root"
+// 	PASS := "password"
+// 	HOST := "localhost"
+// 	PORT := "3306"
+// 	DBNAME := "prototype"
 
-	URL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", USER, PASS, HOST, PORT, DBNAME)
-	db, err := gorm.Open("mysql", URL)
+// 	URL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", USER, PASS, HOST, PORT, DBNAME)
+// 	db, err := gorm.Open("mysql", URL)
 
-	if err != nil {
-		panic(err.Error())
-	}
+// 	if err != nil {
+// 		panic(err.Error())
+// 	}
 
-	return db
-}
+// 	return db
+// }
