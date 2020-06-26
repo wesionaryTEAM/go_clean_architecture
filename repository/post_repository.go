@@ -20,6 +20,11 @@ func (r *repo) FindAll() ([]entity.Post, error) {
 	return posts, err
 }
 
+func (r *repo) Delete(post *entity.Post) error {
+	err := r.DB.Delete(&post).Error
+	return err
+} 
+
 func (r *repo) Migrate() error {
 	return r.DB.AutoMigrate(&entity.Post{}).Error
 }

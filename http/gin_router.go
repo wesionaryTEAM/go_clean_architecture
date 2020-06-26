@@ -1,27 +1,29 @@
-package router
+// package router
 
-import (
-	"github.com/gin-gonic/gin"
-)
+// import (
+// 
 
-type ginRouter struct{}
+// 	"github.com/gin-gonic/gin"
+// )
 
-var (
-	ginDispatcher = gin.Default()
-)
+// type ginRouter struct{}
 
-func NewGinRouter() Router {
-	return &ginRouter{}
-}
+// var (
+// 	ginDispatcher = gin.Default()
+// )
 
-func (*ginRouter) GET(uri string, f func(c *gin.Context)) {
-	ginDispatcher.GET(uri, f)
-}
+// func NewGinRouter() Router {
+// 	return &ginRouter{}
+// }
 
-func (*ginRouter) POST(uri string, f func(c *gin.Context)) {
-	ginDispatcher.POST(uri, f)
-}
+// func (*ginRouter) GET(uri string, f func(c *gin.Context)) {
+// 	ginDispatcher.GET(uri, f)
+// }
 
-func (*ginRouter) SERVE(port string) {
-	_ = ginDispatcher.Run(port)
-}
+// func (*ginRouter) POST(uri string, f func(c *gin.Context)) {
+// 	ginDispatcher.POST(uri, f)
+// }
+
+// func (*ginRouter) SERVE(port string) {
+// 	_ = ginDispatcher.Run(port)
+// }
