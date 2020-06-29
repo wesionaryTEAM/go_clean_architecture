@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"prototype2/utils"
 
-	"github.com/jinzhu/gorm"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
 )
 
 // SetupModels : initializing mysql database
@@ -29,7 +29,7 @@ func SetupModels() *gorm.DB {
 
 /**
 * Only use for the purpose of integratino testing
-*/
+ */
 // func SetupModelsForControllerTest() *gorm.DB {
 // 	//Setup following config with respect to your database
 // 	USER := "root"
