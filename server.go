@@ -3,12 +3,15 @@ package main
 import (
 	"log"
 	"net/http"
-	controller "prototype2/controller/post"
+	postcontroller "prototype2/controller/post"
+	usercontroller "prototype2/controller/user"
 	"prototype2/domain"
 	router "prototype2/http"
 	"prototype2/infrastructure"
-	repository "prototype2/repository/post"
-	service "prototype2/service/post"
+	postrepository "prototype2/repository/post"
+	userrepository "prototype2/repository/user"
+	postservice "prototype2/service/post"
+	userservice "prototype2/service/user"
 	"prototype2/utils"
 
 	"github.com/gin-gonic/gin"
@@ -17,7 +20,12 @@ import (
 var (
 	postRepository domain.PostRepository
 	postService    domain.PostService
-	postController controller.PostController
+	postController postcontroller.PostController
+
+	userRepository domain.UserRepository
+	userService		 domain.UserService
+	userController usercontroller.UserController
+	
 	httpRouter     router.Router = router.NewGinRouter()
 )
 
@@ -26,14 +34,23 @@ func main() {
 
 	db := infrastructure.SetupModels()
 
-	postRepository = repository.NewPostRepository(db)
+	postRepository = postrepository.NewPostRepository(db)
 	if err := postRepository.Migrate(); err != nil {
 		log.Fatal("post migrate err", err)
 	}
 
-	postService = service.NewPostService(postRepository)
+	postService = postservice.NewPostService(postRepository)
 
-	postController = controller.NewPostController(postService)
+	postController = postcontroller.NewPostController(postService)
+
+	userRepository = userrepository.NewUserRepository(db)
+	if err := userRepository.Migrate(); err != nil {
+		log.Fatal("user migrate err", err)
+	}
+
+	userService = userservice.NewUserService(userRepository)
+
+	userController = usercontroller.NewUserController(userService)
 
 	const port string = ":8000"
 
@@ -42,6 +59,8 @@ func main() {
 	})
 
 	httpRouter.GET("/posts", postController.GetPosts)
-	httpRouter.POST("/posts", postController.AddPost)
+	httpRouter.POST("/post", postController.AddPost)
+	httpRouter.GET("/users", userController.GetUsers)
+	httpRouter.POST("/users", userController.AddUser)
 	httpRouter.SERVE(port)
 }
