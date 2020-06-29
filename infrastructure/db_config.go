@@ -2,12 +2,10 @@ package infrastructure
 
 import (
 	"fmt"
+	"prototype2/utils"
 
 	"github.com/jinzhu/gorm"
-	//mysql database import
 	_ "github.com/go-sql-driver/mysql"
-
-	"prototype2/utils"
 )
 
 // SetupModels : initializing mysql database
@@ -28,3 +26,24 @@ func SetupModels() *gorm.DB {
 
 	return db
 }
+
+/**
+* Only use for the purpose of integratino testing
+*/
+// func SetupModelsForControllerTest() *gorm.DB {
+// 	//Setup following config with respect to your database
+// 	USER := "root"
+// 	PASS := "password"
+// 	HOST := "localhost"
+// 	PORT := "3306"
+// 	DBNAME := "prototype"
+
+// 	URL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", USER, PASS, HOST, PORT, DBNAME)
+// 	db, err := gorm.Open("mysql", URL)
+
+// 	if err != nil {
+// 		panic(err.Error())
+// 	}
+
+// 	return db
+// }
