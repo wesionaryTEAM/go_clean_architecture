@@ -3,20 +3,20 @@ package main
 import (
 	"log"
 	"net/http"
-	"prototype2/controller"
+	controller "prototype2/controller/post"
+	"prototype2/domain"
 	router "prototype2/http"
 	"prototype2/infrastructure"
-	"prototype2/repository"
-	"prototype2/service"
+	repository "prototype2/repository/post"
+	service "prototype2/service/post"
 	"prototype2/utils"
 
 	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
 )
 
 var (
-	postRepository repository.PostRepository
-	postService    service.PostService
+	postRepository domain.PostRepository
+	postService    domain.PostService
 	postController controller.PostController
 	httpRouter     router.Router = router.NewGinRouter()
 )

@@ -3,30 +3,32 @@ package controller
 import (
 	"math/rand"
 	"net/http"
-	"prototype2/entity"
-	service "prototype2/service"
+	"prototype2/domain"
+
+	// "prototype2/service/post"
 
 	"github.com/gin-gonic/gin"
 )
 
-type controller struct{}
+type postController struct {
+	postService domain.PostService
+}
 
-var (
-	postService service.PostService
-)
-
+// PostController : set of methods in post controller
 type PostController interface {
 	GetPosts(c *gin.Context)
 	AddPost(c *gin.Context)
 }
 
-func NewPostController(service service.PostService) PostController {
-	postService = service
-	return &controller{}
+// NewPostController : get injected post service
+func NewPostController(s domain.PostService) PostController {
+	return &postController{
+		postService: s,
+	}
 }
 
-func (*controller) GetPosts(c *gin.Context) {
-	posts, err := postService.FindAll()
+func (p *postController) GetPosts(c *gin.Context) {
+	posts, err := p.postService.FindAll()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Error getting the posts"})
 		return
@@ -35,8 +37,8 @@ func (*controller) GetPosts(c *gin.Context) {
 	c.JSON(http.StatusOK, posts)
 }
 
-func (*controller) AddPost(c *gin.Context) {
-	var post entity.Post
+func (p *postController) AddPost(c *gin.Context) {
+	var post domain.Post
 	if err := c.ShouldBindJSON(&post); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -44,25 +46,23 @@ func (*controller) AddPost(c *gin.Context) {
 
 	post.ID = rand.Int63()
 
-	if err1 := postService.Validate(&post); err1 != nil {
+	if err1 := p.postService.Validate(&post); err1 != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
 		return
 	}
-	postService.Create(&post)
+	p.postService.Create(&post)
 	c.JSON(http.StatusOK, post)
 }
-
-
 
 /** Implementation of the controller for the MUX or CHI Router but not GIN router */
 /**
 * Implementation only for the controller level testing
-*/
+ */
 
 // import (
 // 	// "math/rand"
 // 	"net/http"
-// 	"prototype2/entity"
+// 	"prototype2/domain"
 // 	service "prototype2/service"
 // 	"encoding/json"
 // 	"errors"
@@ -95,7 +95,7 @@ func (*controller) AddPost(c *gin.Context) {
 
 // func (*controller) AddPost(response http.ResponseWriter, request *http.Request) {
 // 	response.Header().Set("Content-Type", "application/json")
-// 	var post entity.Post
+// 	var post domain.Post
 // 	err := json.NewDecoder(request.Body).Decode(&post)
 // 	if err != nil {
 // 		response.WriteHeader(http.StatusInternalServerError)
