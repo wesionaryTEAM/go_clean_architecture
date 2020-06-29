@@ -1,7 +1,7 @@
 package service
 
 import (
-	"prototype2/entity"
+	"prototype2/domain"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,16 +12,26 @@ type MockRepository struct {
 	mock.Mock
 }
 
-func (mock *MockRepository) Save(post *entity.Post) (*entity.Post, error) {
+func (mock *MockRepository) Save(post *domain.Post) (*domain.Post, error) {
 	args := mock.Called()
 	result := args.Get(0)
-	return result.(*entity.Post), args.Error(1)
+	return result.(*domain.Post), args.Error(1)
 }
 
-func (mock *MockRepository) FindAll() ([]entity.Post, error) {
+func (mock *MockRepository) FindAll() ([]domain.Post, error) {
 	args := mock.Called()
 	result := args.Get(0)
-	return result.([]entity.Post), args.Error(1)
+	return result.([]domain.Post), args.Error(1)
+}
+
+func (mock *MockRepository) Delete(post *domain.Post) error {
+	args := mock.Called()
+	return args.Error(1)
+}
+
+func (mock *MockRepository) Migrate() error {
+	args := mock.Called()
+	return args.Error(1)
 }
 
 func TestValidateEmptyPost(t *testing.T) {
@@ -38,11 +48,11 @@ func TestValidateEmptyPostField(t *testing.T) {
 	testService := NewPostService(nil)
 
 	scenarios := []struct {
-		post   entity.Post
+		post   domain.Post
 		expect string
 	}{
-		{post: entity.Post{ID: 1, Title: "", Text: "Ball"}, expect: "The post title is empty"},
-		{post: entity.Post{ID: 1, Title: "Apple", Text: ""}, expect: "The post text is empty"},
+		{post: domain.Post{ID: 1, Title: "", Text: "Ball"}, expect: "The post title is empty"},
+		{post: domain.Post{ID: 1, Title: "Apple", Text: ""}, expect: "The post text is empty"},
 	}
 
 	for _, s := range scenarios {
@@ -57,9 +67,9 @@ func TestFindAll(t *testing.T) {
 
 	var identifier int64 = 1
 
-	post := entity.Post{ID: identifier, Title: "Apple", Text: "Ball"}
+	post := domain.Post{ID: identifier, Title: "Apple", Text: "Ball"}
 
-	mockRepo.On("FindAll").Return([]entity.Post{post}, nil)
+	mockRepo.On("FindAll").Return([]domain.Post{post}, nil)
 
 	testService := NewPostService(mockRepo)
 
@@ -74,7 +84,7 @@ func TestFindAll(t *testing.T) {
 
 func TestCreate(t *testing.T) {
 	mockRepo := new(MockRepository)
-	post := entity.Post{Title: "Test Title", Text: "Test Text"}
+	post := domain.Post{Title: "Test Title", Text: "Test Text"}
 
 	//Setting up the expectations
 	mockRepo.On("Save").Return(&post, nil)
