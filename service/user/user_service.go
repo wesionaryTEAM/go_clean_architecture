@@ -14,7 +14,7 @@ type userService struct {
 //NewUserService: construction function, injected by user repository
 func NewUserService(r domain.UserRepository) domain.UserService {
 	return &userService{
-		userRepository r,
+		userRepository: r,
 	}
 }
 
@@ -23,11 +23,11 @@ func (*userService) Validate(user *domain.User) error {
 		err := errors.New("The user is empty")
 		return err
 	}
-	if user.Name == nil {
+	if user.Name == "" {
 		err := errors.New("The name of user is empty")
 		return err
 	}
-	if user.Email == nil {
+	if user.Email == "" {
 		err := errors.New("The email of user is empty")
 		return err
 	}
@@ -35,7 +35,11 @@ func (*userService) Validate(user *domain.User) error {
 }
 
 func (*userService) ValidateAge(user *domain.User) bool {
+	date := time.Now()
 	dob, err := time.Parse("2006-01-02 15:04:05",user.DOB)
+	if err != nil {
+		return false
+	}
 	diff := date.Sub(dob)
 	if (diff.Hours()/8640) < 18 {
 		return false

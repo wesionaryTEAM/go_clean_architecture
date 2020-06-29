@@ -11,7 +11,7 @@ type User struct {
 // UserService : represent the user's services
 type UserService interface {
 	Validate(user *User) error
-	ValidateAge(user *User) error
+	ValidateAge(user *User) bool
 	Create(user *User) (*User, error)
 	FindAll() ([]User, error)
 }
