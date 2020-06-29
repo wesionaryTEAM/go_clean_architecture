@@ -28,8 +28,7 @@ func (p *postRepository) FindAll() ([]domain.Post, error) {
 }
 
 func (p *postRepository) Delete(post *domain.Post) error {
-	err := p.DB.Delete(&post).Error
-	return err
+	return p.DB.Delete(&post).Error
 }
 
 func (p *postRepository) Migrate() error {
