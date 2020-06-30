@@ -5,17 +5,25 @@ import(
 	"math/rand"
 	"prototype2/domain"
 	"time"
+	"sync"
 )
+
+var once sync.Once
 
 type userService struct {
 	userRepository domain.UserRepository
 }
 
+var instance *userService
+
 //NewUserService: construction function, injected by user repository
 func NewUserService(r domain.UserRepository) domain.UserService {
-	return &userService{
-		userRepository: r,
-	}
+	once.Do(func(){
+		instance = &userService{
+			userRepository: r,
+		}
+	})
+	return instance
 }
 
 func (*userService) Validate(user *domain.User) error {
