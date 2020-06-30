@@ -2,37 +2,11 @@ package service
 
 import (
 	"prototype2/domain"
+	"prototype2/domain/mocks"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
-
-type MockRepository struct {
-	mock.Mock
-}
-
-func (mock *MockRepository) Save(post *domain.Post) (*domain.Post, error) {
-	args := mock.Called()
-	result := args.Get(0)
-	return result.(*domain.Post), args.Error(1)
-}
-
-func (mock *MockRepository) FindAll() ([]domain.Post, error) {
-	args := mock.Called()
-	result := args.Get(0)
-	return result.([]domain.Post), args.Error(1)
-}
-
-func (mock *MockRepository) Delete(post *domain.Post) error {
-	args := mock.Called()
-	return args.Error(1)
-}
-
-func (mock *MockRepository) Migrate() error {
-	args := mock.Called()
-	return args.Error(1)
-}
 
 func TestValidateEmptyPost(t *testing.T) {
 	testService := NewPostService(nil)
@@ -63,7 +37,7 @@ func TestValidateEmptyPostField(t *testing.T) {
 }
 
 func TestFindAll(t *testing.T) {
-	mockRepo := new(MockRepository)
+	mockRepo := new(mocks.PostRepository)
 
 	var identifier int64 = 1
 
@@ -83,11 +57,11 @@ func TestFindAll(t *testing.T) {
 }
 
 func TestCreate(t *testing.T) {
-	mockRepo := new(MockRepository)
+	mockRepo := new(mocks.PostRepository)
 	post := domain.Post{Title: "Test Title", Text: "Test Text"}
 
 	//Setting up the expectations
-	mockRepo.On("Save").Return(&post, nil)
+	mockRepo.On("Save", &post).Return(&post, nil)
 
 	testService := NewPostService(mockRepo)
 
