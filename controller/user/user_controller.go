@@ -47,6 +47,12 @@ func (u *userController) AddUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
 		return 
 	}
+
+	if ageValidation := (u.userService.ValidateAge(&user)); ageValidation != true {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid DOB"})
+		return
+	}
+	
 	u.userService.Create(&user)
 	c.JSON(http.StatusOK, user)
 }

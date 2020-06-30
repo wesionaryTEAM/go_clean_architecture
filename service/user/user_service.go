@@ -31,17 +31,25 @@ func (*userService) Validate(user *domain.User) error {
 		err := errors.New("The email of user is empty")
 		return err
 	}
+	if user.DOB == "" {
+		err := errors.New("The DOB of user is empty")
+		return err
+	}
 	return nil
 }
 
 func (*userService) ValidateAge(user *domain.User) bool {
-	date := time.Now()
-	dob, err := time.Parse("2006-01-02 15:04:05",user.DOB)
+	ageLimit := 13
+	loc, _ := time.LoadLocation("UTC")
+	now := time.Now().In(loc)
+	dob, err := time.Parse("2006-01-02",user.DOB)
 	if err != nil {
 		return false
 	}
-	diff := date.Sub(dob)
-	if (diff.Hours()/8640) < 18 {
+
+	diff := now.Sub(dob)
+	diffInYears := int(diff.Hours() / (24 * 7 * 4 * 12))
+	if diffInYears < ageLimit {
 		return false
 	} else {
 		return true

@@ -11,6 +11,7 @@ import (
 	user_controller "prototype2/controller/user"
 	user_repository "prototype2/repository/user"
 	user_service "prototype2/service/user"
+	// Add other controllers, repository and services below
 	router "prototype2/http"
 
 	"github.com/gin-gonic/gin"
