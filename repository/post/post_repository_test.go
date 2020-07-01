@@ -21,6 +21,7 @@ func setup(t *testing.T) (postRepo domain.PostRepository, mock sqlmock.Sqlmock, 
 	}
 }
 
+// TestPostRepository_FindAll : test case for FindAll method
 func TestPostRepository_FindAll(t *testing.T) {
 	postRepo, mock, teardown := setup(t)
 	defer teardown()
@@ -67,25 +68,47 @@ func TestPostRepository_FindAll(t *testing.T) {
 	}
 }
 
-// func TestPostRepository_Save(t *testing.T) {
-// 	postRepo, mock, teardown := setup(t)
-// 	defer teardown()
+// TestPostRepository_Save : test case for Save method
+func TestPostRepository_Save(t *testing.T) {
+	postRepo, mock, teardown := setup(t)
+	defer teardown()
 
-// 	post := &domain.Post{
-// 		ID:    123,
-// 		Title: "Test Title",
-// 		Text:  "Test Text",
-// 	}
+	post := &domain.Post{
+		ID:    123,
+		Title: "Test Title",
+		Text:  "Test Text",
+	}
 
-// 	mock.ExpectBegin()
-// 	mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO posts SET id=\\? , title=\\? , text=\\?`)).
-// 		WithArgs(post.ID, post.Title, post.Text).
-// 		WillReturnRows(sqlmock.NewRows([]string{"id", "title", "text"}).
-// 			AddRow(post.ID, post.Title, post.Text))
-// 	mock.ExpectCommit()
+	mock.ExpectBegin()
+	mock.ExpectExec("INSERT *").
+		WithArgs(post.ID, post.Title, post.Text).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
 
-// 	result, err := postRepo.Save(post)
+	result, err := postRepo.Save(post)
 
-// 	assert.NoError(t, err)
-// 	assert.Equal(t, int64(123), result.ID)
-// }
+	assert.Nil(t, err)
+	assert.Equal(t, post, result)
+}
+
+// TestPostRepository_Delete : test case for Delete method
+func TestPostRepository_Delete(t *testing.T) {
+	postRepo, mock, teardown := setup(t)
+	defer teardown()
+
+	post := &domain.Post{
+		ID:    123,
+		Title: "Test Title",
+		Text:  "Test Text",
+	}
+
+	mock.ExpectBegin()
+	mock.ExpectExec("DELETE *").
+		WithArgs(post.ID).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	err := postRepo.Delete(post)
+
+	assert.Nil(t, err)
+}
