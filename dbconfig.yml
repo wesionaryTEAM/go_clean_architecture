@@ -1,0 +1,10 @@
+# production:
+#   dialect: mysql
+#   datasource: host=prodhost dbname=proddb user=produser password=prodpass sslmode=required
+#   dir: migrations
+#   table: migrations
+development:
+  dialect: mysql
+  datasource: root:password@tcp(localhost:3306)/prototype?charset=utf8&parseTime=True&loc=Local
+  dir: migrations
+  table: migrations
