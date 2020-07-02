@@ -13,6 +13,7 @@ import (
 	user_service "prototype2/service/user"
 	// Add other controllers, repository and services below
 	router "prototype2/http"
+	"prototype2/middleware"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -22,6 +23,8 @@ import (
 func SetupRoutes(db *gorm.DB) {
 
 	httpRouter := router.NewGinRouter()
+
+	r := gin.Default()
 
 	const port string = ":8000"
 
@@ -45,11 +48,18 @@ func SetupRoutes(db *gorm.DB) {
 	userService := user_service.NewUserService(userRepository)
 	userController := user_controller.NewUserController(userService)
 
+	/* Middleware checks */
+	userAuthentication := r.Group("/")
+
 	/* Routes */
 	httpRouter.GET("/posts", postController.GetPosts)
 	httpRouter.POST("/posts", postController.AddPost)
-	httpRouter.GET("/users", userController.GetUsers)
-	httpRouter.POST("/users", userController.AddUser)
+
+	userAuthentication.Use(middleware.UserAuthenticationMiddleware)
+	{
+		httpRouter.GET("/users", userController.GetUsers)
+		httpRouter.POST("/users", userController.AddUser)
+	}
 
 	httpRouter.SERVE(port)
 }
