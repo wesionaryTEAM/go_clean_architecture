@@ -18,5 +18,5 @@ func SetupSentry() {
 	
 	defer sentry.Flush(2 * time.Second)
 
-	sentry.CaptureMessage("It works!")
+	sentry.CaptureMessage("Sentry setup completed...")
 }
