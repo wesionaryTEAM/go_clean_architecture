@@ -4,17 +4,25 @@ import (
 	"errors"
 	"math/rand"
 	"prototype2/domain"
+	"sync"
 )
+
+var once sync.Once
 
 type postService struct {
 	repo domain.PostRepository
 }
 
+var instance *postService
+
 // NewPostService : get injected post repository
 func NewPostService(r domain.PostRepository) domain.PostService {
-	return &postService{
-		repo: r,
-	}
+	once.Do(func(){
+			instance = &postService{
+				repo: r,
+			}
+		})
+	return instance
 }
 
 func (*postService) Validate(post *domain.Post) error {
