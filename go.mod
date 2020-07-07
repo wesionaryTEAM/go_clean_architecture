@@ -7,9 +7,11 @@ require (
 	github.com/getsentry/sentry-go v0.6.1
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-sql-driver/mysql v1.5.0
+	github.com/golangci/golangci-lint v1.27.0 // indirect
 	github.com/jinzhu/gorm v1.9.14
 	github.com/joho/godotenv v1.3.0
-	github.com/stretchr/testify v1.4.0
+	github.com/stretchr/testify v1.5.1
 	github.com/vektra/mockery v1.1.2 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
+	golang.org/x/tools v0.0.0-20200702044944-0cc1aa72b347 // indirect
 )

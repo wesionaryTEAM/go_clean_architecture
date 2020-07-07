@@ -1,0 +1,38 @@
+# options for analysis running
+run:
+  # default concurrency is a available CPU number
+  concurrency: 4
+  # timeout for analysis
+  timeout: 1m
+  # exit code when at least one issue was found, default is 1
+  issues-exit-code: 1
+
+linters:
+  disable-all: true
+  enable:
+    - bodyclose
+    - deadcode
+    - errcheck
+    - funlen
+    - goconst
+    - gocritic
+    - gocyclo
+    - golint
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - interfacer
+    - lll
+    - misspell
+    - nakedret
+    - rowserrcheck
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - varcheck
+    - whitespace
