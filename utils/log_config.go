@@ -19,11 +19,17 @@ func SetupLumberjackLoging() error {
 }
 
 func InitLumberjackLoging() error {
+	get := GetEnvWithKey
+
+	MaxSizeInt, _ := ConvertStringToInt(get("LOG_MAX_SIZE"))
+	MaxBackupsInt, _ := ConvertStringToInt(get("LOG_MAX_BACKUPS"))
+	MaxAgeInt, _ := ConvertStringToInt(get("LOG_MAX_AGE"))
+
 	log.SetOutput(&lumberjack.Logger{
 		Filename: "log/access.log",
-		MaxSize: 500, // megabytes
-		MaxBackups: 3, 
-		MaxAge: 28, // days
+		MaxSize:MaxSizeInt, // megabytes
+		MaxBackups: MaxBackupsInt, 
+		MaxAge: MaxAgeInt, // days
 		Compress: true, // disabled by default
 	})
 	return nil
