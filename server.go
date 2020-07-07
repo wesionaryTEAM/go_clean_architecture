@@ -10,5 +10,7 @@ func main() {
 
 	db := infrastructure.SetupModels()
 
-	infrastructure.SetupRoutes(db)
+	fb := infrastructure.InitializeFirebase()
+
+	infrastructure.SetupRoutes(db, fb)
 }

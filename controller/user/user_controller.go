@@ -4,12 +4,14 @@ import (
 	"math/rand"
 	"net/http"
 	"prototype2/domain"
+	"prototype2/service"
 
 	"github.com/gin-gonic/gin"
 )
 
 type userController struct {
 	userService domain.UserService
+	fbService service.FirebaseService
 }
 
 type UserController interface {
@@ -17,10 +19,11 @@ type UserController interface {
 	AddUser(c *gin.Context)
 }
 
-//NewUserController: constructor, dependency injection from user service 
-func NewUserController(s domain.UserService) UserController {
+//NewUserController: constructor, dependency injection from user service and firebase service
+func NewUserController(s domain.UserService, f service.FirebaseService) UserController {
 	return &userController{
 		userService: s,
+		fbService: f,
 	}
 }
 
@@ -45,14 +48,16 @@ func (u *userController) AddUser(c *gin.Context) {
 
 	if err1 := (u.userService.Validate(&user)); err1 != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
-		return 
+		return
 	}
 
 	if ageValidation := (u.userService.ValidateAge(&user)); ageValidation != true {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid DOB"})
 		return
 	}
-	
+
+	password := "Zxcvbnm123"
+	u.fbService.CreateUser(user.Email, password)
 	u.userService.Create(&user)
 	c.JSON(http.StatusOK, user)
 }
