@@ -6,6 +6,7 @@ import (
 	"prototype2/domain"
 
 	"github.com/gin-gonic/gin"
+	"github.com/getsentry/sentry-go"
 )
 
 type userController struct {
@@ -27,6 +28,7 @@ func NewUserController(s domain.UserService) UserController {
 func (u *userController) GetUsers(c *gin.Context) {
 	users, err := u.userService.FindAll()
 	if err != nil {
+		sentry.CaptureException(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Error while getting users"})
 		return
 	}
@@ -37,6 +39,7 @@ func (u *userController) GetUsers(c *gin.Context) {
 func (u *userController) AddUser(c *gin.Context) {
 	var user domain.User
 	if err := c.ShouldBindJSON(&user); err != nil {
+		sentry.CaptureException(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -44,6 +47,7 @@ func (u *userController) AddUser(c *gin.Context) {
 	user.ID = rand.Int63()
 
 	if err1 := (u.userService.Validate(&user)); err1 != nil {
+		sentry.CaptureException(err1)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
 		return 
 	}

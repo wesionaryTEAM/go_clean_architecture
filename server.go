@@ -8,6 +8,8 @@ import (
 func main() {
 	utils.LoadEnv()
 
+	utils.SetupSentry()
+
 	db := infrastructure.SetupModels()
 
 	infrastructure.SetupRoutes(db)
