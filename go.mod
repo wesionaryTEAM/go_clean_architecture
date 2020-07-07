@@ -11,4 +11,5 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/stretchr/testify v1.4.0
 	github.com/vektra/mockery v1.1.2 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
