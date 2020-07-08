@@ -25,3 +25,7 @@ func (*ginRouter) POST(uri string, f func(c *gin.Context)) {
 func (*ginRouter) SERVE(port string) {
 	_ = ginDispatcher.Run(port)
 }
+
+func (*ginRouter) GROUP(uri string) *gin.RouterGroup {
+	return ginDispatcher.Group(uri)
+}
