@@ -7,31 +7,43 @@ import (
 )
 
 type firebaseService struct {
-	FB *auth.Client
+	Firebase *auth.Client
 }
 
 // FirebaseService : represent the firebase's services
 type FirebaseService interface {
 	VerifyToken(idToken string) (*auth.Token, error)
 	CreateUser(email, password string) error
+	DeleteUser(uid string) error
 }
 
 // NewFirebaseService : get injected firebase
 func NewFirebaseService(fb *auth.Client) FirebaseService {
 	return &firebaseService{
-		FB: fb,
+		Firebase: fb,
 	}
 }
 
-func (f *firebaseService) VerifyToken(idToken string) (*auth.Token, error) {
-	token, err := f.FB.VerifyIDToken(context.Background(), idToken)
+func (fb *firebaseService) VerifyToken(idToken string) (*auth.Token, error) {
+	token, err := fb.Firebase.VerifyIDToken(context.Background(), idToken)
 	return token, err
 }
 
-func (f *firebaseService) CreateUser(email, password string) error {
+func (fb *firebaseService) CreateUser(email, password string) error {
 	params := (&auth.UserToCreate{}).
 		Email(email).
 		Password(password)
-	_, err := f.FB.CreateUser(context.Background(), params)
+	u, err := fb.Firebase.CreateUser(context.Background(), params)
+	if err != nil {
+		return err
+	}
+
+	claims := map[string]interface{}{"user": true}
+	err = fb.Firebase.SetCustomUserClaims(context.Background(), u.UID, claims)
+	return err
+}
+
+func (fb *firebaseService) DeleteUser(uid string) error {
+	err := fb.Firebase.DeleteUser(context.Background(), uid)
 	return err
 }

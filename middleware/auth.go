@@ -11,17 +11,19 @@ import (
 
 type middlewareAuth struct {
 	authProvider service.FirebaseService
+	claims       string
 }
 
-// NewMiddlewareAuth : get injected firebase service
-func NewMiddlewareAuth(s service.FirebaseService) gin.HandlerFunc {
+// NewMiddlewareAuth : get injected firebase service and claims
+func NewMiddlewareAuth(s service.FirebaseService, c string) gin.HandlerFunc {
 	return (&middlewareAuth{
 		authProvider: s,
-	}).UserAuth
+		claims:       c,
+	}).AuthRequired
 }
 
-// UserAuth : to verify all authorized operations
-func (m *middlewareAuth) UserAuth(c *gin.Context) {
+// AuthRequired : to verify all authorized operations
+func (m *middlewareAuth) AuthRequired(c *gin.Context) {
 	authorizationToken := c.GetHeader("Authorization")
 
 	idToken := strings.TrimSpace(strings.Replace(authorizationToken, "Bearer", "", 1))
@@ -33,7 +35,7 @@ func (m *middlewareAuth) UserAuth(c *gin.Context) {
 		return
 	}
 
-	_, err := m.authProvider.VerifyToken(idToken)
+	token, err := m.authProvider.VerifyToken(idToken)
 	if err != nil {
 		c.JSON(http.StatusForbidden, gin.H{
 			"error": "token is not valid",
@@ -41,6 +43,14 @@ func (m *middlewareAuth) UserAuth(c *gin.Context) {
 		c.Abort()
 		return
 
+	}
+
+	if token.Claims[m.claims] != true {
+		c.JSON(http.StatusForbidden, gin.H{
+			"error": "Permission denied",
+		})
+		c.Abort()
+		return
 	}
 
 	c.Next()

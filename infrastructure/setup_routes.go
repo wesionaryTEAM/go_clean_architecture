@@ -46,7 +46,7 @@ func SetupRoutes(db *gorm.DB, fb *auth.Client) {
 
 	// dependency injection for firebase middleware
 	fbAuth := service.NewFirebaseService(fb)
-	auth := middleware.NewMiddlewareAuth(fbAuth)
+	auth := middleware.NewMiddlewareAuth(fbAuth, "user")
 
 	// dependency injection for user resources
 	userRepository := user_repository.NewUserRepository(db)
