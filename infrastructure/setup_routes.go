@@ -18,6 +18,7 @@ import (
 
 	"firebase.google.com/go/auth"
 	"github.com/gin-gonic/gin"
+	"github.com/getsentry/sentry-go"
 	"github.com/jinzhu/gorm"
 )
 
@@ -35,6 +36,7 @@ func SetupRoutes(db *gorm.DB, fb *auth.Client) {
 	// dependency injections for post resources
 	postRepository := post_repository.NewPostRepository(db)
 	if err := postRepository.Migrate(); err != nil {
+		sentry.CaptureException(err)
 		log.Fatal("post migrate err", err)
 	}
 	postService := post_service.NewPostService(postRepository)
@@ -51,6 +53,7 @@ func SetupRoutes(db *gorm.DB, fb *auth.Client) {
 	// dependency injection for user resources
 	userRepository := user_repository.NewUserRepository(db)
 	if err := userRepository.Migrate(); err != nil {
+		sentry.CaptureException(err)
 		log.Fatal("user migrate err", err)
 	}
 	userService := user_service.NewUserService(userRepository)

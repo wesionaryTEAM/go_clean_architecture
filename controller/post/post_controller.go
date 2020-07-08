@@ -4,10 +4,10 @@ import (
 	"math/rand"
 	"net/http"
 	"prototype2/domain"
-
 	// "prototype2/service/post"
 
 	"github.com/gin-gonic/gin"
+	"github.com/getsentry/sentry-go"
 )
 
 type postController struct {
@@ -30,6 +30,7 @@ func NewPostController(s domain.PostService) PostController {
 func (p *postController) GetPosts(c *gin.Context) {
 	posts, err := p.postService.FindAll()
 	if err != nil {
+		sentry.CaptureException(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Error getting the posts"})
 		return
 	}
@@ -40,6 +41,7 @@ func (p *postController) GetPosts(c *gin.Context) {
 func (p *postController) AddPost(c *gin.Context) {
 	var post domain.Post
 	if err := c.ShouldBindJSON(&post); err != nil {
+		sentry.CaptureException(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -47,6 +49,7 @@ func (p *postController) AddPost(c *gin.Context) {
 	post.ID = rand.Int63()
 
 	if err1 := p.postService.Validate(&post); err1 != nil {
+		sentry.CaptureException(err1)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
 		return
 	}
