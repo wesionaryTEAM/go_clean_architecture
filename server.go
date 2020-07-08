@@ -8,6 +8,8 @@ import (
 func main() {
 	utils.LoadEnv()
 
+	utils.SetupLumberjackLoging()
+
 	utils.SetupSentry()
 
 	db := infrastructure.SetupModels()

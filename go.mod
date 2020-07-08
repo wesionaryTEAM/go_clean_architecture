@@ -12,5 +12,6 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/stretchr/testify v1.5.1
 	github.com/vektra/mockery v1.1.2 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	golang.org/x/tools v0.0.0-20200702044944-0cc1aa72b347 // indirect
 )
