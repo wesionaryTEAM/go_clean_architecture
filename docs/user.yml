@@ -8,12 +8,24 @@ servers:
   - url: https://golangcleanarchitecture.wesionary.team # TODO: this url is fake and needs to be changed
     description: Link for the testing purpose
 
+tags:
+  - name: users
+    description: API documentation about User resources
+    externalDocs:
+      url: http://docs.api.com # TODO: change this url to valid one
+  - name: posts
+    description: API documentation about Post resources
+    externalDocs:
+      url: http://docs.api.com # TODO: change this url to valid one
+      
 paths:
   /users:
     get:
       summary: Returns the list of all users
       description: Makes a call to users table and fetches all the users
       operationId: getUsers
+      tags:
+        - users
       responses:
         '200':
           description: A JSON array of users
@@ -33,6 +45,8 @@ paths:
       summary: Returns the posted new users information with generated ID
       description: API to create a new user. Duplicated emails emails are allowed
       operationId: addUser
+      tags:
+      - users
       requestBody:
         description: User that is to be created
         required: true
@@ -59,6 +73,8 @@ paths:
       summary: Returns the list of all the posts
       description: Makes a call to posts table and fetches all the posts
       operationId: getPosts
+      tags:
+      - posts
       responses:
         '200':
           description: A JSON array of posts
@@ -78,6 +94,8 @@ paths:
       summary: Returns the object of new created post with id
       description: API to create new post.
       operationId: addPost
+      tags:
+      - posts
       requestBody:
         description: Post that is to be created
         required: true
