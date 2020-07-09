@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"log"
 	"prototype2/domain"
 	"sync"
 	"time"
@@ -26,6 +27,7 @@ func NewUserService(r domain.UserRepository) domain.UserService {
 }
 
 func (*userService) Validate(user *domain.User) error {
+	log.Print("[UserService]...Validate")
 	if user == nil {
 		err := errors.New("The user is empty")
 		return err
@@ -46,7 +48,8 @@ func (*userService) Validate(user *domain.User) error {
 }
 
 func (*userService) ValidateAge(user *domain.User) bool {
-	ageLimit := 13
+	log.Print("[UserService]...ValidateAge")
+		ageLimit := 13
 	loc, _ := time.LoadLocation("UTC")
 	now := time.Now().In(loc)
 	dob, err := time.Parse("2006-01-02", user.DOB)
@@ -68,5 +71,6 @@ func (u *userService) Create(user *domain.User) (*domain.User, error) {
 }
 
 func (u *userService) FindAll() ([]domain.User, error) {
+	log.Print("[UserService]...FindAll")
 	return u.userRepository.FindAll()
 }

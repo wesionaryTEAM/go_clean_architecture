@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"log"
 	"net/http"
 	"prototype2/api/service"
 	"prototype2/domain"
@@ -28,6 +29,7 @@ func NewUserController(s domain.UserService, f service.FirebaseService) UserCont
 }
 
 func (u *userController) GetUsers(c *gin.Context) {
+	log.Print("[UserController]...GetUsers")
 	users, err := u.userService.FindAll()
 	if err != nil {
 		sentry.CaptureException(err)
@@ -39,6 +41,7 @@ func (u *userController) GetUsers(c *gin.Context) {
 }
 
 func (u *userController) AddUser(c *gin.Context) {
+	log.Print("[UserController]...AddUser")
 	var user domain.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		sentry.CaptureException(err)

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"log"
 	"errors"
 	"math/rand"
 	"prototype2/domain"
@@ -26,6 +27,7 @@ func NewPostService(r domain.PostRepository) domain.PostService {
 }
 
 func (*postService) Validate(post *domain.Post) error {
+	log.Print("[PostService]...Validate")
 	if post == nil {
 		err := errors.New("The post is empty")
 		return err
@@ -42,10 +44,12 @@ func (*postService) Validate(post *domain.Post) error {
 }
 
 func (p *postService) Create(post *domain.Post) (*domain.Post, error) {
+	log.Print("[PostService]...Create")
 	post.ID = rand.Int63()
 	return p.repo.Save(post)
 }
 
 func (p *postService) FindAll() ([]domain.Post, error) {
+	log.Print("[PostService]...FindAll")
 	return p.repo.FindAll()
 }

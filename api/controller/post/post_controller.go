@@ -3,6 +3,7 @@ package controller
 import (
 	"math/rand"
 	"net/http"
+	"log"
 	"prototype2/domain"
 	// "prototype2/service/post"
 
@@ -28,6 +29,7 @@ func NewPostController(s domain.PostService) PostController {
 }
 
 func (p *postController) GetPosts(c *gin.Context) {
+	log.Print("[PostController]...GetPosts")
 	posts, err := p.postService.FindAll()
 	if err != nil {
 		sentry.CaptureException(err)
@@ -39,6 +41,7 @@ func (p *postController) GetPosts(c *gin.Context) {
 }
 
 func (p *postController) AddPost(c *gin.Context) {
+	log.Print("[PostController]...AddPost")
 	var post domain.Post
 	if err := c.ShouldBindJSON(&post); err != nil {
 		sentry.CaptureException(err)
