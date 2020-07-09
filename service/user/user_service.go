@@ -25,6 +25,9 @@ func NewUserService(r domain.UserRepository) domain.UserService {
 		}
 	})
 	return instance
+	// return &userService{
+	// 	userRepository: r,
+	// }
 }
 
 func (*userService) Validate(user *domain.User) error {
