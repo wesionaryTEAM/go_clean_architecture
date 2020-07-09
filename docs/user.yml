@@ -1,10 +1,10 @@
 openapi: 3.0.0
-info: 
+info:
   title: Go Lang Clean Architecture Skeleton project
   description: This repository manages the MVC architecture with Services and Repositories integration with Gin Router with unit tests for service and repositories
   version: 0.0.1
 
-servers: 
+servers:
   - url: https://golangcleanarchitecture.wesionary.team # TODO: this url is fake and needs to be changed
     description: Link for the testing purpose
 
@@ -17,7 +17,7 @@ tags:
     description: API documentation about Post resources
     externalDocs:
       url: http://docs.api.com # TODO: change this url to valid one
-      
+
 paths:
   /users:
     get:
@@ -27,113 +27,118 @@ paths:
       tags:
         - users
       responses:
-        '200':
+        "200":
           description: A JSON array of users
           content:
             application/json:
               schema:
                 type: array
-                items: 
-                  $ref: '#/components/schemas/User'
-        default: 
-          description: unexpected error
-          content: 
+                items:
+                  $ref: "#/components/schemas/User"
+        "400":
+          description: Bad request
+          content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
     post:
       summary: Returns the posted new users information with generated ID
       description: API to create a new user. Duplicated emails emails are allowed
       operationId: addUser
       tags:
-      - users
+        - users
       requestBody:
         description: User that is to be created
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewUser'
+              $ref: "#/components/schemas/NewUser"
       responses:
-        '200':
+        "200":
           description: user response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: "#/components/schemas/User"
         default:
           description: unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-              
+                $ref: "#/components/schemas/Error"
   /posts:
     get:
       summary: Returns the list of all the posts
       description: Makes a call to posts table and fetches all the posts
       operationId: getPosts
       tags:
-      - posts
+        - posts
       responses:
-        '200':
+        "200":
           description: A JSON array of posts
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Post'
-        default: 
+                  $ref: "#/components/schemas/Post"
+        default:
           description: unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-    post: 
+                $ref: "#/components/schemas/Error"
+    post:
       summary: Returns the object of new created post with id
       description: API to create new post.
       operationId: addPost
       tags:
-      - posts
+        - posts
       requestBody:
         description: Post that is to be created
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewPost'
+              $ref: "#/components/schemas/NewPost"
       responses:
-        '200':
+        "200":
           description: post response
-          content: 
+          content:
             application/json:
-              schema: 
-                $ref: '#/components/schemas/Post'
+              schema:
+                $ref: "#/components/schemas/Post"
         default:
           description: unexpected error
           content:
             application/json:
-              schema: 
-                $ref: '#/components/schemas/Error'
-      
-                
+              schema:
+                $ref: "#/components/schemas/Error"
+
 components:
   schemas:
     User:
       allOf:
-        - $ref: '#/components/schemas/NewUser'
+        - $ref: "#/components/schemas/NewUser"
         - type: object
           required:
-          - id
-          - name
-          - email
-          - dob
+            - id
+            - name
+            - email
+            - dob
           properties:
             id:
               type: integer
               format: int64
-    
+
     NewUser:
       type: object
       required:
@@ -147,7 +152,7 @@ components:
           type: string
         dob:
           type: string
-    
+
     Error:
       type: object
       required:
@@ -155,25 +160,24 @@ components:
         - message
       properties:
         code:
-          type: integer
-          format: int32
+          type: string
         message:
           type: string
-          
+
     Post:
       allOf:
-      - $ref: '#/components/schemas/NewPost'
-      - type: object
-        required:
-          - id
-          - title
-          - text
-        properties:
-          id:
-            type: integer
-            format: int64
-        
-    NewPost: 
+        - $ref: "#/components/schemas/NewPost"
+        - type: object
+          required:
+            - id
+            - title
+            - text
+          properties:
+            id:
+              type: integer
+              format: int64
+
+    NewPost:
       type: object
       required:
         - title
@@ -183,5 +187,3 @@ components:
           type: string
         text:
           type: string
-
-                
