@@ -10,6 +10,6 @@ func ConvertStringToInt(value string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	
+
 	return converted, nil
 }

@@ -15,7 +15,7 @@ func SetupSentry() {
 	if err != nil {
 		log.Fatalf("sentry.Init: %s", err)
 	}
-	
+
 	defer sentry.Flush(2 * time.Second)
 
 	sentry.CaptureMessage("Sentry setup completed...")
