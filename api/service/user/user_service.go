@@ -49,7 +49,7 @@ func (*userService) Validate(user *domain.User) error {
 
 func (*userService) ValidateAge(user *domain.User) bool {
 	log.Print("[UserService]...ValidateAge")
-		ageLimit := 13
+	ageLimit := 13
 	loc, _ := time.LoadLocation("UTC")
 	now := time.Now().In(loc)
 	dob, err := time.Parse("2006-01-02", user.DOB)

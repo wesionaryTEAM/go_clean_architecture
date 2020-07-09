@@ -36,6 +36,6 @@ func (u *userRepository) Delete(user *domain.User) error {
 }
 
 func (u *userRepository) Migrate() error {
-	log.Print("[UserRepository]...Migrate")	
+	log.Print("[UserRepository]...Migrate")
 	return u.DB.AutoMigrate(&domain.User{}).Error
 }

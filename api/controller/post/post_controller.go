@@ -1,9 +1,9 @@
 package controller
 
 import (
+	"log"
 	"math/rand"
 	"net/http"
-	"log"
 	"prototype2/domain"
 	// "prototype2/service/post"
 

@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"prototype2/domain"
 	"log"
+	"prototype2/domain"
 
 	"github.com/jinzhu/gorm"
 )
@@ -31,7 +31,7 @@ func (p *postRepository) FindAll() ([]domain.Post, error) {
 }
 
 func (p *postRepository) Delete(post *domain.Post) error {
-	log.Print("[PostRepository]...Delete")	
+	log.Print("[PostRepository]...Delete")
 	return p.DB.Delete(&post).Error
 }
 

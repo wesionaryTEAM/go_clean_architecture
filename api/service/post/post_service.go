@@ -1,8 +1,8 @@
 package service
 
 import (
-	"log"
 	"errors"
+	"log"
 	"math/rand"
 	"prototype2/domain"
 	"sync"
