@@ -24,6 +24,9 @@ func NewPostService(r domain.PostRepository) domain.PostService {
 		}
 	})
 	return instance
+	// return &postService{
+	// 	repo: r,
+	// }
 }
 
 func (*postService) Validate(post *domain.Post) error {
