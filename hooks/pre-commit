@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# this will retrieve all of the .go files that have been
+# changed since the last commit
+STAGED_GO_FILES=$(git diff --cached --name-only -- '*.go')
+
+# we can check to see if this is empty
+if [[ "$STAGED_GO_FILES" = "" ]]; then
+  exit 0
+fi
+
+PASS=true
+
+# On the staged file
+for FILE in $STAGED_GO_FILES
+do
+  # Run goimports
+  goimports -w $FILE
+
+  # Run golangci-lint
+  golangci-lint run $FILE
+  if [[ $? == 1 ]]; then
+    PASS=false
+  fi
+done
+
+if ! $PASS; then
+  printf "COMMIT FAILED\n"
+  exit 1
+else
+  printf "COMMIT SUCCEEDED\n"
+  git add .
+fi
+
+exit 0
