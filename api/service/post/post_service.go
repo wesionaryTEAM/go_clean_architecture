@@ -56,3 +56,17 @@ func (p *postService) FindAll() ([]domain.Post, error) {
 	log.Print("[PostService]...FindAll")
 	return p.repo.FindAll()
 }
+
+func (p *postService) GetByID(id int64) (*domain.Post, error) {
+	log.Print("[PostService]...GetByID")
+	return p.repo.FindByID(id)
+}
+
+func (p *postService) Delete(id int64) error {
+	log.Print("[PostService]...Delete")
+	post, err := p.repo.FindByID(id)
+	if err != nil {
+		return err
+	}
+	return p.repo.Delete(post)
+}
