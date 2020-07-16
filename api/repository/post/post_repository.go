@@ -1,9 +1,10 @@
 package repository
 
 import (
+	"fmt"
 	"log"
 	"prototype2/domain"
-	"prototype2/errors"
+	"prototype2/responses"
 
 	"github.com/jinzhu/gorm"
 )
@@ -21,7 +22,17 @@ func NewPostRepository(db *gorm.DB) domain.PostRepository {
 
 func (p *postRepository) Save(post *domain.Post) (*domain.Post, error) {
 	log.Print("[PostRepository]...Save")
-	return post, p.DB.Create(post).Error
+	var post domain.Post
+	result := p.DB.Create(post).Error
+
+	if result.Error != nil {
+		err := result.Error
+		msg := fmt.Sprintf("error saving the post")
+		err = responses.ErrDatabase
+		err = responses.InternalError.Wrapf(err, msg)
+		return nil, err
+	}
+	return &post, nil
 }
 
 func (p *postRepository) FindAll() ([]domain.Post, error) {
@@ -29,14 +40,20 @@ func (p *postRepository) FindAll() ([]domain.Post, error) {
 	var posts []domain.Post
 	result := p.DB.Find(&posts)
 
-	switch result.Error {
-	case nil:
-		return posts, nil
-	case gorm.ErrRecordNotFound:
-		return nil, errors.ErrNotFound
-	default:
-		return nil, errors.ErrDatabase
+	if result.Error != nil {
+		err := result.Error
+		msg := fmt.Sprintf("error getting the posts")
+		switch err {
+		case gorm.ErrRecordNotFound:
+			err = responses.ErrNotFound
+			err = responses.NotFound.Wrapf(err, msg)
+		default:
+			err = responses.ErrDatabase
+			err = responses.InternalError.Wrapf(err, msg)
+		}
+		return nil, err
 	}
+	return posts, nil
 }
 
 func (p *postRepository) FindByID(id int64) (*domain.Post, error) {
@@ -44,28 +61,34 @@ func (p *postRepository) FindByID(id int64) (*domain.Post, error) {
 	var post domain.Post
 	result := p.DB.Where("id = ?", id).First(&post)
 
-	switch result.Error {
-	case nil:
-		return &post, nil
-	case gorm.ErrRecordNotFound:
-		return nil, errors.ErrNotFound
-	default:
-		return nil, errors.ErrDatabase
+	if result.Error != nil {
+		err := result.Error
+		msg := fmt.Sprintf("error getting the post with id %d", id)
+		switch err {
+		case gorm.ErrRecordNotFound:
+			err = responses.ErrNotFound
+			err = responses.NotFound.Wrapf(err, msg)
+		default:
+			err = responses.ErrDatabase
+			err = responses.InternalError.Wrapf(err, msg)
+		}
+		return nil, err
 	}
+	return &post, nil
 }
 
 func (p *postRepository) Delete(post *domain.Post) error {
 	log.Print("[PostRepository]...Delete")
 	result := p.DB.Delete(&post)
 
-	switch result.Error {
-	case nil:
-		return nil
-	case gorm.ErrRecordNotFound:
-		return errors.ErrNotFound
-	default:
-		return errors.ErrDatabase
+	if result.Error != nil {
+		err := result.Error
+		msg := fmt.Sprintf("error deleting the post")
+		err = responses.ErrDatabase
+		err = responses.InternalError.Wrapf(err, msg)
+		return err
 	}
+	return nil
 }
 
 func (p *postRepository) Migrate() error {
@@ -76,6 +99,6 @@ func (p *postRepository) Migrate() error {
 	case nil:
 		return nil
 	default:
-		return errors.ErrDatabase
+		return responses.ErrDatabase
 	}
 }

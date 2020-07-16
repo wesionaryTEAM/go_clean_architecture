@@ -2,10 +2,14 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"math/rand"
-	"prototype2/domain"
+	"strconv"
 	"sync"
+
+	"prototype2/domain"
+	"prototype2/responses"
 )
 
 var once sync.Once
@@ -57,14 +61,29 @@ func (p *postService) FindAll() ([]domain.Post, error) {
 	return p.repo.FindAll()
 }
 
-func (p *postService) GetByID(id int64) (*domain.Post, error) {
+func (p *postService) GetByID(idString string) (*domain.Post, error) {
 	log.Print("[PostService]...GetByID")
+
+	id, err := strconv.ParseInt(idString, 10, 64)
+	if err != nil {
+		    err = responses.BadRequest.Wrapf(err, "interactor converting id to int")
+		    err = responses.AddErrorContext(err, "id", "wrong id format")
+
+		return nil, err
+	}
+
 	return p.repo.FindByID(id)
 }
 
-func (p *postService) Delete(id int64) error {
+func (p *postService) Delete(idString string) error {
 	log.Print("[PostService]...Delete")
-	post, err := p.repo.FindByID(id)
+
+	n, err := strconv.ParseInt(idString, 10, 64)
+	if err == nil {
+		fmt.Printf("%d of type %T", n, n)
+	}
+
+	post, err := p.repo.FindByID(n)
 	if err != nil {
 		return err
 	}

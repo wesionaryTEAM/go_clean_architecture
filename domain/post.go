@@ -12,8 +12,8 @@ type PostService interface {
 	Validate(post *Post) error
 	Create(post *Post) (*Post, error)
 	FindAll() ([]Post, error)
-	GetByID(id int64) (*Post, error)
-	Delete(id int64) error
+	GetByID(id string) (*Post, error)
+	Delete(id string) error
 }
 
 // PostRepository : represent the post's repository contract

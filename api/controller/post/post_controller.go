@@ -1,14 +1,12 @@
 package controller
 
 import (
-	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
-	"strconv"
 
 	"prototype2/domain"
-	"prototype2/errors"
+	"prototype2/responses"
 
 	"github.com/gin-gonic/gin"
 )
@@ -36,7 +34,7 @@ func (p *postController) GetPosts(c *gin.Context) {
 	log.Print("[PostController]...GetPosts")
 	posts, err := p.postService.FindAll()
 	if err != nil {
-		errors.Wrap(c, err)
+		responses.HandleError(c, err)
 		return
 	}
 
@@ -47,14 +45,15 @@ func (p *postController) AddPost(c *gin.Context) {
 	log.Print("[PostController]...AddPost")
 	var post domain.Post
 	if err := c.ShouldBindJSON(&post); err != nil {
-		errors.Wrap(c, err)
+		err = responses.BadRequest.New("error parsing the input information")
+		responses.HandleError(c, err)
 		return
 	}
 
 	post.ID = rand.Int63()
 
 	if err1 := p.postService.Validate(&post); err1 != nil {
-		errors.Wrap(c, err1)
+		responses.HandleError(c, err1)
 		return
 	}
 	p.postService.Create(&post)
@@ -64,14 +63,9 @@ func (p *postController) AddPost(c *gin.Context) {
 func (p *postController) GetPost(c *gin.Context) {
 	log.Print("[PostController]...GetPost")
 
-	id := c.Param("id")
-	n, err := strconv.ParseInt(id, 10, 64)
-	if err == nil {
-		fmt.Printf("%d of type %T", n, n)
-	}
-	post, err1 := p.postService.GetByID(n)
-	if err1 != nil {
-		errors.Wrap(c, err1)
+	post, err := p.postService.GetByID(c.Param("id"))
+	if err != nil {
+		responses.HandleError(c, err)
 		return
 	}
 
@@ -81,12 +75,11 @@ func (p *postController) GetPost(c *gin.Context) {
 func (p *postController) DeletePost(c *gin.Context) {
 	log.Print("[PostController]...DeletePost")
 
-	id := c.Param("id")
-	n, err := strconv.ParseInt(id, 10, 64)
-	if err == nil {
-		fmt.Printf("%d of type %T", n, n)
+	err := p.postService.Delete(c.Param("id"))
+	if err != nil {
+		responses.HandleError(c, err)
+		return
 	}
-	p.postService.Delete(n)
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }
