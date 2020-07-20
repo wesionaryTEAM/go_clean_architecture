@@ -5,8 +5,9 @@ import (
 	"math/rand"
 	"net/http"
 
+	"prototype2/api/responses"
 	"prototype2/domain"
-	"prototype2/responses"
+	"prototype2/errors"
 
 	"github.com/gin-gonic/gin"
 )
@@ -45,7 +46,7 @@ func (p *postController) AddPost(c *gin.Context) {
 	log.Print("[PostController]...AddPost")
 	var post domain.Post
 	if err := c.ShouldBindJSON(&post); err != nil {
-		err = responses.BadRequest.New("error parsing the input information")
+		err = errors.BadRequest.New("error parsing the input information")
 		responses.HandleError(c, err)
 		return
 	}

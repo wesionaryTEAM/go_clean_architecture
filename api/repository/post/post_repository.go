@@ -3,8 +3,9 @@ package repository
 import (
 	"fmt"
 	"log"
+
 	"prototype2/domain"
-	"prototype2/responses"
+	"prototype2/errors"
 
 	"github.com/jinzhu/gorm"
 )
@@ -22,17 +23,15 @@ func NewPostRepository(db *gorm.DB) domain.PostRepository {
 
 func (p *postRepository) Save(post *domain.Post) (*domain.Post, error) {
 	log.Print("[PostRepository]...Save")
-	var post domain.Post
-	result := p.DB.Create(post).Error
+	result := p.DB.Create(&post)
 
 	if result.Error != nil {
 		err := result.Error
 		msg := fmt.Sprintf("error saving the post")
-		err = responses.ErrDatabase
-		err = responses.InternalError.Wrapf(err, msg)
+		err = errors.InternalError.Wrapf(err, msg)
 		return nil, err
 	}
-	return &post, nil
+	return post, nil
 }
 
 func (p *postRepository) FindAll() ([]domain.Post, error) {
@@ -45,11 +44,9 @@ func (p *postRepository) FindAll() ([]domain.Post, error) {
 		msg := fmt.Sprintf("error getting the posts")
 		switch err {
 		case gorm.ErrRecordNotFound:
-			err = responses.ErrNotFound
-			err = responses.NotFound.Wrapf(err, msg)
+			err = errors.NotFound.Wrapf(err, msg)
 		default:
-			err = responses.ErrDatabase
-			err = responses.InternalError.Wrapf(err, msg)
+			err = errors.InternalError.Wrapf(err, msg)
 		}
 		return nil, err
 	}
@@ -66,11 +63,9 @@ func (p *postRepository) FindByID(id int64) (*domain.Post, error) {
 		msg := fmt.Sprintf("error getting the post with id %d", id)
 		switch err {
 		case gorm.ErrRecordNotFound:
-			err = responses.ErrNotFound
-			err = responses.NotFound.Wrapf(err, msg)
+			err = errors.NotFound.Wrapf(err, msg)
 		default:
-			err = responses.ErrDatabase
-			err = responses.InternalError.Wrapf(err, msg)
+			err = errors.InternalError.Wrapf(err, msg)
 		}
 		return nil, err
 	}
@@ -84,8 +79,7 @@ func (p *postRepository) Delete(post *domain.Post) error {
 	if result.Error != nil {
 		err := result.Error
 		msg := fmt.Sprintf("error deleting the post")
-		err = responses.ErrDatabase
-		err = responses.InternalError.Wrapf(err, msg)
+		err = errors.InternalError.Wrapf(err, msg)
 		return err
 	}
 	return nil
@@ -99,6 +93,6 @@ func (p *postRepository) Migrate() error {
 	case nil:
 		return nil
 	default:
-		return responses.ErrDatabase
+		return result.Error
 	}
 }
