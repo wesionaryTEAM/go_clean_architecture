@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"net/http"
 	"strings"
 
 	"prototype2/api/responses"
@@ -30,27 +29,24 @@ func (m *middlewareAuth) AuthRequired(c *gin.Context) {
 
 	idToken := strings.TrimSpace(strings.Replace(authorizationToken, "Bearer", "", 1))
 	if idToken == "" {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "No token found in header",
-		})
+		err := errors.InternalError.New("no token found in header")
+		responses.HandleError(c, err)
 		c.Abort()
 		return
 	}
 
 	token, err := m.authProvider.VerifyToken(idToken)
 	if err != nil {
-		c.JSON(http.StatusForbidden, gin.H{
-			"error": "token is not valid",
-		})
+		err := errors.Unauthorized.New("token is not valid")
+		responses.HandleError(c, err)
 		c.Abort()
 		return
 
 	}
 
 	if token.Claims[m.claims] != true {
-		c.JSON(http.StatusForbidden, gin.H{
-			"error": "Permission denied",
-		})
+		err := errors.Forbidden.New("permission denied")
+		responses.HandleError(c, err)
 		c.Abort()
 		return
 	}
