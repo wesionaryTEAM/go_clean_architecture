@@ -33,7 +33,7 @@ package controller
 // 	var jsonString = []byte(`{"title":"` + TITLE + `","text":"` + TEXT + `"}`)
 // 	request, _ := http.NewRequest("POST", "/posts", bytes.NewBuffer(jsonString))
 
-// 	//assign the controlelr action as a handler function (add post action)
+// 	//assign the controller action as a handler function (add post action)
 // 	handler := http.HandlerFunc(postController.AddPost)
 
 // 	//Record the http response using httptest
@@ -81,7 +81,7 @@ package controller
 // 	// Insert new post
 // 	post, err := setup()
 // 	if err != nil {
-// 		t.Errorf("Error occured initializing the post")
+// 		t.Errorf("Error occurred initializing the post")
 // 	}
 
 // 	// Create new HTTP request

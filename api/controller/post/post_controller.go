@@ -53,12 +53,18 @@ func (p *postController) AddPost(c *gin.Context) {
 
 	post.ID = rand.Int63()
 
-	if err1 := p.postService.Validate(&post); err1 != nil {
-		responses.HandleError(c, err1)
+	if err := p.postService.Validate(&post); err != nil {
+		responses.HandleError(c, err)
 		return
 	}
-	p.postService.Create(&post)
-	c.JSON(http.StatusOK, post)
+
+	postCreated, err := p.postService.Create(&post)
+	if err != nil {
+		responses.HandleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, postCreated)
 }
 
 func (p *postController) GetPost(c *gin.Context) {

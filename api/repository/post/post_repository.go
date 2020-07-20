@@ -27,7 +27,7 @@ func (p *postRepository) Save(post *domain.Post) (*domain.Post, error) {
 
 	if result.Error != nil {
 		err := result.Error
-		msg := fmt.Sprintf("error saving the post")
+		msg := "error saving the post"
 		err = errors.InternalError.Wrapf(err, msg)
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (p *postRepository) FindAll() ([]domain.Post, error) {
 
 	if result.Error != nil {
 		err := result.Error
-		msg := fmt.Sprintf("error getting the posts")
+		msg := "error getting the posts"
 		switch err {
 		case gorm.ErrRecordNotFound:
 			err = errors.NotFound.Wrapf(err, msg)
@@ -78,7 +78,7 @@ func (p *postRepository) Delete(post *domain.Post) error {
 
 	if result.Error != nil {
 		err := result.Error
-		msg := fmt.Sprintf("error deleting the post")
+		msg := "error deleting the post"
 		err = errors.InternalError.Wrapf(err, msg)
 		return err
 	}

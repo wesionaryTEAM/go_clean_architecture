@@ -14,7 +14,6 @@ import (
 
 //SetupRoutes : all the routes are defined here
 func SetupRoutes(db *gorm.DB, fb *auth.Client) {
-
 	httpRouter := router.NewGinRouter()
 
 	httpRouter.GET("/", func(c *gin.Context) {

@@ -55,20 +55,24 @@ func (u *userController) AddUser(c *gin.Context) {
 		return
 	}
 
-	if ageValidation := (u.userService.ValidateAge(&user)); ageValidation != true {
+	if ageValidation := (u.userService.ValidateAge(&user)); !ageValidation {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid DOB"})
 		return
 	}
 
 	uid, err := u.fbService.CreateUser(user.Email, user.Password)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Couldnot create user in firebase"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Couldnt create user in firebase"})
 		return
 	}
 
 	user.ID = uid
 
-	u.userService.Create(&user)
+	userCreated, err := u.userService.Create(&user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Couldnt create user"})
+		return
+	}
 
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, userCreated)
 }
