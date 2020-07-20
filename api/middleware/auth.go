@@ -4,7 +4,9 @@ import (
 	"net/http"
 	"strings"
 
+	"prototype2/api/responses"
 	"prototype2/api/service"
+	"prototype2/errors"
 
 	"github.com/gin-gonic/gin"
 )
