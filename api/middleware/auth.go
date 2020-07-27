@@ -41,7 +41,6 @@ func (m *middlewareAuth) AuthRequired(c *gin.Context) {
 		responses.HandleError(c, err)
 		c.Abort()
 		return
-
 	}
 
 	if token.Claims[m.claims] != true {

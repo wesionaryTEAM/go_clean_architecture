@@ -32,19 +32,19 @@ func NewUserService(r domain.UserRepository) domain.UserService {
 func (*userService) Validate(user *domain.User) error {
 	log.Print("[UserService]...Validate")
 	if user == nil {
-		err := errors.New("The user is empty")
+		err := errors.New("the user is empty")
 		return err
 	}
 	if user.Name == "" {
-		err := errors.New("The name of user is empty")
+		err := errors.New("the name field of user is empty")
 		return err
 	}
 	if user.Email == "" {
-		err := errors.New("The email of user is empty")
+		err := errors.New("the email field of user is empty")
 		return err
 	}
 	if user.DOB == "" {
-		err := errors.New("The DOB of user is empty")
+		err := errors.New("the DOB field of user is empty")
 		return err
 	}
 	return nil
@@ -62,11 +62,7 @@ func (*userService) ValidateAge(user *domain.User) bool {
 
 	diff := now.Sub(dob)
 	diffInYears := int(diff.Hours() / (24 * 7 * 4 * 12))
-	if diffInYears < ageLimit {
-		return false
-	} else {
-		return true
-	}
+	return diffInYears >= ageLimit
 }
 
 func (u *userService) Create(user *domain.User) (*domain.User, error) {

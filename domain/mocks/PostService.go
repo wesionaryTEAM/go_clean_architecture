@@ -36,6 +36,20 @@ func (_m *PostService) Create(post *domain.Post) (*domain.Post, error) {
 	return r0, r1
 }
 
+// Delete provides a mock function with given fields: id
+func (_m *PostService) Delete(id string) error {
+	ret := _m.Called(id)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string) error); ok {
+		r0 = rf(id)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // FindAll provides a mock function with given fields:
 func (_m *PostService) FindAll() ([]domain.Post, error) {
 	ret := _m.Called()
@@ -52,6 +66,29 @@ func (_m *PostService) FindAll() ([]domain.Post, error) {
 	var r1 error
 	if rf, ok := ret.Get(1).(func() error); ok {
 		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetByID provides a mock function with given fields: id
+func (_m *PostService) GetByID(id string) (*domain.Post, error) {
+	ret := _m.Called(id)
+
+	var r0 *domain.Post
+	if rf, ok := ret.Get(0).(func(string) *domain.Post); ok {
+		r0 = rf(id)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.Post)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(id)
 	} else {
 		r1 = ret.Error(1)
 	}

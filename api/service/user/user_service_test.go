@@ -63,9 +63,18 @@ func TestValidateEmptyNameField(t *testing.T) {
 		user   domain.User
 		expect string
 	}{
-		{user: domain.User{ID: "1", Name: "", Email: "testemail@test.com", DOB: "1995-12-28"}, expect: "The name of user is empty"},
-		{user: domain.User{ID: "1", Name: "Lorem Ipsum", Email: "", DOB: "1995-12-28"}, expect: "The email of user is empty"},
-		{user: domain.User{ID: "1", Name: "Lorem Ipsum", Email: "testemail@test.com", DOB: ""}, expect: "The DOB of user is empty"},
+		{
+			user: domain.User{ID: "1", Name: "", Email: "testemail@test.com", DOB: "1995-12-28"},
+			expect: "The name of user is empty",
+		},
+		{
+			user: domain.User{ID: "1", Name: "Lorem Ipsum", Email: "", DOB: "1995-12-28"},
+			expect: "The email of user is empty",
+		},
+		{
+			user: domain.User{ID: "1", Name: "Lorem Ipsum", Email: "testemail@test.com", DOB: ""},
+			expect: "The DOB of user is empty",
+		},
 	}
 
 	for _, s := range scenarios {

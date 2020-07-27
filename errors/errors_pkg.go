@@ -73,7 +73,6 @@ func AddErrorContext(err error, field, message string) error {
 func GetErrorContext(err error) map[string]string {
 	emptyContext := errorContext{}
 	if responseErr, ok := err.(responseError); ok && responseErr.contextInfo != emptyContext {
-
 		return map[string]string{
 			"field":   responseErr.contextInfo.Field,
 			"message": responseErr.contextInfo.Message,
