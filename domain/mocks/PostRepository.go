@@ -50,6 +50,29 @@ func (_m *PostRepository) FindAll() ([]domain.Post, error) {
 	return r0, r1
 }
 
+// FindByID provides a mock function with given fields: id
+func (_m *PostRepository) FindByID(id int64) (*domain.Post, error) {
+	ret := _m.Called(id)
+
+	var r0 *domain.Post
+	if rf, ok := ret.Get(0).(func(int64) *domain.Post); ok {
+		r0 = rf(id)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.Post)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(int64) error); ok {
+		r1 = rf(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Migrate provides a mock function with given fields:
 func (_m *PostRepository) Migrate() error {
 	ret := _m.Called()
@@ -86,9 +109,3 @@ func (_m *PostRepository) Save(post *domain.Post) (*domain.Post, error) {
 
 	return r0, r1
 }
-
-// func (mock *MockRepository) Save(post *domain.Post) (*domain.Post, error) {
-// 	args := mock.Called()
-// 	result := args.Get(0)
-// 	return result.(*domain.Post), args.Error(1)
-// }

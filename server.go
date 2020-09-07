@@ -8,7 +8,11 @@ import (
 func main() {
 	utils.LoadEnv()
 
-	utils.SetupLumberjackLoging()
+	err := utils.SetupLumberjackLoging()
+	if err != nil {
+		panic(err.Error())
+	}
+
 
 	utils.SetupSentry()
 

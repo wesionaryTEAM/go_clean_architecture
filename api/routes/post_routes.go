@@ -27,4 +27,6 @@ func PostRoutes(route *gin.RouterGroup, db *gorm.DB) {
 	// Post routes
 	route.GET("/", postController.GetPosts)
 	route.POST("/", postController.AddPost)
+	route.GET("/:id", postController.GetPost)
+	route.DELETE("/:id", postController.DeletePost)
 }

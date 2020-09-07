@@ -2,3 +2,4 @@
 .vscode/
 log/access.log
 .git
+log

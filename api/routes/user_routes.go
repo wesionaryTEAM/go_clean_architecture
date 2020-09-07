@@ -3,7 +3,7 @@ package routes
 import (
 	"log"
 
-	// user controlelr, repository and service
+	// user controller, repository and service
 	user_controller "prototype2/api/controller/user"
 	user_repository "prototype2/api/repository/user"
 	user_service "prototype2/api/service/user"

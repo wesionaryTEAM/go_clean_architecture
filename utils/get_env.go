@@ -12,7 +12,7 @@ func GetEnvWithKey(key string) string {
 	return os.Getenv(key)
 }
 
-//LoadEnv initally load env
+//LoadEnv initially load env
 func LoadEnv() {
 	// load .env file
 	err := godotenv.Load(".env")
