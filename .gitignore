@@ -1,3 +1,4 @@
 .env
 .vscode/
 log/access.log
+.git
