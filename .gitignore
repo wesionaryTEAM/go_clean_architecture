@@ -3,3 +3,4 @@
 log/access.log
 .git
 log
+.idea/
