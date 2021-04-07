@@ -1,58 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e3c27e05-6d7f-49d5-8e10-4c3de742dfbc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/api/handlers/handlers.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/handlers/user_handler.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/handlers/user_handler_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/middlewares/middlewares.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/routes/routes.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/services/service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/services/user_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api/services/user_service_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bootstrap/bootstrap.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cli/app.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cli/cli.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interfaces/user.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/env.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/lib.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/log.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/isCli.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/controller/post/post_controller.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/controller/post/post_controller_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/controller/user/user_controller.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/middleware/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/middlewares/auth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/repository/db_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/repository/repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/repository/firestore_repository.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/repository/mongodb_repository.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/repository/mysql_repository.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/repository/post/post_repository.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/repository/post/post_repository_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/repository/user/user_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/repository/user_repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/routes/post_routes.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/routes/user_routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/routes/user_routes.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/service/firebase_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/services/firebase_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/service/post/post_service.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/service/post/post_service_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/service/user/user_service.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/service/user/user_service_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/domain/mocks/PostRepository.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/domain/mocks/PostService.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/domain/mocks/UserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/mocks/UserRepository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/domain/mocks/UserService.go" beforeDir="false" afterPath="$PROJECT_DIR$/mocks/UserService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/domain/post.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/domain/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/http/chi_router.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/http/gin_router.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/http/mux_router.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/http/router.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/infrastructure/db_config.go" beforeDir="false" afterPath="$PROJECT_DIR$/lib/db.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infrastructure/firebase_config.go" beforeDir="false" afterPath="$PROJECT_DIR$/lib/firebase.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infrastructure/setup_routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/lib/router.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/server.go" afterDir="false" />
-    </list>
+    <list default="true" id="e3c27e05-6d7f-49d5-8e10-4c3de742dfbc" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
