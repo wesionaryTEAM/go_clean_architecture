@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="e3c27e05-6d7f-49d5-8e10-4c3de742dfbc" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/api/handlers/handlers.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/handlers/user_handler.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/handlers/user_handler_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/middlewares/middlewares.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/routes/routes.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/services/service.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/services/user_service.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/services/user_service_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bootstrap/bootstrap.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cli/app.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cli/cli.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/interfaces/user.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/env.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/lib.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/log.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/isCli.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/controller/post/post_controller.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/controller/post/post_controller_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/controller/user/user_controller.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/middleware/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/middlewares/auth.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/repository/db_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/repository/repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/repository/firestore_repository.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/repository/mongodb_repository.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/repository/mysql_repository.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/repository/post/post_repository.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/repository/post/post_repository_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/repository/user/user_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/repository/user_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/routes/post_routes.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/routes/user_routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/routes/user_routes.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/service/firebase_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/services/firebase_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/service/post/post_service.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/service/post/post_service_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/service/user/user_service.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/service/user/user_service_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/mocks/PostRepository.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/mocks/PostService.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/mocks/UserRepository.go" beforeDir="false" afterPath="$PROJECT_DIR$/mocks/UserRepository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/mocks/UserService.go" beforeDir="false" afterPath="$PROJECT_DIR$/mocks/UserService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/post.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/domain/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http/chi_router.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/http/gin_router.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/http/mux_router.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/http/router.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/infrastructure/db_config.go" beforeDir="false" afterPath="$PROJECT_DIR$/lib/db.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/infrastructure/firebase_config.go" beforeDir="false" afterPath="$PROJECT_DIR$/lib/firebase.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/infrastructure/setup_routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/lib/router.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/server.go" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="GOROOT" url="file:///usr/local/go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="false" />
+  </component>
+  <component name="ProjectId" id="1qqZXZ7b343MZq7WgmWh5pubyDC" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="go.sdk.automatically.set" value="true" />
+    <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
+    <property name="last_opened_file_path" value="$USER_HOME$" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/models" />
+      <recent name="$PROJECT_DIR$/api/service" />
+      <recent name="$PROJECT_DIR$/api/repository" />
+      <recent name="$PROJECT_DIR$/api/controller" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>true</integration-enabled>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/lib/router.go</url>
+          <line>2</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
