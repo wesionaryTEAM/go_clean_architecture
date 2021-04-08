@@ -1,32 +1,25 @@
 package responses
 
 import (
-	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
-
-	"prototype2/errors"
 )
 
-func HandleError(c *gin.Context, err error) {
-	// Send error to sentry
-	sentry.CaptureMessage(err.Error())
+// JSON : json response function
+func JSON(c *gin.Context, statusCode int, data interface{}) {
+	c.JSON(statusCode, gin.H{"data": data})
+}
 
-	// Get ErrorType
-	errorType := errors.GetErrorType(err)
+// ErrorJSON : json error response function
+func ErrorJSON(c *gin.Context, statusCode int, data interface{}) {
+	c.JSON(statusCode, gin.H{"error": data})
+}
 
-	// Get Status Code of the ErrorType
-	status := errors.GetStatusCode(errorType)
+// SuccessJSON : json error response function
+func SuccessJSON(c *gin.Context, statusCode int, data interface{}) {
+	c.JSON(statusCode, gin.H{"msg": data})
+}
 
-	// Check if there's additional context to the error
-	errorContext := errors.GetErrorContext(err)
-	if errorContext != nil {
-		c.JSON(status, gin.H{
-			"error":   err.Error(),
-			"context": errorContext,
-		})
-		return
-	}
-
-	// No error context to the error
-	c.JSON(status, gin.H{"error": err.Error()})
+// JSONCount : json response function
+func JSONCount(c *gin.Context, statusCode int, data interface{}, count int) {
+	c.JSON(statusCode, gin.H{"data": data, "count": count})
 }
