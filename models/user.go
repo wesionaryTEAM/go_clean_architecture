@@ -4,7 +4,7 @@ import "github.com/google/uuid"
 
 // User : Database model for user
 type User struct {
-	ID       uuid.UUID `json:"id"`
+	ID uuid.UUID `json:"id"`
 }
 
 func (u User) TableName() string {

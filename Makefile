@@ -24,3 +24,8 @@ create:
 
 .PHONY: migrate-up migrate-down force goto drop create
 
+tags:
+	@read -r -p "Which file? " FILE; \
+	read -r -p "Which struct? " STRUCT; \
+	read -r -p "Which tag? " TAG; \
+	gomodifytags -file $$FILE -struct $$STRUCT -add-tags $$TAG -w
