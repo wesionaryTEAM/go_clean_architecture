@@ -6,8 +6,7 @@ import (
 	"prototype2/lib"
 )
 
-type UserController struct {
-	logger lib.Logger
+type UserController struct {logger lib.Logger
 	userService interfaces.UserServiceInterface
 }
 
