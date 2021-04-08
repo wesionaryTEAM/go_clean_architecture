@@ -1,6 +1,9 @@
 include .env
 MIGRATE=docker-compose exec web migrate -path=migration -database "mysql://${DBUsername}:${DBPassword}@tcp(${DBHost}:${DBPort})/${DBName}" -verbose
 
+setup:
+	git config core.hooksPath hooks
+
 dev:
 		gin appPort 5000 -i run server.go
 migrate-up:
