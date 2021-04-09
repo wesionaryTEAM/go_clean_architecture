@@ -6,13 +6,11 @@ import "os"
 type Env struct {
 	ServerPort  string
 	Environment string
-	LogOutput   string
 	DBUsername  string
 	DBPassword  string
 	DBHost      string
 	DBPort      string
 	DBName      string
-	JWTSecret   string
 }
 
 // NewEnv creates a new environment
@@ -24,15 +22,12 @@ func NewEnv() Env {
 
 // LoadEnv loads environment
 func (env *Env) LoadEnv() {
-	env.ServerPort = os.Getenv("ServerPort")
-	env.Environment = os.Getenv("Environment")
-	env.LogOutput = os.Getenv("LogOutput")
+	env.ServerPort = os.Getenv("SERVER_PORT")
+	env.Environment = os.Getenv("ENVIRONMENT")
 
-	env.DBUsername = os.Getenv("DBUsername")
-	env.DBPassword = os.Getenv("DBPassword")
-	env.DBHost = os.Getenv("DBHost")
-	env.DBPort = os.Getenv("DBPort")
-	env.DBName = os.Getenv("DBName")
-
-	env.JWTSecret = os.Getenv("JWTSecret")
+	env.DBUsername = os.Getenv("DB_USER")
+	env.DBPassword = os.Getenv("DB_PASS")
+	env.DBHost = os.Getenv("DB_HOST")
+	env.DBPort = os.Getenv("DB_PORT")
+	env.DBName = os.Getenv("DB_NAME")
 }
