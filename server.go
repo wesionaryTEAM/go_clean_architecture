@@ -1,24 +1,14 @@
 package main
 
 import (
-	"prototype2/infrastructure"
-	"prototype2/utils"
+	"clean-architecture/bootstrap"
+
+	"github.com/joho/godotenv"
+	"go.uber.org/fx"
 )
 
 func main() {
-	utils.LoadEnv()
+	godotenv.Load()
 
-	err := utils.SetupLumberjackLoging()
-	if err != nil {
-		panic(err.Error())
-	}
-
-
-	utils.SetupSentry()
-
-	db := infrastructure.SetupModels()
-
-	fb := infrastructure.InitializeFirebase()
-
-	infrastructure.SetupRoutes(db, fb)
+	fx.New(bootstrap.Module).Run()
 }

@@ -1,43 +1,30 @@
 package routes
 
 import (
-	"log"
-
-	// user controller, repository and service
-	user_controller "prototype2/api/controller/user"
-	user_repository "prototype2/api/repository/user"
-	user_service "prototype2/api/service/user"
-
-	"prototype2/api/middleware"
-	"prototype2/api/service"
-
-	"firebase.google.com/go/auth"
-	"github.com/getsentry/sentry-go"
-	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
+	"clean-architecture/api/handlers"
+	"clean-architecture/lib"
 )
 
-// UserRoutes - all user routes are placed here "/users/***"
-func UserRoutes(route *gin.RouterGroup, db *gorm.DB, fb *auth.Client) {
-	fbAuth := service.NewFirebaseService(fb)
+// UserRoutes struct
+type UserRoutes struct {
+	logger         lib.Logger
+	handler        lib.Router
+	userController handlers.UserController
+}
 
-	// dependency injection for user resources
-	userRepository := user_repository.NewUserRepository(db)
-	if err := userRepository.Migrate(); err != nil {
-		sentry.CaptureException(err)
-		log.Fatal("user migrate err", err)
+func NewUserRoutes(logger lib.Logger, handler lib.Router, userController handlers.UserController) UserRoutes {
+	return UserRoutes{
+		handler:        handler,
+		logger:         logger,
+		userController: userController,
 	}
-	userService := user_service.NewUserService(userRepository)
-	userController := user_controller.NewUserController(userService, fbAuth)
+}
 
-	// Initialize MiddlewareAuth for users
-	userAuth := middleware.NewMiddlewareAuth(fbAuth, "user")
-
-	// User Routes
-	route.POST("/", userController.AddUser)
-	users := route.Group("/")
-	users.Use(userAuth)
+// Setup user routes
+func (s UserRoutes) Setup() {
+	s.logger.Zap.Info("Setting up routes")
+	api := s.handler.Gin.Group("/users")
 	{
-		users.GET("/", userController.GetUsers)
+		api.GET("", s.userController.GetUsers)
 	}
 }

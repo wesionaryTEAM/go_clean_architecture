@@ -1,0 +1,46 @@
+version: "3.3"
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./docker/web.Dockerfile
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    volumes:
+      - .:/clean_web
+    env_file: .env
+    container_name: clean-web
+    security_opt:
+      - seccomp:unconfined
+    depends_on:
+      - database
+  api:
+    build:
+      context: .
+      dockerfile: ./docker/web.Dockerfile
+    security_opt:
+      - seccomp:unconfined
+
+  database:
+    build:
+      context: .
+      dockerfile: ./docker/db.Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_PASS}"
+      MYSQL_DATABASE: "${DB_NAME}"
+      MYSQL_ROOT_HOST: 172.*,*,*
+    container_name: clean-db
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci','--default-authentication-plugin=mysql_native_password']
+    ports:
+      - 33068:3306
+    volumes:
+      - clean_db:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    ports:
+      - ${ADMINER_PORT}:8080
+
+volumes:
+  clean_db:
