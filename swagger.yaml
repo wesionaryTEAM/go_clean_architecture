@@ -15,6 +15,6 @@ definitions:
         $ref: '#/definitions/UUID'
     title: User represents the user for this application
     type: object
-    x-go-package: prototype2/models
+    x-go-package: clean-architecture/models
 paths: {}
 swagger: "2.0"

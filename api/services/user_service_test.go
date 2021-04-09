@@ -3,7 +3,7 @@ package services
 import (
 	"testing"
 
-	"prototype2/models"
+	"clean-architecture/models"
 
 	"github.com/stretchr/testify/mock"
 )
@@ -39,7 +39,6 @@ func (mock *MockRepository) Migrate() error {
 
 // Write your UNIT TEST code below
 
-
 /**
 * Function name: Validate
 * Test case: When user is nil
@@ -53,7 +52,6 @@ func TestValidateEmptyUser(t *testing.T) {
 	//
 	//assert.Equal(t, "The user is empty", err.Error())
 }
-
 
 /**
 * Function name: Validate
@@ -86,7 +84,6 @@ func TestValidateEmptyNameField(t *testing.T) {
 	//}
 }
 
-
 /**
 * Function name: Find all
 * Test case: Should return all the mocked objects
@@ -114,7 +111,6 @@ func TestFindAll(t *testing.T) {
 	//assert.Equal(t, "1993-12-13", result[0].DOB)
 }
 
-
 /**
 *	Function name: ValidateAge
 * Test case: Should return false when age is less than 18 and true when age is
@@ -138,7 +134,6 @@ func TestValidateAge(t *testing.T) {
 	//	assert.Equal(t, s.expect, result)
 	//}
 }
-
 
 /**
 *	Function name: Create

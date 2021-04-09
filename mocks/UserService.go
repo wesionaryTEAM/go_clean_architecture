@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	"prototype2/models"
+	"clean-architecture/models"
 
 	mock "github.com/stretchr/testify/mock"
 )

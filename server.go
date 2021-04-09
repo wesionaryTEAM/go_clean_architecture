@@ -1,9 +1,10 @@
 package main
 
 import (
+	"clean-architecture/bootstrap"
+
 	"github.com/joho/godotenv"
 	"go.uber.org/fx"
-	"prototype2/bootstrap"
 )
 
 func main() {

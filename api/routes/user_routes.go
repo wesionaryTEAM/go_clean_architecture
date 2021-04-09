@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"prototype2/api/handlers"
-	"prototype2/lib"
+	"clean-architecture/api/handlers"
+	"clean-architecture/lib"
 )
 
 // UserRoutes struct
@@ -11,7 +11,6 @@ type UserRoutes struct {
 	handler        lib.RequestHandler
 	userController handlers.UserController
 }
-
 
 func NewUserRoutes(logger lib.Logger, handler lib.RequestHandler, userController handlers.UserController) UserRoutes {
 	return UserRoutes{

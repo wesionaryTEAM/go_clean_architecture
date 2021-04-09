@@ -1,4 +1,4 @@
-module prototype2
+module clean-architecture
 
 go 1.14
 

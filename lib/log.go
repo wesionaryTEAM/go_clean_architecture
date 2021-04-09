@@ -19,10 +19,6 @@ func NewLogger(env Env) Logger {
 		config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
 	}
 
-	if env.Environment == "production" && env.LogOutput != "" {
-		config.OutputPaths = []string{env.LogOutput}
-	}
-
 	logger, _ := config.Build()
 
 	sugar := logger.Sugar()

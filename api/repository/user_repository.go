@@ -1,15 +1,15 @@
 package repository
 
 import (
-	"prototype2/interfaces"
-	"prototype2/lib"
+	"clean-architecture/interfaces"
+	"clean-architecture/lib"
 )
 
 type UserRepo struct {
 	db lib.Database
 }
 
-func NewUserRepo(db lib.Database) interfaces.UserRepositoryInterface{
+func NewUserRepo(db lib.Database) interfaces.UserRepositoryInterface {
 	return UserRepo{db: db}
 }
 

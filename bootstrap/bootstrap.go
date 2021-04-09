@@ -3,15 +3,16 @@ package bootstrap
 import (
 	"context"
 
+	"clean-architecture/api/handlers"
+	"clean-architecture/api/middlewares"
+	"clean-architecture/api/repository"
+	"clean-architecture/api/routes"
+	"clean-architecture/api/services"
+	"clean-architecture/cli"
+	"clean-architecture/lib"
+	"clean-architecture/utils"
+
 	"go.uber.org/fx"
-	"prototype2/api/handlers"
-	"prototype2/api/middlewares"
-	"prototype2/api/repository"
-	"prototype2/api/routes"
-	"prototype2/api/services"
-	"prototype2/cli"
-	"prototype2/lib"
-	"prototype2/utils"
 )
 
 var Module = fx.Options(
@@ -49,7 +50,7 @@ func bootstrap(
 		lifecycle.Append(fx.Hook{
 			OnStart: func(context.Context) error {
 				logger.Zap.Info("Starting hatsu cli Application")
-				logger.Zap.Info("------- 🤖 hatsu 🤖 (CLI) -------")
+				logger.Zap.Info("------- 🤖 clean-architecture 🤖 (CLI) -------")
 				go cliApp.Start()
 				return nil
 			},
@@ -62,18 +63,13 @@ func bootstrap(
 	lifecycle.Append(fx.Hook{
 		OnStart: func(context.Context) error {
 			logger.Zap.Info("Starting Application")
-			logger.Zap.Info("------------------------")
-			logger.Zap.Info("------- hatsu 📺 -------")
-			logger.Zap.Info("------------------------")
-
-			logger.Zap.Info("Migrating DB schema...")
-
-			//migrations.Migrate()
+			logger.Zap.Info("-------------------------------------")
+			logger.Zap.Info("------- clean-architecture 📺 -------")
+			logger.Zap.Info("-------------------------------------")
 
 			go func() {
 				middlewares.Setup()
 				routes.Setup()
-				logger.Zap.Info("🌱 seeding data...🌱 🌱 🌱 ")
 				if env.ServerPort == "" {
 					handler.Gin.Run()
 				} else {

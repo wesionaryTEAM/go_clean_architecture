@@ -1,16 +1,16 @@
 package services
 
 import (
-	"prototype2/interfaces"
-	"prototype2/lib"
+	"clean-architecture/interfaces"
+	"clean-architecture/lib"
 )
 
 type UserService struct {
 	userRepo interfaces.UserRepositoryInterface
-	logger lib.Logger
+	logger   lib.Logger
 }
 
-func NewUserService(userRepo interfaces.UserRepositoryInterface, logger lib.Logger) interfaces.UserServiceInterface{
+func NewUserService(userRepo interfaces.UserRepositoryInterface, logger lib.Logger) interfaces.UserServiceInterface {
 	return UserService{
 		userRepo: userRepo,
 		logger:   logger,

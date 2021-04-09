@@ -1,11 +1,12 @@
 package middlewares
 
 import (
+	"errors"
+	"net/http"
 	"strings"
 
-	"prototype2/api/responses"
-	"prototype2/api/services"
-	"prototype2/errors"
+	"clean-architecture/api/responses"
+	"clean-architecture/api/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,23 +30,23 @@ func (m *middlewareAuth) AuthRequired(c *gin.Context) {
 
 	idToken := strings.TrimSpace(strings.Replace(authorizationToken, "Bearer", "", 1))
 	if idToken == "" {
-		err := errors.InternalError.New("no token found in header")
-		responses.HandleError(c, err)
+		err := errors.New("no token found in header")
+		responses.ErrorJSON(c, http.StatusInternalServerError, err)
 		c.Abort()
 		return
 	}
 
 	token, err := m.authProvider.VerifyToken(idToken)
 	if err != nil {
-		err := errors.Unauthorized.New("token is not valid")
-		responses.HandleError(c, err)
+		err := errors.New("token is not valid")
+		responses.ErrorJSON(c, http.StatusUnauthorized, err)
 		c.Abort()
 		return
 	}
 
 	if token.Claims[m.claims] != true {
-		err := errors.Forbidden.New("permission denied")
-		responses.HandleError(c, err)
+		err := errors.New("permission denied")
+		responses.ErrorJSON(c, http.StatusForbidden, err)
 		c.Abort()
 		return
 	}

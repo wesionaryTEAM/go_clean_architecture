@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"prototype2/lib"
+	"clean-architecture/lib"
 
 	"github.com/manifoldco/promptui"
 )

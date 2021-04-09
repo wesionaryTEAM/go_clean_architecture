@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"prototype2/interfaces"
-	"prototype2/lib"
+	"clean-architecture/interfaces"
+	"clean-architecture/lib"
 
 	"github.com/gin-gonic/gin"
 )
