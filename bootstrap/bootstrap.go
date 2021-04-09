@@ -73,7 +73,7 @@ func bootstrap(
 				if env.ServerPort == "" {
 					handler.Gin.Run()
 				} else {
-					handler.Gin.Run(env.ServerPort)
+					handler.Gin.Run(":" + env.ServerPort)
 				}
 			}()
 

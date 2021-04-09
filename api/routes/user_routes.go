@@ -8,11 +8,11 @@ import (
 // UserRoutes struct
 type UserRoutes struct {
 	logger         lib.Logger
-	handler        lib.RequestHandler
+	handler        lib.Router
 	userController handlers.UserController
 }
 
-func NewUserRoutes(logger lib.Logger, handler lib.RequestHandler, userController handlers.UserController) UserRoutes {
+func NewUserRoutes(logger lib.Logger, handler lib.Router, userController handlers.UserController) UserRoutes {
 	return UserRoutes{
 		handler:        handler,
 		logger:         logger,
