@@ -6,12 +6,11 @@ services:
       context: .
       dockerfile: ./docker/web.Dockerfile
     ports:
-      - 5008:5008
-      - 5003:2345
+      - ${SERVER_PORT}:${SERVER_PORT}
     volumes:
       - .:/clean_web
     env_file: .env
-    container_name: hatsu-webs
+    container_name: clean-web
     security_opt:
       - seccomp:unconfined
     depends_on:
@@ -28,21 +27,20 @@ services:
       context: .
       dockerfile: ./docker/db.Dockerfile
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: hatsu
-      MYSQL_PASSWORD: secret
-      MYSQL_DATABASE: hatsu
-    container_name: hatsu_db
+      MYSQL_ROOT_PASSWORD: "${DB_PASS}"
+      MYSQL_DATABASE: "${DB_NAME}"
+      MYSQL_ROOT_HOST: 172.*,*,*
+    container_name: clean-db
     command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci','--default-authentication-plugin=mysql_native_password']
     ports:
       - 33068:3306
     volumes:
-      - hatsu_db:/var/lib/mysql
+      - clean_db:/var/lib/mysql
 
   adminer:
     image: adminer
     ports:
-      - 5005:8080
+      - ${ADMINER_PORT}:8080
 
 volumes:
-  hatsu_db:
+  clean_db:
