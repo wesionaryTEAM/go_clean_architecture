@@ -4,3 +4,6 @@ log/access.log
 .git
 log
 .idea/
+
+
+__debug_bin
