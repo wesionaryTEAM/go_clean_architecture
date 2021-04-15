@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"clean-architecture/interfaces"
+	"clean-architecture/api/services"
 	"clean-architecture/lib"
 
 	"github.com/gin-gonic/gin"
@@ -9,11 +9,11 @@ import (
 
 type UserController struct {
 	logger      lib.Logger
-	userService interfaces.UserServiceInterface
+	userService services.UserService
 }
 
-func NewUserController(logger lib.Logger, serviceInterface interfaces.UserServiceInterface) UserController {
-	return UserController{logger: logger, userService: serviceInterface}
+func NewUserController(logger lib.Logger, service services.UserService) UserController {
+	return UserController{logger: logger, userService: service}
 }
 
 func (u *UserController) CreateUser(c *gin.Context) {

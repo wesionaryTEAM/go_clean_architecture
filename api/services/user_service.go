@@ -1,16 +1,16 @@
 package services
 
 import (
-	"clean-architecture/interfaces"
+	"clean-architecture/api/repository"
 	"clean-architecture/lib"
 )
 
 type UserService struct {
-	userRepo interfaces.UserRepositoryInterface
+	userRepo repository.UserRepo
 	logger   lib.Logger
 }
 
-func NewUserService(userRepo interfaces.UserRepositoryInterface, logger lib.Logger) interfaces.UserServiceInterface {
+func NewUserService(userRepo repository.UserRepo, logger lib.Logger) UserService {
 	return UserService{
 		userRepo: userRepo,
 		logger:   logger,
