@@ -15,12 +15,6 @@ services:
       - seccomp:unconfined
     depends_on:
       - database
-  api:
-    build:
-      context: .
-      dockerfile: ./docker/web.Dockerfile
-    security_opt:
-      - seccomp:unconfined
 
   database:
     build:
@@ -29,7 +23,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: "${DB_PASS}"
       MYSQL_DATABASE: "${DB_NAME}"
-      MYSQL_ROOT_HOST: 172.*,*,*
+      MYSQL_ROOT_HOST: "%"
     container_name: clean-db
     command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci','--default-authentication-plugin=mysql_native_password']
     ports:
