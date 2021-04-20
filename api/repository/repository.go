@@ -6,5 +6,5 @@ import (
 
 // Module exports dependency
 var Module = fx.Options(
-	fx.Provide(NewUserRepo),
+	fx.Provide(NewUserRepository),
 )
