@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"clean-architecture/lib"
+	"clean-architecture/infrastructure"
 
 	"github.com/manifoldco/promptui"
 )
@@ -14,13 +14,13 @@ type Command interface {
 
 // Application cli application
 type Application struct {
-	logger   lib.Logger
+	logger   infrastructure.Logger
 	commands []Command
 }
 
 // NewApplication creates new cli application
 func NewApplication(
-	logger lib.Logger,
+	logger infrastructure.Logger,
 ) Application {
 	return Application{
 		logger: logger,

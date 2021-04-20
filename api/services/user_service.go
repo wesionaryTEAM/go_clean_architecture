@@ -2,7 +2,7 @@ package services
 
 import (
 	"clean-architecture/api/repository"
-	"clean-architecture/lib"
+	"clean-architecture/infrastructure"
 	"clean-architecture/models"
 
 	"github.com/jinzhu/copier"
@@ -11,12 +11,12 @@ import (
 
 // UserService service layer
 type UserService struct {
-	logger     lib.Logger
+	logger     infrastructure.Logger
 	repository repository.UserRepository
 }
 
 // NewUserService creates a new userservice
-func NewUserService(logger lib.Logger, repository repository.UserRepository) UserService {
+func NewUserService(logger infrastructure.Logger, repository repository.UserRepository) UserService {
 	return UserService{
 		logger:     logger,
 		repository: repository,

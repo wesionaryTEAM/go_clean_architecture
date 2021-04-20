@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"clean-architecture/lib"
+	"clean-architecture/infrastructure"
 	"clean-architecture/models"
 
 	"gorm.io/gorm"
@@ -9,12 +9,12 @@ import (
 
 // UserRepository database structure
 type UserRepository struct {
-	db     lib.Database
-	logger lib.Logger
+	db     infrastructure.Database
+	logger infrastructure.Logger
 }
 
 // NewUserRepository creates a new user repository
-func NewUserRepository(db lib.Database, logger lib.Logger) UserRepository {
+func NewUserRepository(db infrastructure.Database, logger infrastructure.Logger) UserRepository {
 	return UserRepository{
 		db:     db,
 		logger: logger,

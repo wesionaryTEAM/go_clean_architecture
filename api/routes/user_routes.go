@@ -3,20 +3,20 @@ package routes
 import (
 	"clean-architecture/api/controllers"
 	"clean-architecture/api/middlewares"
-	"clean-architecture/lib"
+	"clean-architecture/infrastructure"
 )
 
 // UserRoutes struct
 type UserRoutes struct {
-	logger         lib.Logger
-	handler        lib.Router
+	logger         infrastructure.Logger
+	handler        infrastructure.Router
 	userController controllers.UserController
 	authMiddleware middlewares.FirebaseAuthMiddleware
 }
 
 func NewUserRoutes(
-	logger lib.Logger,
-	handler lib.Router,
+	logger infrastructure.Logger,
+	handler infrastructure.Router,
 	userController controllers.UserController,
 	authMiddleware middlewares.FirebaseAuthMiddleware,
 ) UserRoutes {

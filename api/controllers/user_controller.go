@@ -3,7 +3,7 @@ package controllers
 import (
 	"clean-architecture/api/services"
 	"clean-architecture/constants"
-	"clean-architecture/lib"
+	"clean-architecture/infrastructure"
 	"clean-architecture/models"
 	"net/http"
 	"strconv"
@@ -15,11 +15,11 @@ import (
 // UserController data type
 type UserController struct {
 	service services.UserService
-	logger  lib.Logger
+	logger  infrastructure.Logger
 }
 
 // NewUserController creates new user controller
-func NewUserController(userService services.UserService, logger lib.Logger) UserController {
+func NewUserController(userService services.UserService, logger infrastructure.Logger) UserController {
 	return UserController{
 		service: userService,
 		logger:  logger,

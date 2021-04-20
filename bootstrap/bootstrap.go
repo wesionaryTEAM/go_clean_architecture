@@ -9,7 +9,7 @@ import (
 	"clean-architecture/api/routes"
 	"clean-architecture/api/services"
 	"clean-architecture/cli"
-	"clean-architecture/lib"
+	"clean-architecture/infrastructure"
 	"clean-architecture/utils"
 
 	"go.uber.org/fx"
@@ -20,7 +20,7 @@ var Module = fx.Options(
 	routes.Module,
 	services.Module,
 	repository.Module,
-	lib.Module,
+	infrastructure.Module,
 	middlewares.Module,
 	cli.Module,
 	fx.Invoke(bootstrap),
@@ -28,13 +28,13 @@ var Module = fx.Options(
 
 func bootstrap(
 	lifecycle fx.Lifecycle,
-	handler lib.Router,
+	handler infrastructure.Router,
 	routes routes.Routes,
-	env lib.Env,
+	env infrastructure.Env,
 	middlewares middlewares.Middlewares,
-	logger lib.Logger,
+	logger infrastructure.Logger,
 	cliApp cli.Application,
-	database lib.Database,
+	database infrastructure.Database,
 
 ) {
 
