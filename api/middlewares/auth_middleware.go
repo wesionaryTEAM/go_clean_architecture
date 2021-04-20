@@ -2,8 +2,8 @@ package middlewares
 
 import (
 	"clean-architecture/api/responses"
-	"clean-architecture/api/services"
 	"clean-architecture/constants"
+	"clean-architecture/services"
 	"net/http"
 	"strings"
 

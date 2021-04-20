@@ -5,11 +5,11 @@ import (
 
 	"clean-architecture/api/controllers"
 	"clean-architecture/api/middlewares"
-	"clean-architecture/api/repository"
 	"clean-architecture/api/routes"
-	"clean-architecture/api/services"
 	"clean-architecture/cli"
 	"clean-architecture/infrastructure"
+	"clean-architecture/repository"
+	"clean-architecture/services"
 	"clean-architecture/utils"
 
 	"go.uber.org/fx"
