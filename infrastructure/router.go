@@ -18,10 +18,10 @@ type Router struct {
 //NewRouter : all the routes are defined here
 func NewRouter(env Env) Router {
 
-	if env.Environment != "local" {
+	if env.Environment != "local" && env.SentryDSN != "" {
 		if err := sentry.Init(sentry.ClientOptions{
 			Dsn:         env.SentryDSN,
-			Environment: `glive-backend-` + env.Environment,
+			Environment: `clean-backend-` + env.Environment,
 		}); err != nil {
 			fmt.Printf("Sentry initialization failed: %v\n", err)
 		}
@@ -41,7 +41,7 @@ func NewRouter(env Env) Router {
 	}))
 
 	httpRouter.GET("/health-check", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"data": "GLive 📺 API Up and Running"})
+		c.JSON(http.StatusOK, gin.H{"data": "clean architecture 📺 API Up and Running"})
 	})
 
 	return Router{
