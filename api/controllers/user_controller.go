@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"clean-architecture/constants"
 	"clean-architecture/infrastructure"
 	"clean-architecture/models"
 	"clean-architecture/services"
@@ -9,7 +8,6 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 // UserController data type
@@ -63,40 +61,8 @@ func (u UserController) GetUser(c *gin.Context) {
 	c.JSON(200, gin.H{"data": users})
 }
 
-// SaveUser saves the user
+// SaveUser saves the user without transaction for comparision
 func (u UserController) SaveUser(c *gin.Context) {
-	user := models.User{}
-	trxHandle := c.MustGet(constants.DBTransaction).(*gorm.DB)
-
-	if err := c.ShouldBindJSON(&user); err != nil {
-		u.logger.Zap.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	if err := u.service.WithTrx(trxHandle).CreateUser(user); err != nil {
-		u.logger.Zap.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	if err := u.service.WithTrx(trxHandle).CreateUser(user); err != nil {
-		u.logger.Zap.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	c.JSON(200, gin.H{"data": "user created"})
-}
-
-// SaveUserWOTrx saves the user without transaction for comparision
-func (u UserController) SaveUserWOTrx(c *gin.Context) {
 	user := models.User{}
 
 	if err := c.ShouldBindJSON(&user); err != nil {
