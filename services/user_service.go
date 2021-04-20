@@ -1,9 +1,9 @@
 package services
 
 import (
-	"clean-architecture/api/repository"
 	"clean-architecture/infrastructure"
 	"clean-architecture/models"
+	"clean-architecture/repository"
 
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"

@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"clean-architecture/api/services"
 	"clean-architecture/constants"
 	"clean-architecture/infrastructure"
 	"clean-architecture/models"
+	"clean-architecture/services"
 	"net/http"
 	"strconv"
 
