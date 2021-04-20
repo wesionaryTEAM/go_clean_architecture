@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"clean-architecture/api/handlers"
+	"clean-architecture/api/controllers"
 	"clean-architecture/lib"
 )
 
@@ -9,10 +9,10 @@ import (
 type UserRoutes struct {
 	logger         lib.Logger
 	handler        lib.Router
-	userController handlers.UserController
+	userController controllers.UserController
 }
 
-func NewUserRoutes(logger lib.Logger, handler lib.Router, userController handlers.UserController) UserRoutes {
+func NewUserRoutes(logger lib.Logger, handler lib.Router, userController controllers.UserController) UserRoutes {
 	return UserRoutes{
 		handler:        handler,
 		logger:         logger,

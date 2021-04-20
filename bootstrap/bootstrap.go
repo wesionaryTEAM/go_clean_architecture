@@ -3,7 +3,7 @@ package bootstrap
 import (
 	"context"
 
-	"clean-architecture/api/handlers"
+	"clean-architecture/api/controllers"
 	"clean-architecture/api/middlewares"
 	"clean-architecture/api/repository"
 	"clean-architecture/api/routes"
@@ -16,7 +16,7 @@ import (
 )
 
 var Module = fx.Options(
-	handlers.Module,
+	controllers.Module,
 	routes.Module,
 	services.Module,
 	repository.Module,
