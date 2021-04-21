@@ -12,7 +12,7 @@ import (
 
 // Router -> Gin Router
 type Router struct {
-	Gin *gin.Engine
+	*gin.Engine
 }
 
 //NewRouter : all the routes are defined here
@@ -45,6 +45,6 @@ func NewRouter(env Env) Router {
 	})
 
 	return Router{
-		Gin: httpRouter,
+		httpRouter,
 	}
 }

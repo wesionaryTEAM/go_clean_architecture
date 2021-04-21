@@ -71,9 +71,9 @@ func bootstrap(
 				middlewares.Setup()
 				routes.Setup()
 				if env.ServerPort == "" {
-					handler.Gin.Run()
+					handler.Run()
 				} else {
-					handler.Gin.Run(":" + env.ServerPort)
+					handler.Run(":" + env.ServerPort)
 				}
 			}()
 

@@ -31,7 +31,7 @@ func NewUserRoutes(
 // Setup user routes
 func (s UserRoutes) Setup() {
 	s.logger.Zap.Info("Setting up routes")
-	api := s.handler.Gin.Group("/api").Use(s.authMiddleware.Handle())
+	api := s.handler.Group("/api").Use(s.authMiddleware.Handle())
 	{
 		api.GET("/user", s.userController.GetUser)
 		api.GET("/user/:id", s.userController.GetOneUser)
