@@ -33,25 +33,25 @@ func (r UserRepository) WithTrx(trxHandle *gorm.DB) UserRepository {
 
 // GetAll gets all users
 func (r UserRepository) GetAll() (users []models.User, err error) {
-	return users, r.db.DB.Find(&users).Error
+	return users, r.db.Find(&users).Error
 }
 
 // Save user
 func (r UserRepository) Save(user models.User) (models.User, error) {
-	return user, r.db.DB.Create(&user).Error
+	return user, r.db.Create(&user).Error
 }
 
 // Update updates user
 func (r UserRepository) Update(user models.User) (models.User, error) {
-	return user, r.db.DB.Save(&user).Error
+	return user, r.db.Save(&user).Error
 }
 
 // GetOne gets ont user
 func (r UserRepository) GetOne(id uint) (user models.User, err error) {
-	return user, r.db.DB.Where("id = ?", id).First(&user).Error
+	return user, r.db.Where("id = ?", id).First(&user).Error
 }
 
 // Delete deletes the row of data
 func (r UserRepository) Delete(id uint) error {
-	return r.db.DB.Where("id = ?", id).Delete(&models.User{}).Error
+	return r.db.Where("id = ?", id).Delete(&models.User{}).Error
 }

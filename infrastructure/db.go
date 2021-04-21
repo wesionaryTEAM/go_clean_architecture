@@ -13,7 +13,7 @@ import (
 
 // Database modal
 type Database struct {
-	DB *gorm.DB
+	*gorm.DB
 }
 
 // NewDatabase creates a new database instance
@@ -51,7 +51,5 @@ func NewDatabase(Zaplogger Logger, env Env) Database {
 
 	Zaplogger.Zap.Info("Database connection established")
 
-	return Database{
-		DB: db,
-	}
+	return Database{DB: db}
 }
