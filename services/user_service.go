@@ -16,7 +16,10 @@ type UserService struct {
 }
 
 // NewUserService creates a new userservice
-func NewUserService(logger infrastructure.Logger, repository repository.UserRepository) UserService {
+func NewUserService(
+	logger infrastructure.Logger,
+	repository repository.UserRepository,
+) UserService {
 	return UserService{
 		logger:     logger,
 		repository: repository,
@@ -24,27 +27,20 @@ func NewUserService(logger infrastructure.Logger, repository repository.UserRepo
 }
 
 // WithTrx delegates transaction to repository database
-func (s UserService) WithTrx(trxHandle *gorm.DB) UserService {
-	s.repository = s.repository.WithTrx(trxHandle)
-	return s
+func (u UserService) WithTrx(trxHandle *gorm.DB) UserService {
+	u.repository = u.repository.WithTrx(trxHandle)
+	return u
 }
 
 // GetOneUser gets one user
-func (s UserService) GetOneUser(id uint) (models.User, error) {
-	user, err := s.repository.GetOne(id)
-	return user, err
+func (s UserService) GetOneUser(id uint) (user models.User, err error) {
+	return user, s.repository.GetOne(&user, id)
 }
 
 // GetAllUser get all the user
 func (s UserService) GetAllUser() ([]models.User, error) {
 	users, err := s.repository.GetAll()
 	return users, err
-}
-
-// CreateUser call to create the user
-func (s UserService) CreateUser(user models.User) error {
-	_, err := s.repository.Save(user)
-	return err
 }
 
 // UpdateUser updates the user
@@ -59,11 +55,15 @@ func (s UserService) UpdateUser(id uint, user models.User) error {
 
 	userDB.ID = id
 
-	_, err = s.repository.Update(userDB)
-	return err
+	return s.repository.Update(&userDB)
 }
 
 // DeleteUser deletes the user
 func (s UserService) DeleteUser(id uint) error {
-	return s.repository.Delete(id)
+	return s.repository.Delete(&models.User{}, id)
+}
+
+// DeleteUser deletes the user
+func (s UserService) Create(user models.User) error {
+	return s.repository.Create(&user)
 }
