@@ -61,7 +61,7 @@ func (u UserController) GetUser(c *gin.Context) {
 	c.JSON(200, gin.H{"data": users})
 }
 
-// SaveUser saves the user without transaction for comparision
+// SaveUser saves the user
 func (u UserController) SaveUser(c *gin.Context) {
 	user := models.User{}
 
@@ -73,15 +73,7 @@ func (u UserController) SaveUser(c *gin.Context) {
 		return
 	}
 
-	if err := u.service.CreateUser(user); err != nil {
-		u.logger.Zap.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	if err := u.service.CreateUser(user); err != nil {
+	if err := u.service.Create(user); err != nil {
 		u.logger.Zap.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
