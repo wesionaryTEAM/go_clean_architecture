@@ -2,7 +2,6 @@ package bootstrap
 
 import (
 	"context"
-
 	"clean-architecture/api/controllers"
 	"clean-architecture/api/middlewares"
 	"clean-architecture/api/routes"
@@ -35,13 +34,16 @@ func bootstrap(
 	logger infrastructure.Logger,
 	cliApp cli.Application,
 	database infrastructure.Database,
+	cfg *modcfg.Spec
 
 ) {
 
+	var flushTimeout = 2 * time.Second
+
 	appStop := func(context.Context) error {
 		logger.Zap.Info("Stopping Application")
-
 		conn, _ := database.DB.DB()
+		sentry.Flush(flushTimeout)
 		conn.Close()
 		return nil
 	}
@@ -49,6 +51,20 @@ func bootstrap(
 	if utils.IsCli() {
 		lifecycle.Append(fx.Hook{
 			OnStart: func(context.Context) error {
+
+				if cfg.SentryDSN == "" {
+					logger.Info("Sentry disabled")
+	
+					return nil
+				}
+
+
+				return sentry.Init(sentry.ClientOptions{
+					Dsn:         cfg.SentryDSN,
+					Environment: cfg.SentryENV,
+					Release:     version.AppVersion,
+				})
+	
 				logger.Zap.Info("Starting hatsu cli Application")
 				logger.Zap.Info("------- 🤖 clean-architecture 🤖 (CLI) -------")
 				go cliApp.Start()
