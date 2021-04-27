@@ -1,8 +1,6 @@
 package bootstrap
 
 import (
-	"context"
-
 	"clean-architecture/api/controllers"
 	"clean-architecture/api/middlewares"
 	"clean-architecture/api/routes"
@@ -11,7 +9,10 @@ import (
 	"clean-architecture/repository"
 	"clean-architecture/services"
 	"clean-architecture/utils"
+	"context"
+	"time"
 
+	"github.com/getsentry/sentry-go"
 	"go.uber.org/fx"
 )
 
@@ -25,6 +26,8 @@ var Module = fx.Options(
 	cli.Module,
 	fx.Invoke(bootstrap),
 )
+
+var flushTimeout = 2 * time.Second
 
 func bootstrap(
 	lifecycle fx.Lifecycle,
@@ -75,10 +78,17 @@ func bootstrap(
 				} else {
 					handler.Run(":" + env.ServerPort)
 				}
+
 			}()
+
+			return sentry.Init(sentry.ClientOptions{
+				Dsn: env.SentryDSN,
+			})
+		},
+		OnStop: func(ctx context.Context) error {
+			sentry.Flush(flushTimeout)
 
 			return nil
 		},
-		OnStop: appStop,
 	})
 }
