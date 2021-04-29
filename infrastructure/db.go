@@ -17,7 +17,11 @@ type Database struct {
 }
 
 // NewDatabase creates a new database instance
-func NewDatabase(Zaplogger Logger, env Env) Database {
+func NewDatabase(Zaplogger Logger, config Env) Database {
+	config, err := LoadConfig(".")
+	if err != nil {
+		log.Fatal("cannot load config:", err)
+	}
 
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
@@ -28,22 +32,22 @@ func NewDatabase(Zaplogger Logger, env Env) Database {
 		},
 	)
 
-	Zaplogger.Zap.Info(env)
+	Zaplogger.Zap.Info(config)
 
-	url := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", env.DBUsername, env.DBPassword, env.DBHost, env.DBPort, env.DBName)
+	url := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", config.DBUsername, config.DBPassword, config.DBHost, config.DBPort, config.DBName)
 
-	if env.Environment != "local" {
+	if config.Environment != "local" {
 		url = fmt.Sprintf(
 			"%s:%s@unix(/cloudsql/%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-			env.DBUsername,
-			env.DBPassword,
-			env.DBHost,
-			env.DBName,
+			config.DBUsername,
+			config.DBPassword,
+			config.DBHost,
+			config.DBName,
 		)
 	}
 
 	db, err := gorm.Open(mysql.Open(url), &gorm.Config{Logger: newLogger})
-	_ = db.Exec("CREATE DATABASE IF NOT EXISTS " + env.DBName + ";")
+	_ = db.Exec("CREATE DATABASE IF NOT EXISTS " + config.DBName + ";")
 	if err != nil {
 		Zaplogger.Zap.Info("Url: ", url)
 		Zaplogger.Zap.Panic(err)

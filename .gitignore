@@ -1,4 +1,4 @@
-.env
+app.env
 .vscode/
 log/access.log
 .git

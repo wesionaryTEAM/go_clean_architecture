@@ -1,48 +1,44 @@
 package infrastructure
 
-import "os"
+import "github.com/spf13/viper"
 
-// Env has environment stored
 type Env struct {
-	ServerPort  string
-	Environment string
-	DBUsername  string
-	DBPassword  string
-	DBHost      string
-	DBPort      string
-	DBName      string
-	SentryDSN   string
-
-	StorageBucketName string
-
-	MailClientID     string
-	MailClientSecret string
-	MailTokenType    string
+	ServerPort        string `mapstructure:"SERVER_PORT"`
+	Environment       string `mapstructure:"ENVIRONMENT"`
+	DBUsername        string `mapstructure:"DB_USER"`
+	DBPassword        string `mapstructure:"DB_PASSWORD"`
+	DBHost            string `mapstructure:"DB_HOST"`
+	DBPort            string `mapstructure:"DB_PORT"`
+	DBName            string `mapstructure:"DB_NAME"`
+	SentryDSN         string `mapstructure:"SENTRY_DSN"`
+	StorageBucketName string `mapstructure:"STORAGE_BUCKET_NAME"`
+	MailClientID      string `mapstructure:"MAIL_CLIENT_ID"`
+	MailClientSecret  string `mapstructure:"MAIL_CLIENT_SECRET"`
+	MailTokenType     string `mapstructure:"MAIL_TOKEN_TYPE"`
 }
 
-// NewEnv creates a new environment
-func NewEnv() Env {
-	env := Env{}
-	env.LoadEnv()
-	return env
-}
+func LoadConfig(path string) (config Env, err error) {
 
-// LoadEnv loads environment
-func (env *Env) LoadEnv() {
-	env.ServerPort = os.Getenv("SERVER_PORT")
-	env.Environment = os.Getenv("ENVIRONMENT")
+	viper.AddConfigPath(path)
 
-	env.DBUsername = os.Getenv("DB_USER")
-	env.DBPassword = os.Getenv("DB_PASS")
-	env.DBHost = os.Getenv("DB_HOST")
-	env.DBPort = os.Getenv("DB_PORT")
-	env.DBName = os.Getenv("DB_NAME")
+	// to look specfic file name with config name : app
+	viper.SetConfigName("app")
 
-	env.SentryDSN = os.Getenv("SENTRY_DSN")
+	// set config Type that may be env , json, xml and soon other
+	viper.SetConfigType("env")
 
-	env.StorageBucketName = os.Getenv("STORAGE_BUCKET_NAME")
+	// to read env values from environment variables, so we can call Automatic.env() to automatically overide values that
+	// it has read from the config file with values of coressponding environment variables if they
+	// exist in default
+	viper.AutomaticEnv()
 
-	env.MailClientID = os.Getenv("MAIL_CLIENT_ID")
-	env.MailClientSecret = os.Getenv("MAIL_CLIENT_SECRET")
-	env.MailTokenType = os.Getenv("MAIL_TOKEN_TYPE")
+	err = viper.ReadInConfig()
+	if err != nil {
+		return
+	}
+
+	// to unmarshal values into target config object
+	err = viper.Unmarshal(&config)
+	return
+	// loading function is completed
 }

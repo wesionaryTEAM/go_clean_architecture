@@ -30,7 +30,7 @@ func bootstrap(
 	lifecycle fx.Lifecycle,
 	handler infrastructure.Router,
 	routes routes.Routes,
-	env infrastructure.Env,
+	config infrastructure.Env,
 	middlewares middlewares.Middlewares,
 	logger infrastructure.Logger,
 	cliApp cli.Application,
@@ -70,10 +70,10 @@ func bootstrap(
 			go func() {
 				middlewares.Setup()
 				routes.Setup()
-				if env.ServerPort == "" {
+				if config.ServerPort == "" {
 					handler.Run()
 				} else {
-					handler.Run(":" + env.ServerPort)
+					handler.Run(":" + config.ServerPort)
 				}
 			}()
 
