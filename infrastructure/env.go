@@ -1,6 +1,10 @@
 package infrastructure
 
-import "github.com/spf13/viper"
+import (
+	"log"
+
+	"github.com/spf13/viper"
+)
 
 type Env struct {
 	ServerPort        string `mapstructure:"SERVER_PORT"`
@@ -17,28 +21,20 @@ type Env struct {
 	MailTokenType     string `mapstructure:"MAIL_TOKEN_TYPE"`
 }
 
-func LoadConfig(path string) (config Env, err error) {
+func NewEnv() Env {
+	env := Env{}
+	viper.SetConfigFile(".env")
 
-	viper.AddConfigPath(path)
-
-	// to look specfic file name with config name : app
-	viper.SetConfigName("app")
-
-	// set config Type that may be env , json, xml and soon other
-	viper.SetConfigType("env")
-
-	// to read env values from environment variables, so we can call Automatic.env() to automatically overide values that
-	// it has read from the config file with values of coressponding environment variables if they
-	// exist in default
-	viper.AutomaticEnv()
-
-	err = viper.ReadInConfig()
+	err := viper.ReadInConfig()
 	if err != nil {
-		return
+		log.Fatal("cannot read cofiguration")
 	}
 
-	// to unmarshal values into target config object
-	err = viper.Unmarshal(&config)
-	return
-	// loading function is completed
+	err = viper.Unmarshal(&env)
+	if err != nil {
+		log.Fatal("environment cant be loaded: ", err)
+	}
+
+	log.Printf("%#v \n", env)
+	return env
 }

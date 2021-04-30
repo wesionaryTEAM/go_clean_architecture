@@ -18,10 +18,6 @@ type Database struct {
 
 // NewDatabase creates a new database instance
 func NewDatabase(Zaplogger Logger, config Env) Database {
-	config, err := LoadConfig(".")
-	if err != nil {
-		log.Fatal("cannot load config:", err)
-	}
 
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
