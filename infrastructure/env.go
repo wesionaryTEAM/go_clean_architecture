@@ -1,48 +1,40 @@
 package infrastructure
 
-import "os"
+import (
+	"log"
 
-// Env has environment stored
+	"github.com/spf13/viper"
+)
+
 type Env struct {
-	ServerPort  string
-	Environment string
-	DBUsername  string
-	DBPassword  string
-	DBHost      string
-	DBPort      string
-	DBName      string
-	SentryDSN   string
-
-	StorageBucketName string
-
-	MailClientID     string
-	MailClientSecret string
-	MailTokenType    string
+	ServerPort        string `mapstructure:"SERVER_PORT"`
+	Environment       string `mapstructure:"ENVIRONMENT"`
+	DBUsername        string `mapstructure:"DB_USER"`
+	DBPassword        string `mapstructure:"DB_PASS"`
+	DBHost            string `mapstructure:"DB_HOST"`
+	DBPort            string `mapstructure:"DB_PORT"`
+	DBName            string `mapstructure:"DB_NAME"`
+	SentryDSN         string `mapstructure:"SENTRY_DSN"`
+	StorageBucketName string `mapstructure:"STORAGE_BUCKET_NAME"`
+	MailClientID      string `mapstructure:"MAIL_CLIENT_ID"`
+	MailClientSecret  string `mapstructure:"MAIL_CLIENT_SECRET"`
+	MailTokenType     string `mapstructure:"MAIL_TOKEN_TYPE"`
 }
 
-// NewEnv creates a new environment
 func NewEnv() Env {
 	env := Env{}
-	env.LoadEnv()
+	viper.SetConfigFile(".env")
+
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatal("cannot read cofiguration")
+	}
+
+	err = viper.Unmarshal(&env)
+	if err != nil {
+		log.Fatal("environment cant be loaded: ", err)
+	}
+
+	log.Printf("%#v \n", env)
 	return env
-}
-
-// LoadEnv loads environment
-func (env *Env) LoadEnv() {
-	env.ServerPort = os.Getenv("SERVER_PORT")
-	env.Environment = os.Getenv("ENVIRONMENT")
-
-	env.DBUsername = os.Getenv("DB_USER")
-	env.DBPassword = os.Getenv("DB_PASS")
-	env.DBHost = os.Getenv("DB_HOST")
-	env.DBPort = os.Getenv("DB_PORT")
-	env.DBName = os.Getenv("DB_NAME")
-
-	env.SentryDSN = os.Getenv("SENTRY_DSN")
-
-	env.StorageBucketName = os.Getenv("STORAGE_BUCKET_NAME")
-
-	env.MailClientID = os.Getenv("MAIL_CLIENT_ID")
-	env.MailClientSecret = os.Getenv("MAIL_CLIENT_SECRET")
-	env.MailTokenType = os.Getenv("MAIL_TOKEN_TYPE")
 }
