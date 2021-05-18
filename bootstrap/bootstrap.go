@@ -82,7 +82,8 @@ func bootstrap(
 			}()
 
 			return sentry.Init(sentry.ClientOptions{
-				Dsn: env.SentryDSN,
+				Dsn:              env.SentryDSN,
+				AttachStacktrace: true,
 			})
 		},
 		OnStop: func(ctx context.Context) error {
