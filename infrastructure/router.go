@@ -36,6 +36,7 @@ func NewRouter(env Env) Router {
 		AllowCredentials: true,
 	}))
 
+	// Attach sentry middleware
 	httpRouter.Use(sentrygin.New(sentrygin.Options{
 		Repanic: true,
 	}))
