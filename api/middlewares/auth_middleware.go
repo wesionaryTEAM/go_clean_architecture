@@ -8,6 +8,8 @@ import (
 	"strings"
 
 	"firebase.google.com/go/auth"
+	"github.com/getsentry/sentry-go"
+	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
 )
 
@@ -71,6 +73,15 @@ func (m FirebaseAuthMiddleware) getTokenFromHeader(c *gin.Context) (*auth.Token,
 	idToken := strings.TrimSpace(strings.Replace(header, "Bearer", "", 1))
 
 	token, err := m.service.VerifyToken(idToken)
+
+	//set email to the sentry message
+	email := token.Claims["email"].(string)
+	if hub := sentrygin.GetHubFromContext(c); hub != nil {
+		hub.ConfigureScope(func(scope *sentry.Scope) {
+			scope.SetUser(sentry.User{Email: email})
+		})
+	}
+
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"clean-architecture/utils"
 	"fmt"
 	"net/http"
 
@@ -36,11 +37,13 @@ func NewRouter(env Env) Router {
 		AllowCredentials: true,
 	}))
 
+	// Attach sentry middleware
 	httpRouter.Use(sentrygin.New(sentrygin.Options{
 		Repanic: true,
 	}))
 
 	httpRouter.GET("/health-check", func(c *gin.Context) {
+		utils.SendSentryMsg(c, "Error")
 		c.JSON(http.StatusOK, gin.H{"data": "clean architecture 📺 API Up and Running"})
 	})
 
