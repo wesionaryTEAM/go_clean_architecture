@@ -34,13 +34,12 @@ func (u UserService) WithTrx(trxHandle *gorm.DB) UserService {
 
 // GetOneUser gets one user
 func (s UserService) GetOneUser(id uint) (user models.User, err error) {
-	return user, s.repository.GetOne(&user, id)
+	return user, s.repository.First(&user, id).Error
 }
 
 // GetAllUser get all the user
-func (s UserService) GetAllUser() ([]models.User, error) {
-	users, err := s.repository.GetAll()
-	return users, err
+func (s UserService) GetAllUser() (users []models.User, err error) {
+	return users, s.repository.Find(&users).Error
 }
 
 // UpdateUser updates the user
@@ -55,15 +54,15 @@ func (s UserService) UpdateUser(id uint, user models.User) error {
 
 	userDB.ID = id
 
-	return s.repository.Update(&userDB)
+	return s.repository.Save(&userDB).Error
 }
 
 // DeleteUser deletes the user
 func (s UserService) DeleteUser(id uint) error {
-	return s.repository.Delete(&models.User{}, id)
+	return s.repository.Delete(&models.User{}, id).Error
 }
 
 // DeleteUser deletes the user
 func (s UserService) Create(user models.User) error {
-	return s.repository.Create(&user)
+	return s.repository.Create(&user).Error
 }
