@@ -1,30 +1,23 @@
 package repository
 
 import (
-	"clean-architecture/models"
+	"clean-architecture/infrastructure"
 
 	"gorm.io/gorm"
 )
 
 // UserRepository database structure
 type UserRepository struct {
-	BaseRepository
+	infrastructure.Database
 }
 
 // NewUserRepository creates a new user repository
-func NewUserRepository(repo BaseRepository) UserRepository {
-	return UserRepository{
-		BaseRepository: repo,
-	}
+func NewUserRepository(db infrastructure.Database) UserRepository {
+	return UserRepository{db}
 }
 
 // WithTrx delegate transaction from user repository
 func (r UserRepository) WithTrx(trxHandle *gorm.DB) UserRepository {
-	r.BaseRepository = r.BaseRepository.WithTrx(trxHandle)
+	r.Database.DB = trxHandle
 	return r
-}
-
-// GetAll gets all users
-func (r UserRepository) GetAll() (users []models.User, err error) {
-	return users, r.db.Find(&users).Error
 }
