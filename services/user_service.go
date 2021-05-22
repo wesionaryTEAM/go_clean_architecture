@@ -5,7 +5,6 @@ import (
 	"clean-architecture/models"
 	"clean-architecture/repository"
 
-	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 )
 
@@ -33,8 +32,8 @@ func (u UserService) WithTrx(trxHandle *gorm.DB) UserService {
 }
 
 // GetOneUser gets one user
-func (s UserService) GetOneUser(id uint) (user models.User, err error) {
-	return user, s.repository.First(&user, id).Error
+func (s UserService) GetOneUser(userID models.BinaryUUID) (user models.User, err error) {
+	return user, s.repository.First(&user, "id = ?", userID).Error
 }
 
 // GetAllUser get all the user
@@ -43,23 +42,13 @@ func (s UserService) GetAllUser() (users []models.User, err error) {
 }
 
 // UpdateUser updates the user
-func (s UserService) UpdateUser(id uint, user models.User) error {
-
-	userDB, err := s.GetOneUser(id)
-	if err != nil {
-		return err
-	}
-
-	copier.Copy(&userDB, &user)
-
-	userDB.ID = id
-
-	return s.repository.Save(&userDB).Error
+func (s UserService) UpdateUser(user models.User) error {
+	return s.repository.Save(&user).Error
 }
 
 // DeleteUser deletes the user
-func (s UserService) DeleteUser(id uint) error {
-	return s.repository.Delete(&models.User{}, id).Error
+func (s UserService) DeleteUser(uuid models.BinaryUUID) error {
+	return s.repository.Delete(&models.User{}, uuid).Error
 }
 
 // DeleteUser deletes the user

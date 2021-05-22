@@ -31,12 +31,12 @@ func NewUserRoutes(
 // Setup user routes
 func (s UserRoutes) Setup() {
 	s.logger.Zap.Info("Setting up routes")
-	api := s.handler.Group("/api").Use(s.authMiddleware.Handle())
+	api := s.handler.Group("/api")
 	{
 		api.GET("/user", s.userController.GetUser)
 		api.GET("/user/:id", s.userController.GetOneUser)
 		api.POST("/user", s.userController.SaveUser)
-		api.POST("/user/:id", s.userController.UpdateUser)
+		api.PUT("/user/:id", s.userController.UpdateUser)
 		api.DELETE("/user/:id", s.userController.DeleteUser)
 	}
 }
