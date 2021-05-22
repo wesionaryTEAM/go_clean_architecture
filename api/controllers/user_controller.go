@@ -4,8 +4,9 @@ import (
 	"clean-architecture/infrastructure"
 	"clean-architecture/models"
 	"clean-architecture/services"
+	"clean-architecture/utils"
+	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,15 +29,7 @@ func NewUserController(userService services.UserService, logger infrastructure.L
 func (u UserController) GetOneUser(c *gin.Context) {
 	paramID := c.Param("id")
 
-	id, err := strconv.Atoi(paramID)
-	if err != nil {
-		u.logger.Zap.Error(err)
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err,
-		})
-		return
-	}
-	user, err := u.service.GetOneUser(uint(id))
+	user, err := u.service.GetOneUser(models.ParseUUID(paramID))
 
 	if err != nil {
 		u.logger.Zap.Error(err)
@@ -86,27 +79,18 @@ func (u UserController) SaveUser(c *gin.Context) {
 
 // UpdateUser updates user
 func (u UserController) UpdateUser(c *gin.Context) {
-	user := models.User{}
-	paramID := c.Param("id")
+	paramID := models.ParseUUID(c.Param("id"))
 
-	if err := c.ShouldBindJSON(&user); err != nil {
-		u.logger.Zap.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	id, err := strconv.Atoi(paramID)
+	user, err := u.service.GetOneUser(paramID)
 	if err != nil {
 		u.logger.Zap.Error(err)
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err,
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
 		})
 		return
 	}
 
-	if err := u.service.UpdateUser(uint(id), user); err != nil {
+	if err := utils.CustomBind(c.Request, &user); err != nil {
 		u.logger.Zap.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -114,23 +98,24 @@ func (u UserController) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{"data": "user updated"})
+	log.Printf("%+v \n", user)
+
+	if err := u.service.UpdateUser(user); err != nil {
+		u.logger.Zap.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{"data": user})
 }
 
 // DeleteUser deletes user
 func (u UserController) DeleteUser(c *gin.Context) {
 	paramID := c.Param("id")
 
-	id, err := strconv.Atoi(paramID)
-	if err != nil {
-		u.logger.Zap.Error(err)
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err,
-		})
-		return
-	}
-
-	if err := u.service.DeleteUser(uint(id)); err != nil {
+	if err := u.service.DeleteUser(models.ParseUUID(paramID)); err != nil {
 		u.logger.Zap.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
