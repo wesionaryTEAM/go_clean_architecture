@@ -27,7 +27,7 @@ func NewMigrations(
 
 //Migrate -> migrates all table
 func (m Migrations) Migrate() {
-	m.logger.Zap.Info("Migrating schemas...")
+	m.logger.Info("Migrating schemas...")
 
 	USER := m.env.DBUsername
 	PASS := m.env.DBPassword
@@ -50,12 +50,12 @@ func (m Migrations) Migrate() {
 
 	migrations, err := migrate.New("file://migration/", "mysql://"+dsn)
 	if err != nil {
-		m.logger.Zap.Error("error in migration", err.Error())
+		m.logger.Error("error in migration", err.Error())
 	}
 
-	m.logger.Zap.Info("--- Running Migration ---")
+	m.logger.Info("--- Running Migration ---")
 	err = migrations.Steps(1000)
 	if err != nil {
-		m.logger.Zap.Error("Error in migration: ", err.Error())
+		m.logger.Error("Error in migration: ", err.Error())
 	}
 }

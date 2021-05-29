@@ -28,7 +28,7 @@ func NewDatabase(Zaplogger Logger, env Env) Database {
 		},
 	)
 
-	Zaplogger.Zap.Info(env)
+	Zaplogger.Info(env)
 
 	url := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", env.DBUsername, env.DBPassword, env.DBHost, env.DBPort, env.DBName)
 
@@ -45,11 +45,11 @@ func NewDatabase(Zaplogger Logger, env Env) Database {
 	db, err := gorm.Open(mysql.Open(url), &gorm.Config{Logger: newLogger})
 	_ = db.Exec("CREATE DATABASE IF NOT EXISTS " + env.DBName + ";")
 	if err != nil {
-		Zaplogger.Zap.Info("Url: ", url)
-		Zaplogger.Zap.Panic(err)
+		Zaplogger.Info("Url: ", url)
+		Zaplogger.Panic(err)
 	}
 
-	Zaplogger.Zap.Info("Database connection established")
+	Zaplogger.Info("Database connection established")
 
 	return Database{DB: db}
 }

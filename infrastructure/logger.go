@@ -5,9 +5,16 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+var globalLog Logger
+
 // Logger structure
 type Logger struct {
-	Zap *zap.SugaredLogger
+	*zap.SugaredLogger
+}
+
+// GetLogger gets the global instance of the logger
+func GetLogger() Logger {
+	return globalLog
 }
 
 // NewLogger sets up logger
@@ -23,10 +30,10 @@ func NewLogger(env Env) Logger {
 
 	logger, _ := config.Build()
 
-	sugar := logger.Sugar()
+	globalLog := logger.Sugar()
 
 	return Logger{
-		Zap: sugar,
+		globalLog,
 	}
 
 }

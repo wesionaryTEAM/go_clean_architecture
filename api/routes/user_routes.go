@@ -30,7 +30,7 @@ func NewUserRoutes(
 
 // Setup user routes
 func (s UserRoutes) Setup() {
-	s.logger.Zap.Info("Setting up routes")
+	s.logger.Info("Setting up routes")
 	api := s.handler.Group("/api")
 	{
 		api.GET("/user", s.userController.GetUser)
