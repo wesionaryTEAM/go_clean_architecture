@@ -8,10 +8,11 @@ import (
 
 // UserRoutes struct
 type UserRoutes struct {
-	logger         infrastructure.Logger
-	handler        infrastructure.Router
-	userController controllers.UserController
-	authMiddleware middlewares.FirebaseAuthMiddleware
+	logger           infrastructure.Logger
+	handler          infrastructure.Router
+	userController   controllers.UserController
+	authMiddleware   middlewares.FirebaseAuthMiddleware
+	uploadMiddleware middlewares.UploadMiddleware
 }
 
 func NewUserRoutes(
@@ -19,12 +20,14 @@ func NewUserRoutes(
 	handler infrastructure.Router,
 	userController controllers.UserController,
 	authMiddleware middlewares.FirebaseAuthMiddleware,
+	uploadMiddleware middlewares.UploadMiddleware,
 ) UserRoutes {
 	return UserRoutes{
-		handler:        handler,
-		logger:         logger,
-		userController: userController,
-		authMiddleware: authMiddleware,
+		handler:          handler,
+		logger:           logger,
+		userController:   userController,
+		authMiddleware:   authMiddleware,
+		uploadMiddleware: uploadMiddleware,
 	}
 }
 
@@ -36,7 +39,10 @@ func (s UserRoutes) Setup() {
 		api.GET("/user", s.userController.GetUser)
 		api.GET("/user/:id", s.userController.GetOneUser)
 		api.POST("/user", s.userController.SaveUser)
-		api.PUT("/user/:id", s.userController.UpdateUser)
+		api.PUT("/user/:id",
+			s.uploadMiddleware.Push(s.uploadMiddleware.Config().ThumbEnable(true)).Handle(),
+			s.userController.UpdateUser,
+		)
 		api.DELETE("/user/:id", s.userController.DeleteUser)
 	}
 }

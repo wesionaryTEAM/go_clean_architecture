@@ -1,11 +1,11 @@
 package controllers
 
 import (
+	"clean-architecture/constants"
 	"clean-architecture/infrastructure"
 	"clean-architecture/models"
 	"clean-architecture/services"
 	"clean-architecture/utils"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -98,7 +98,8 @@ func (u UserController) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	log.Printf("%+v \n", user)
+	metadata, _ := c.MustGet(constants.File).(models.UploadedFiles)
+	user.ProfilePic = metadata.GetFile("file").URL
 
 	if err := u.service.UpdateUser(user); err != nil {
 		u.logger.Error(err)

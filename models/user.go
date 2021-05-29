@@ -12,9 +12,11 @@ import (
 type User struct {
 	Base
 	Name         string         `json:"name" form:"name"`
+	Email        string         `json:"email" form:"email"`
 	Age          int            `json:"age" form:"age"`
 	Birthday     *time.Time     `json:"time"`
 	MemberNumber sql.NullString `json:"member_number"`
+	ProfilePic   string         `json:"profile_pic"`
 	CreatedAt    time.Time      `json:"created_at" form:"created_at"`
 	UpdatedAt    time.Time      `json:"updated_at" form:"updated_at"`
 }
