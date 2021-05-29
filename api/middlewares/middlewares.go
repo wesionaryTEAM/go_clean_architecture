@@ -6,6 +6,7 @@ import "go.uber.org/fx"
 var Module = fx.Options(
 	fx.Provide(NewFirebaseAuthMiddleware),
 	fx.Provide(NewDBTransactionMiddleware),
+	fx.Provide(NewUploadMiddleware),
 	fx.Provide(NewMiddlewares),
 )
 
