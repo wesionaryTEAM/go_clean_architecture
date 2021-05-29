@@ -10,7 +10,8 @@ import (
 	"image"
 	"image/jpeg"
 	"image/png"
-	"mime/multipart"
+	"io"
+	"io/ioutil"
 	"net/http"
 	"path/filepath"
 
@@ -26,6 +27,12 @@ const (
 	JPEGFile Extension = ".jpeg"
 	JPGFile  Extension = ".jpg"
 	PNGFile  Extension = ".png"
+)
+
+var (
+	ErrExtensionMismatch      = errors.New("file extension not supported")
+	ErrThumbExtensionMismatch = errors.New("file extension not supported for thumbnail")
+	ErrFileRead               = errors.New("file read error")
 )
 
 type UploadConfig struct {
@@ -48,94 +55,144 @@ type UploadConfig struct {
 type UploadMiddleware struct {
 	logger infrastructure.Logger
 	bucket services.BucketService
-	config UploadConfig
+	config []UploadConfig
 }
 
 func NewUploadMiddleware(
 	logger infrastructure.Logger,
 	bucket services.BucketService,
 ) UploadMiddleware {
-	return UploadMiddleware{
-		config: UploadConfig{
-			FieldName:        "file",
-			BucketFolder:     "",
-			Extensions:       []Extension{JPEGFile, PNGFile, JPGFile},
-			ThumbnailEnabled: true,
-			ThumbnailWidth:   100,
-		},
+	m := UploadMiddleware{
 		bucket: bucket,
 		logger: logger,
 	}
+	return m
 }
 
-// Config sets up the file upload config
-func (u UploadMiddleware) Config(config UploadConfig) UploadMiddleware {
-	u.config = config
+func (u UploadMiddleware) Config() UploadConfig {
+	return UploadConfig{
+		FieldName:        "file",
+		BucketFolder:     "",
+		Extensions:       []Extension{JPEGFile, PNGFile, JPGFile},
+		ThumbnailEnabled: false,
+		ThumbnailWidth:   100,
+	}
+}
+
+// Field modify field of upload
+func (cfg UploadConfig) Field(name string) UploadConfig {
+	cfg.FieldName = name
+	return cfg
+}
+
+// Folder modify folder of upload
+func (cfg UploadConfig) Folder(folder string) UploadConfig {
+	cfg.BucketFolder = folder
+	return cfg
+}
+
+// Extension modify upload extension
+func (cfg UploadConfig) Extension(ext []Extension) UploadConfig {
+	cfg.Extensions = ext
+	return cfg
+}
+
+// ThumbEnable enable thumbnail generation
+func (cfg UploadConfig) ThumbEnable(enable bool) UploadConfig {
+	cfg.ThumbnailEnabled = enable
+	return cfg
+}
+
+// Push adds file upload configuration
+func (u UploadMiddleware) Push(config UploadConfig) UploadMiddleware {
+	u.config = append(u.config, config)
 	return u
 }
 
 // Handle handles file upload
 func (u UploadMiddleware) Handle() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		file, fileHeader, _ := c.Request.FormFile(u.config.FieldName)
 
-		if file != nil && fileHeader != nil {
-
-			ext := filepath.Ext(fileHeader.Filename)
-			if !u.matchesExtension(ext) {
-				u.logger.Error("file-upload-error: ", "extension mismatch")
-				responses.ErrorJSON(c, http.StatusBadRequest, "file extension not supported")
-				c.Abort()
-				return
-			}
-
-			uploadFileName, fileUID := u.randomFileName(ext)
-			errorGroup, ctx := errgroup.WithContext(c.Request.Context())
-
-			errorGroup.Go(func() error {
-				url, err := u.bucket.UploadFile(ctx, file, uploadFileName, fileHeader.Filename)
-				c.Set(u.config.FieldName, url)
-				return err
-			})
-
-			if u.config.ThumbnailEnabled {
-				errorGroup.Go(func() error {
-
-					e := Extension(ext)
-					properExtension := e == JPEGFile || e == JPGFile || e == PNGFile
-
-					if !properExtension {
-						return errors.New("not proper extension for thumbnail generation")
-					}
-
-					img, err := u.createThumbnail(file, ext)
-					if err != nil {
-						return err
-					}
-
-					resizeFileName := u.bucketPath(fmt.Sprintf("%s_thumb%s", fileUID, ext))
-					_, err = u.bucket.UploadFile(ctx, img, resizeFileName, fileHeader.Filename)
-					if err != nil {
-						return err
-					}
-					return nil
-				})
-			}
-
-			if err := errorGroup.Wait(); err != nil {
-				u.logger.Error("file-upload-error: ", err.Error())
-				responses.ErrorJSON(c, http.StatusInternalServerError, err)
-				c.Abort()
-				return
-			}
-
+		if len(u.config) == 0 {
+			u.logger.Info("no file upload configuration has been attached")
 		}
+
+		errGroup, ctx := errgroup.WithContext(c.Request.Context())
+
+		for i := range u.config {
+			conf := u.config[i]
+			file, fileHeader, _ := c.Request.FormFile(conf.FieldName)
+
+			if file != nil && fileHeader != nil {
+
+				ext := filepath.Ext(fileHeader.Filename)
+				if !u.matchesExtension(conf, ext) {
+					u.logger.Error("file-upload-error: ", ErrExtensionMismatch)
+					responses.ErrorJSON(c, http.StatusInternalServerError, ErrExtensionMismatch)
+					c.Abort()
+					return
+				}
+
+				fileByte, err := ioutil.ReadAll(file)
+				if err != nil {
+					u.logger.Error("file-upload-error: ", ErrFileRead)
+					responses.ErrorJSON(c, http.StatusInternalServerError, ErrFileRead)
+					c.Abort()
+					return
+				}
+
+				uploadFileName, fileUID := u.randomFileName(conf, ext)
+				fileReader := bytes.NewReader(fileByte)
+				errGroup.Go(func() error {
+					url, err := u.bucket.UploadFile(ctx, fileReader, uploadFileName, fileHeader.Filename)
+					c.Set(conf.FieldName, url)
+					return err
+				})
+
+				if conf.ThumbnailEnabled {
+					thumbReader := bytes.NewReader(fileByte)
+					errGroup.Go(func() error {
+						e := Extension(ext)
+						properExtension := e == JPEGFile || e == JPGFile || e == PNGFile
+
+						if !properExtension {
+							return ErrExtensionMismatch
+						}
+
+						img, err := u.createThumbnail(conf, thumbReader, ext)
+						if err != nil {
+							return err
+						}
+
+						resizeFileName := u.bucketPath(conf, fmt.Sprintf("%s_thumb%s", fileUID, ext))
+						_, err = u.bucket.UploadFile(ctx, img, resizeFileName, fileHeader.Filename)
+						if err != nil {
+							return err
+						}
+						return nil
+					})
+				}
+			}
+		}
+
+		if err := errGroup.Wait(); err != nil {
+			u.logger.Error("file-upload-error: ", err.Error())
+			if err == ErrThumbExtensionMismatch {
+				responses.ErrorJSON(c, http.StatusBadRequest, err)
+			} else {
+				responses.ErrorJSON(c, http.StatusInternalServerError, err)
+			}
+			c.Abort()
+			return
+		}
+
 		c.Next()
+
 	}
 }
 
-func (u UploadMiddleware) matchesExtension(ext string) bool {
-	for _, e := range u.config.Extensions {
+func (u UploadMiddleware) matchesExtension(c UploadConfig, ext string) bool {
+	for _, e := range c.Extensions {
 		if e == Extension(ext) {
 			return true
 		}
@@ -143,25 +200,24 @@ func (u UploadMiddleware) matchesExtension(ext string) bool {
 	return false
 }
 
-func (u UploadMiddleware) randomFileName(ext string) (string, string) {
+func (u UploadMiddleware) randomFileName(c UploadConfig, ext string) (string, string) {
 	randUUID, _ := uuid.NewRandom()
 	fileName := randUUID.String() + ext
-	return u.bucketPath(fileName), randUUID.String()
+	return u.bucketPath(c, fileName), randUUID.String()
 }
 
-func (u UploadMiddleware) bucketPath(fileName string) string {
-	if u.config.BucketFolder != "" {
-		return fmt.Sprintf("%s/%s", u.config.BucketFolder, fileName)
+func (u UploadMiddleware) bucketPath(c UploadConfig, fileName string) string {
+	if c.BucketFolder != "" {
+		return fmt.Sprintf("%s/%s", c.BucketFolder, fileName)
 	}
 	return fileName
 }
 
 // createThumbnail creates thumbnail from multipart file
-func (u UploadMiddleware) createThumbnail(file multipart.File, ext string) (*bytes.Buffer, error) {
+func (u UploadMiddleware) createThumbnail(c UploadConfig, file io.Reader, ext string) (*bytes.Buffer, error) {
 	var img image.Image
 	var err error
 
-	file.Seek(0, 0)
 	if Extension(ext) == JPGFile || Extension(ext) == JPEGFile {
 		img, err = jpeg.Decode(file)
 	}
@@ -173,7 +229,7 @@ func (u UploadMiddleware) createThumbnail(file multipart.File, ext string) (*byt
 		return nil, err
 	}
 
-	resizeImage := resize.Resize(u.config.ThumbnailWidth, 0, img, resize.Lanczos3)
+	resizeImage := resize.Resize(c.ThumbnailWidth, 0, img, resize.Lanczos3)
 	buff := new(bytes.Buffer)
 	if Extension(ext) == JPGFile || Extension(ext) == JPEGFile {
 		if err := jpeg.Encode(buff, resizeImage, nil); err != nil {
