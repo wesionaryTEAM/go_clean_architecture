@@ -3,7 +3,9 @@ package middlewares
 import (
 	"bytes"
 	"clean-architecture/api/responses"
+	"clean-architecture/constants"
 	"clean-architecture/infrastructure"
+	"clean-architecture/models"
 	"clean-architecture/services"
 	"errors"
 	"fmt"
@@ -92,7 +94,7 @@ func (cfg UploadConfig) Folder(folder string) UploadConfig {
 }
 
 // Extension modify upload extension
-func (cfg UploadConfig) Extension(ext []Extension) UploadConfig {
+func (cfg UploadConfig) Extension(ext ...Extension) UploadConfig {
 	cfg.Extensions = ext
 	return cfg
 }
@@ -118,6 +120,8 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 		}
 
 		errGroup, ctx := errgroup.WithContext(c.Request.Context())
+
+		uploadedFiles := []models.UploadMetadata{}
 
 		for i := range u.config {
 			conf := u.config[i]
@@ -145,7 +149,13 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 				fileReader := bytes.NewReader(fileByte)
 				errGroup.Go(func() error {
 					url, err := u.bucket.UploadFile(ctx, fileReader, uploadFileName, fileHeader.Filename)
-					c.Set(conf.FieldName, url)
+					uploadedFiles = append(uploadedFiles, models.UploadMetadata{
+						FieldName: conf.FieldName,
+						URL:       url,
+						FileName:  fileHeader.Filename,
+						FileUID:   fileUID,
+						Size:      fileHeader.Size,
+					})
 					return err
 				})
 
@@ -186,6 +196,7 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 			return
 		}
 
+		c.Set(constants.File, models.UploadedFiles(uploadedFiles))
 		c.Next()
 
 	}
