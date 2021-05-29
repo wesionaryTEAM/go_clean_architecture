@@ -5,6 +5,7 @@ import (
 	"clean-architecture/api/responses"
 	"clean-architecture/infrastructure"
 	"clean-architecture/services"
+	"errors"
 	"fmt"
 	"image"
 	"image/jpeg"
@@ -99,6 +100,14 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 
 			if u.config.ThumbnailEnabled {
 				errorGroup.Go(func() error {
+
+					e := Extension(ext)
+					properExtension := e == JPEGFile || e == JPGFile || e == PNGFile
+
+					if !properExtension {
+						return errors.New("not proper extension for thumbnail generation")
+					}
+
 					img, err := u.createThumbnail(file, ext)
 					if err != nil {
 						return err
