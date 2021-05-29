@@ -29,6 +29,7 @@ func NewRouter(env Env) Router {
 	}
 
 	httpRouter := gin.Default()
+	httpRouter.MaxMultipartMemory = env.MaxMultipartMemory
 
 	httpRouter.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
