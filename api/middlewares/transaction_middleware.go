@@ -31,11 +31,11 @@ func NewDBTransactionMiddleware(
 
 //Handle -> It setup the database transaction middleware
 func (m DBTransactionMiddleware) Handle() gin.HandlerFunc {
-	m.logger.Zap.Info("setting up database transaction middleware")
+	m.logger.Info("setting up database transaction middleware")
 
 	return func(c *gin.Context) {
 		txHandle := m.db.DB.Begin()
-		m.logger.Zap.Info("beginning database transaction")
+		m.logger.Info("beginning database transaction")
 
 		defer func() {
 			if r := recover(); r != nil {
@@ -47,12 +47,12 @@ func (m DBTransactionMiddleware) Handle() gin.HandlerFunc {
 		c.Next()
 
 		if utils.StatusInList(c.Writer.Status(), []int{http.StatusOK, http.StatusCreated}) {
-			m.logger.Zap.Info("committing transactions")
+			m.logger.Info("committing transactions")
 			if err := txHandle.Commit().Error; err != nil {
-				m.logger.Zap.Error("trx commit error: ", err)
+				m.logger.Error("trx commit error: ", err)
 			}
 		} else {
-			m.logger.Zap.Info("rolling back transaction due to status code: ", c.Writer.Status())
+			m.logger.Info("rolling back transaction due to status code: ", c.Writer.Status())
 			txHandle.Rollback()
 		}
 	}

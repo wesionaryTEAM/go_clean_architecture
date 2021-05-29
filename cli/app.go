@@ -29,7 +29,7 @@ func NewApplication(
 
 // Start starts cli application
 func (c Application) Start() {
-	c.logger.Zap.Info("⛑  Start CLI...")
+	c.logger.Info("⛑  Start CLI...")
 	names := []string{}
 	commandMap := map[string]Command{}
 
@@ -48,11 +48,11 @@ func (c Application) Start() {
 	_, result, err := prompt.Run()
 
 	if err != nil {
-		c.logger.Zap.Error("prompt failed")
+		c.logger.Error("prompt failed")
 	}
 
 	if result == "EXIT_APPLICATION" {
-		c.logger.Zap.Info("CLI Application Exited")
+		c.logger.Info("CLI Application Exited")
 		return
 	}
 

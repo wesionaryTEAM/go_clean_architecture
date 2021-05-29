@@ -18,16 +18,16 @@ func NewFBApp(logger Logger) *firebase.App {
 
 	serviceAccountKeyFilePath, err := filepath.Abs("./serviceAccountKey.json")
 	if err != nil {
-		logger.Zap.Panic("Unable to load serviceAccountKey.json file")
+		logger.Panic("Unable to load serviceAccountKey.json file")
 	}
 
 	opt := option.WithCredentialsFile(serviceAccountKeyFilePath)
 
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
-		logger.Zap.Fatalf("Firebase NewApp: %v", err)
+		logger.Fatalf("Firebase NewApp: %v", err)
 	}
-	logger.Zap.Info("✅ Firebase app initialized.")
+	logger.Info("✅ Firebase app initialized.")
 	return app
 }
 
@@ -38,7 +38,7 @@ func NewFBAuth(logger Logger, app *firebase.App) *auth.Client {
 
 	firebaseAuth, err := app.Auth(ctx)
 	if err != nil {
-		logger.Zap.Fatalf("Firebase Authentication: %v", err)
+		logger.Fatalf("Firebase Authentication: %v", err)
 	}
 
 	return firebaseAuth
@@ -50,7 +50,7 @@ func NewFirestoreClient(logger Logger, app *firebase.App) *firestore.Client {
 
 	firestoreClient, err := app.Firestore(ctx)
 	if err != nil {
-		logger.Zap.Fatalf("Firestore client: %v", err)
+		logger.Fatalf("Firestore client: %v", err)
 	}
 
 	return firestoreClient
@@ -61,7 +61,7 @@ func NewFCMClient(logger Logger, app *firebase.App) *messaging.Client {
 	ctx := context.Background()
 	messagingClient, err := app.Messaging(ctx)
 	if err != nil {
-		logger.Zap.Fatalf("Firebase messaing: %v", err)
+		logger.Fatalf("Firebase messaing: %v", err)
 	}
 	return messagingClient
 }

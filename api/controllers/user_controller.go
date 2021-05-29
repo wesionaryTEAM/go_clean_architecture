@@ -32,7 +32,7 @@ func (u UserController) GetOneUser(c *gin.Context) {
 	user, err := u.service.GetOneUser(models.ParseUUID(paramID))
 
 	if err != nil {
-		u.logger.Zap.Error(err)
+		u.logger.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -49,7 +49,7 @@ func (u UserController) GetOneUser(c *gin.Context) {
 func (u UserController) GetUser(c *gin.Context) {
 	users, err := u.service.GetAllUser()
 	if err != nil {
-		u.logger.Zap.Error(err)
+		u.logger.Error(err)
 	}
 	c.JSON(200, gin.H{"data": users})
 }
@@ -59,7 +59,7 @@ func (u UserController) SaveUser(c *gin.Context) {
 	user := models.User{}
 
 	if err := c.ShouldBindJSON(&user); err != nil {
-		u.logger.Zap.Error(err)
+		u.logger.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -67,7 +67,7 @@ func (u UserController) SaveUser(c *gin.Context) {
 	}
 
 	if err := u.service.Create(user); err != nil {
-		u.logger.Zap.Error(err)
+		u.logger.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -83,7 +83,7 @@ func (u UserController) UpdateUser(c *gin.Context) {
 
 	user, err := u.service.GetOneUser(paramID)
 	if err != nil {
-		u.logger.Zap.Error(err)
+		u.logger.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -91,7 +91,7 @@ func (u UserController) UpdateUser(c *gin.Context) {
 	}
 
 	if err := utils.CustomBind(c.Request, &user); err != nil {
-		u.logger.Zap.Error(err)
+		u.logger.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -101,7 +101,7 @@ func (u UserController) UpdateUser(c *gin.Context) {
 	log.Printf("%+v \n", user)
 
 	if err := u.service.UpdateUser(user); err != nil {
-		u.logger.Zap.Error(err)
+		u.logger.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -116,7 +116,7 @@ func (u UserController) DeleteUser(c *gin.Context) {
 	paramID := c.Param("id")
 
 	if err := u.service.DeleteUser(models.ParseUUID(paramID)); err != nil {
-		u.logger.Zap.Error(err)
+		u.logger.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})

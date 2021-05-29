@@ -30,7 +30,7 @@ func NewGmailService(logger Logger, env Env) *gmail.Service {
 	var tokenSource = config.TokenSource(ctx, &token)
 	srv, err := gmail.NewService(ctx, option.WithTokenSource(tokenSource))
 	if err != nil {
-		logger.Zap.Fatal("failed to receive gmail client", err.Error())
+		logger.Fatal("failed to receive gmail client", err.Error())
 	}
 	return srv
 

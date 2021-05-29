@@ -42,7 +42,7 @@ func bootstrap(
 ) {
 
 	appStop := func(context.Context) error {
-		logger.Zap.Info("Stopping Application")
+		logger.Info("Stopping Application")
 
 		conn, _ := database.DB.DB()
 		conn.Close()
@@ -52,8 +52,8 @@ func bootstrap(
 	if utils.IsCli() {
 		lifecycle.Append(fx.Hook{
 			OnStart: func(context.Context) error {
-				logger.Zap.Info("Starting hatsu cli Application")
-				logger.Zap.Info("------- 🤖 clean-architecture 🤖 (CLI) -------")
+				logger.Info("Starting hatsu cli Application")
+				logger.Info("------- 🤖 clean-architecture 🤖 (CLI) -------")
 				go cliApp.Start()
 				return nil
 			},
@@ -65,10 +65,10 @@ func bootstrap(
 
 	lifecycle.Append(fx.Hook{
 		OnStart: func(context.Context) error {
-			logger.Zap.Info("Starting Application")
-			logger.Zap.Info("-------------------------------------")
-			logger.Zap.Info("------- clean-architecture 📺 -------")
-			logger.Zap.Info("-------------------------------------")
+			logger.Info("Starting Application")
+			logger.Info("-------------------------------------")
+			logger.Info("------- clean-architecture 📺 -------")
+			logger.Info("-------------------------------------")
 
 			go func() {
 				middlewares.Setup()
