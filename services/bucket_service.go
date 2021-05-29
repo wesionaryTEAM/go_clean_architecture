@@ -5,7 +5,6 @@ import (
 	"context"
 	"io"
 	"io/ioutil"
-	"mime/multipart"
 	"net/url"
 	"strings"
 	"time"
@@ -37,7 +36,7 @@ func NewBucketService(
 // UploadFile -> uploads the file to the cloud storage
 func (s BucketService) UploadFile(
 	ctx context.Context,
-	file multipart.File,
+	file io.Reader,
 	fileName string,
 	originalFileName string,
 ) (string, error) {
