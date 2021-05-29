@@ -16,6 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/nfnt/resize"
+	"golang.org/x/sync/errgroup"
 )
 
 type Extension string
@@ -88,35 +89,36 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 			}
 
 			uploadFileName, fileUID := u.randomFileName(ext)
+			errorGroup, ctx := errgroup.WithContext(c.Request.Context())
 
-			url, err := u.bucket.UploadFile(c.Request.Context(), file, uploadFileName, fileHeader.Filename)
-			if err != nil {
+			errorGroup.Go(func() error {
+				url, err := u.bucket.UploadFile(ctx, file, uploadFileName, fileHeader.Filename)
+				c.Set(u.config.FieldName, url)
+				return err
+			})
+
+			if u.config.ThumbnailEnabled {
+				errorGroup.Go(func() error {
+					img, err := u.createThumbnail(file, ext)
+					if err != nil {
+						return err
+					}
+
+					resizeFileName := u.bucketPath(fmt.Sprintf("%s_thumb%s", fileUID, ext))
+					_, err = u.bucket.UploadFile(ctx, img, resizeFileName, fileHeader.Filename)
+					if err != nil {
+						return err
+					}
+					return nil
+				})
+			}
+
+			if err := errorGroup.Wait(); err != nil {
 				u.logger.Error("file-upload-error: ", err.Error())
 				responses.ErrorJSON(c, http.StatusInternalServerError, err)
 				c.Abort()
 				return
 			}
-
-			if u.config.ThumbnailEnabled {
-				img, err := u.createThumbnail(file, ext)
-				if err != nil {
-					u.logger.Error("file-upload-error: ", err.Error())
-					responses.ErrorJSON(c, http.StatusInternalServerError, err)
-					c.Abort()
-					return
-				}
-
-				resizeFileName := u.bucketPath(fmt.Sprintf("%s_thumb%s", fileUID, ext))
-				_, err = u.bucket.UploadFile(c.Request.Context(), img, resizeFileName, fileHeader.Filename)
-				if err != nil {
-					u.logger.Error("file-upload-error: ", err.Error())
-					responses.ErrorJSON(c, http.StatusInternalServerError, err)
-					c.Abort()
-					return
-				}
-			}
-
-			c.Set(u.config.FieldName, url)
 
 		}
 		c.Next()
