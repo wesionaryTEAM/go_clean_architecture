@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"time"
 
@@ -12,7 +13,9 @@ type SignedURL string
 
 // UnmarshalJSON -> convert from json string
 func (s *SignedURL) UnmarshalJSON(by []byte) error {
-	*s = SignedURL(string(by))
+	str := ""
+	_ = json.Unmarshal(by, &str)
+	*s = SignedURL(str)
 	return nil
 }
 
