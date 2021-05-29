@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"clean-architecture/lib"
 	"clean-architecture/utils"
 	"fmt"
 	"net/http"
@@ -17,7 +18,7 @@ type Router struct {
 }
 
 //NewRouter : all the routes are defined here
-func NewRouter(env Env) Router {
+func NewRouter(env lib.Env) Router {
 
 	if env.Environment != "local" && env.SentryDSN != "" {
 		if err := sentry.Init(sentry.ClientOptions{

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"clean-architecture/lib"
 	"database/sql"
 	"time"
 
@@ -16,7 +17,7 @@ type User struct {
 	Age          int            `json:"age" form:"age"`
 	Birthday     *time.Time     `json:"time"`
 	MemberNumber sql.NullString `json:"member_number"`
-	ProfilePic   string         `json:"profile_pic"`
+	ProfilePic   lib.SignedURL  `json:"profile_pic"`
 	CreatedAt    time.Time      `json:"created_at" form:"created_at"`
 	UpdatedAt    time.Time      `json:"updated_at" form:"updated_at"`
 }
@@ -29,6 +30,6 @@ func (u User) TableName() string {
 // BeforeCreate run this before creating user
 func (t *User) BeforeCreate(tx *gorm.DB) error {
 	id, err := uuid.NewRandom()
-	t.ID = BinaryUUID(id)
+	t.ID = lib.BinaryUUID(id)
 	return err
 }

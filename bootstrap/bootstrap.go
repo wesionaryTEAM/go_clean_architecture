@@ -6,6 +6,7 @@ import (
 	"clean-architecture/api/routes"
 	"clean-architecture/cli"
 	"clean-architecture/infrastructure"
+	"clean-architecture/lib"
 	"clean-architecture/repository"
 	"clean-architecture/services"
 	"clean-architecture/utils"
@@ -24,6 +25,7 @@ var Module = fx.Options(
 	infrastructure.Module,
 	middlewares.Module,
 	cli.Module,
+	lib.Module,
 	fx.Invoke(bootstrap),
 )
 
@@ -33,17 +35,15 @@ func bootstrap(
 	lifecycle fx.Lifecycle,
 	handler infrastructure.Router,
 	routes routes.Routes,
-	env infrastructure.Env,
+	env lib.Env,
 	middlewares middlewares.Middlewares,
-	logger infrastructure.Logger,
+	logger lib.Logger,
 	cliApp cli.Application,
 	database infrastructure.Database,
-
 ) {
 
 	appStop := func(context.Context) error {
 		logger.Info("Stopping Application")
-
 		conn, _ := database.DB.DB()
 		conn.Close()
 		return nil

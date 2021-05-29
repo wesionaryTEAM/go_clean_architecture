@@ -1,7 +1,7 @@
 package services
 
 import (
-	"clean-architecture/infrastructure"
+	"clean-architecture/lib"
 	"context"
 	"io"
 	"io/ioutil"
@@ -15,16 +15,16 @@ import (
 
 // BucketService -> handles the file upload/download functions
 type BucketService struct {
-	logger infrastructure.Logger
+	logger lib.Logger
 	client *storage.Client
-	env    infrastructure.Env
+	env    lib.Env
 }
 
 // NewBucketService -> initilization for the BucketService struct
 func NewBucketService(
-	logger infrastructure.Logger,
+	logger lib.Logger,
 	client *storage.Client,
-	env infrastructure.Env,
+	env lib.Env,
 ) BucketService {
 	return BucketService{
 		logger: logger,

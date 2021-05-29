@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"clean-architecture/lib"
 	"fmt"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -10,14 +11,14 @@ import (
 
 //Migrations -> Migration Struct
 type Migrations struct {
-	logger Logger
-	env    Env
+	logger lib.Logger
+	env    lib.Env
 }
 
 //NewMigrations -> return new Migrations struct
 func NewMigrations(
-	logger Logger,
-	env Env,
+	logger lib.Logger,
+	env lib.Env,
 ) Migrations {
 	return Migrations{
 		logger: logger,

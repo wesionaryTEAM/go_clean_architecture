@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"clean-architecture/lib"
 	"context"
 	"time"
 
@@ -11,7 +12,7 @@ import (
 )
 
 // NewGmailService -> receive gmail service client
-func NewGmailService(logger Logger, env Env) *gmail.Service {
+func NewGmailService(logger lib.Logger, env lib.Env) *gmail.Service {
 	ctx := context.Background()
 
 	config := oauth2.Config{

@@ -4,8 +4,7 @@ import (
 	"bytes"
 	"clean-architecture/api/responses"
 	"clean-architecture/constants"
-	"clean-architecture/infrastructure"
-	"clean-architecture/models"
+	"clean-architecture/lib"
 	"clean-architecture/services"
 	"errors"
 	"fmt"
@@ -55,13 +54,13 @@ type UploadConfig struct {
 }
 
 type UploadMiddleware struct {
-	logger infrastructure.Logger
+	logger lib.Logger
 	bucket services.BucketService
 	config []UploadConfig
 }
 
 func NewUploadMiddleware(
-	logger infrastructure.Logger,
+	logger lib.Logger,
 	bucket services.BucketService,
 ) UploadMiddleware {
 	m := UploadMiddleware{
@@ -121,7 +120,7 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 
 		errGroup, ctx := errgroup.WithContext(c.Request.Context())
 
-		uploadedFiles := []models.UploadMetadata{}
+		uploadedFiles := []lib.UploadMetadata{}
 
 		for i := range u.config {
 			conf := u.config[i]
@@ -149,7 +148,7 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 				fileReader := bytes.NewReader(fileByte)
 				errGroup.Go(func() error {
 					url, err := u.bucket.UploadFile(ctx, fileReader, uploadFileName, fileHeader.Filename)
-					uploadedFiles = append(uploadedFiles, models.UploadMetadata{
+					uploadedFiles = append(uploadedFiles, lib.UploadMetadata{
 						FieldName: conf.FieldName,
 						URL:       url,
 						FileName:  fileHeader.Filename,
@@ -196,7 +195,7 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 			return
 		}
 
-		c.Set(constants.File, models.UploadedFiles(uploadedFiles))
+		c.Set(constants.File, lib.UploadedFiles(uploadedFiles))
 		c.Next()
 
 	}

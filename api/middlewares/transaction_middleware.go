@@ -3,6 +3,7 @@ package middlewares
 import (
 	"clean-architecture/constants"
 	"clean-architecture/infrastructure"
+	"clean-architecture/lib"
 	"clean-architecture/utils"
 	"net/http"
 
@@ -12,14 +13,14 @@ import (
 //DBTransactionMiddleware -> struct for transaction
 type DBTransactionMiddleware struct {
 	handler infrastructure.Router
-	logger  infrastructure.Logger
+	logger  lib.Logger
 	db      infrastructure.Database
 }
 
 //NewDBTransactionMiddleware -> new instance of transaction
 func NewDBTransactionMiddleware(
 	handler infrastructure.Router,
-	logger infrastructure.Logger,
+	logger lib.Logger,
 	db infrastructure.Database,
 ) DBTransactionMiddleware {
 	return DBTransactionMiddleware{

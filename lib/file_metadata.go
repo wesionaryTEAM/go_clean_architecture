@@ -1,4 +1,4 @@
-package models
+package lib
 
 // UploadMetadata metadata received after uploading file
 type UploadMetadata struct {

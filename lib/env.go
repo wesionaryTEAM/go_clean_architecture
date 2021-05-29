@@ -1,4 +1,4 @@
-package infrastructure
+package lib
 
 import (
 	"log"
@@ -22,10 +22,15 @@ type Env struct {
 	MailTokenType      string `mapstructure:"MAIL_TOKEN_TYPE"`
 }
 
+var globalEnv = Env{
+	MaxMultipartMemory: 10 << 20, // 10 MB
+}
+
+func GetEnv() Env {
+	return globalEnv
+}
+
 func NewEnv() Env {
-	env := Env{
-		MaxMultipartMemory: 10 << 20, // 10 MB
-	}
 	viper.SetConfigFile(".env")
 
 	err := viper.ReadInConfig()
@@ -33,11 +38,11 @@ func NewEnv() Env {
 		log.Fatal("cannot read cofiguration")
 	}
 
-	err = viper.Unmarshal(&env)
+	err = viper.Unmarshal(&globalEnv)
 	if err != nil {
 		log.Fatal("environment cant be loaded: ", err)
 	}
 
-	log.Printf("%#v \n", env)
-	return env
+	log.Printf("%#v \n", &globalEnv)
+	return globalEnv
 }

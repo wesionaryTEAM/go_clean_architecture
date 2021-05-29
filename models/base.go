@@ -1,5 +1,7 @@
 package models
 
+import "clean-architecture/lib"
+
 type Base struct {
-	ID BinaryUUID `json:"id"`
+	ID lib.BinaryUUID `json:"id"`
 }

@@ -1,7 +1,7 @@
 package services
 
 import (
-	"clean-architecture/infrastructure"
+	"clean-architecture/lib"
 	"clean-architecture/models"
 	"clean-architecture/repository"
 
@@ -10,13 +10,13 @@ import (
 
 // UserService service layer
 type UserService struct {
-	logger     infrastructure.Logger
+	logger     lib.Logger
 	repository repository.UserRepository
 }
 
 // NewUserService creates a new userservice
 func NewUserService(
-	logger infrastructure.Logger,
+	logger lib.Logger,
 	repository repository.UserRepository,
 ) UserService {
 	return UserService{
@@ -32,7 +32,7 @@ func (u UserService) WithTrx(trxHandle *gorm.DB) UserService {
 }
 
 // GetOneUser gets one user
-func (s UserService) GetOneUser(userID models.BinaryUUID) (user models.User, err error) {
+func (s UserService) GetOneUser(userID lib.BinaryUUID) (user models.User, err error) {
 	return user, s.repository.First(&user, "id = ?", userID).Error
 }
 
@@ -47,7 +47,7 @@ func (s UserService) UpdateUser(user models.User) error {
 }
 
 // DeleteUser deletes the user
-func (s UserService) DeleteUser(uuid models.BinaryUUID) error {
+func (s UserService) DeleteUser(uuid lib.BinaryUUID) error {
 	return s.repository.Delete(&models.User{}, uuid).Error
 }
 
