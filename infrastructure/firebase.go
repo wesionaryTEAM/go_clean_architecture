@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"clean-architecture/lib"
 	"context"
 	"path/filepath"
 
@@ -12,7 +13,7 @@ import (
 )
 
 // NewFBApp creates new firebase app instance
-func NewFBApp(logger Logger) *firebase.App {
+func NewFBApp(logger lib.Logger) *firebase.App {
 
 	ctx := context.Background()
 
@@ -32,7 +33,7 @@ func NewFBApp(logger Logger) *firebase.App {
 }
 
 // NewFBAuth creates new firebase auth client
-func NewFBAuth(logger Logger, app *firebase.App) *auth.Client {
+func NewFBAuth(logger lib.Logger, app *firebase.App) *auth.Client {
 
 	ctx := context.Background()
 
@@ -45,7 +46,7 @@ func NewFBAuth(logger Logger, app *firebase.App) *auth.Client {
 }
 
 // NewFirestoreClient creates new firestore client
-func NewFirestoreClient(logger Logger, app *firebase.App) *firestore.Client {
+func NewFirestoreClient(logger lib.Logger, app *firebase.App) *firestore.Client {
 	ctx := context.Background()
 
 	firestoreClient, err := app.Firestore(ctx)
@@ -57,7 +58,7 @@ func NewFirestoreClient(logger Logger, app *firebase.App) *firestore.Client {
 }
 
 // NewFCMClient creates new firebase cloud messaging client
-func NewFCMClient(logger Logger, app *firebase.App) *messaging.Client {
+func NewFCMClient(logger lib.Logger, app *firebase.App) *messaging.Client {
 	ctx := context.Background()
 	messagingClient, err := app.Messaging(ctx)
 	if err != nil {

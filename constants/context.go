@@ -9,4 +9,7 @@ const (
 
 	// UID -> authenticated user's id
 	UID = "UID"
+
+	// File uploaded file from file upload middleware
+	File = "@uploaded_file"
 )

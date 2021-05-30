@@ -1,4 +1,4 @@
-package infrastructure
+package lib
 
 import (
 	"go.uber.org/zap"

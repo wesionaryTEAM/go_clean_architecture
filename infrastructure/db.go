@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"clean-architecture/lib"
 	"fmt"
 	"log"
 	"os"
@@ -17,7 +18,7 @@ type Database struct {
 }
 
 // NewDatabase creates a new database instance
-func NewDatabase(Zaplogger Logger, env Env) Database {
+func NewDatabase(Zaplogger lib.Logger, env lib.Env) Database {
 
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer

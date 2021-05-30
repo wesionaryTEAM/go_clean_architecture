@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `name` VARCHAR(20) NOT NULL,
   `age` int(10) UNSIGNED,
   `birthday` DATETIME,
+  `profile_pic` VARCHAR(100),
   `member_number` VARCHAR(100),
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NOT NULL,

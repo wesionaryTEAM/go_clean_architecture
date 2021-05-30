@@ -1,11 +1,11 @@
 package controllers
 
 import (
-	"clean-architecture/infrastructure"
+	"clean-architecture/constants"
+	"clean-architecture/lib"
 	"clean-architecture/models"
 	"clean-architecture/services"
 	"clean-architecture/utils"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -14,11 +14,11 @@ import (
 // UserController data type
 type UserController struct {
 	service services.UserService
-	logger  infrastructure.Logger
+	logger  lib.Logger
 }
 
 // NewUserController creates new user controller
-func NewUserController(userService services.UserService, logger infrastructure.Logger) UserController {
+func NewUserController(userService services.UserService, logger lib.Logger) UserController {
 	return UserController{
 		service: userService,
 		logger:  logger,
@@ -29,7 +29,7 @@ func NewUserController(userService services.UserService, logger infrastructure.L
 func (u UserController) GetOneUser(c *gin.Context) {
 	paramID := c.Param("id")
 
-	user, err := u.service.GetOneUser(models.ParseUUID(paramID))
+	user, err := u.service.GetOneUser(lib.ParseUUID(paramID))
 
 	if err != nil {
 		u.logger.Error(err)
@@ -79,7 +79,7 @@ func (u UserController) SaveUser(c *gin.Context) {
 
 // UpdateUser updates user
 func (u UserController) UpdateUser(c *gin.Context) {
-	paramID := models.ParseUUID(c.Param("id"))
+	paramID := lib.ParseUUID(c.Param("id"))
 
 	user, err := u.service.GetOneUser(paramID)
 	if err != nil {
@@ -98,7 +98,8 @@ func (u UserController) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	log.Printf("%+v \n", user)
+	metadata, _ := c.MustGet(constants.File).(lib.UploadedFiles)
+	user.ProfilePic = lib.SignedURL(metadata.GetFile("file").URL)
 
 	if err := u.service.UpdateUser(user); err != nil {
 		u.logger.Error(err)
@@ -115,7 +116,7 @@ func (u UserController) UpdateUser(c *gin.Context) {
 func (u UserController) DeleteUser(c *gin.Context) {
 	paramID := c.Param("id")
 
-	if err := u.service.DeleteUser(models.ParseUUID(paramID)); err != nil {
+	if err := u.service.DeleteUser(lib.ParseUUID(paramID)); err != nil {
 		u.logger.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
