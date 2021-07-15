@@ -16,6 +16,7 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/chai2010/webp"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/nfnt/resize"
@@ -241,14 +242,26 @@ func (u UploadMiddleware) createThumbnail(c UploadConfig, file io.Reader, ext st
 
 	resizeImage := resize.Resize(c.ThumbnailWidth, 0, img, resize.Lanczos3)
 	buff := new(bytes.Buffer)
+
+	options := &webp.Options{
+		Lossless: false,
+		Quality:  75,
+	}
+
 	if Extension(ext) == JPGFile || Extension(ext) == JPEGFile {
-		if err := jpeg.Encode(buff, resizeImage, nil); err != nil {
+		if err := webp.Encode(buff, resizeImage, options); err != nil {
 			return nil, err
+		} else {
+
+			// jpeg.Encode(buff, resizeImage, nil)
 		}
+
 	}
 	if Extension(ext) == PNGFile {
-		if err := png.Encode(buff, resizeImage); err != nil {
+		if err := webp.Encode(buff, resizeImage, options); err != nil {
 			return nil, err
+		} else {
+			//png.Encode(buff, resizeImage)
 		}
 	}
 
