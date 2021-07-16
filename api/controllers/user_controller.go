@@ -57,19 +57,21 @@ func (u UserController) GetUser(c *gin.Context) {
 
 // SaveUser saves the user
 func (u UserController) SaveUser(c *gin.Context) {
-	user := models.User{
-		// Age:   2,
-		// Email: "roseonmhr@gmail.com",
-		// Name:  "rojan mahrajan",
-	}
-
-	// if err := c.ShouldBindJSON(&user); err != nil {
-	// 	u.logger.Error(err)
-	// 	c.JSON(http.StatusInternalServerError, gin.H{
-	// 		"error": err.Error(),
-	// 	})
-	// 	return
+	// user := models.User{
+	// 	Age:   1,
+	// 	Email: "dineshsilwal@gmail.com",
+	// 	Name:  "Dinesh Silwal",
 	// }
+
+	user := models.User{}
+
+	if err := c.ShouldBindJSON(&user); err != nil {
+		u.logger.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
 
 	if err := u.service.Create(user); err != nil {
 		u.logger.Error(err)
