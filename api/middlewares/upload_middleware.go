@@ -50,6 +50,9 @@ type UploadConfig struct {
 	// ThumbnailEnabled set whether thumbnail is enabled or nor
 	ThumbnailEnabled bool
 
+	// WebpEnabled set whether thumbnail is enabled or nor
+	WebpEnabled bool
+
 	// ThumbnailWidth set thumbnail width
 	ThumbnailWidth uint
 }
@@ -105,6 +108,12 @@ func (cfg UploadConfig) ThumbEnable(enable bool) UploadConfig {
 	return cfg
 }
 
+// WebpEnabled enable thumbnail generation
+func (cfg UploadConfig) Webp(enable bool) UploadConfig {
+	cfg.WebpEnabled = enable
+	return cfg
+}
+
 // Push adds file upload configuration
 func (u UploadMiddleware) Push(config UploadConfig) UploadMiddleware {
 	u.config = append(u.config, config)
@@ -125,6 +134,7 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 
 		for i := range u.config {
 			conf := u.config[i]
+
 			file, fileHeader, _ := c.Request.FormFile(conf.FieldName)
 
 			if file != nil && fileHeader != nil {
@@ -147,7 +157,28 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 
 				uploadFileName, fileUID := u.randomFileName(conf, ext)
 				fileReader := bytes.NewReader(fileByte)
+
 				errGroup.Go(func() error {
+					if conf.WebpEnabled {
+						buff := new(bytes.Buffer)
+						options := &webp.Options{
+							Lossless: false,
+							Quality:  75,
+						}
+						var decodedImage image.Image
+						decodedImage, _, err = image.Decode(bytes.NewReader(fileByte))
+						if err != nil {
+							return err
+						}
+						if err := webp.Encode(buff, decodedImage, options); err != nil {
+							return err
+						}
+						uploadWebpFileName := u.bucketPath(conf, fmt.Sprintf("%s_webp%s", fileUID, ext))
+						fmt.Println("<--- webp file" + uploadWebpFileName)
+						if _, err := u.bucket.UploadFile(ctx, buff, uploadWebpFileName, fileHeader.Filename); err != nil {
+							return err
+						}
+					}
 					url, err := u.bucket.UploadFile(ctx, fileReader, uploadFileName, fileHeader.Filename)
 					uploadedFiles = append(uploadedFiles, lib.UploadMetadata{
 						FieldName: conf.FieldName,
@@ -161,6 +192,8 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 
 				if conf.ThumbnailEnabled {
 					thumbReader := bytes.NewReader(fileByte)
+					errGroup, ctx := errgroup.WithContext(c.Request.Context())
+
 					errGroup.Go(func() error {
 						e := Extension(ext)
 						properExtension := e == JPEGFile || e == JPGFile || e == PNGFile
@@ -168,16 +201,28 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 						if !properExtension {
 							return ErrExtensionMismatch
 						}
-
-						img, err := u.createThumbnail(conf, thumbReader, ext)
+						// Genrate non webp thumbnail
+						img, err := u.createThumbnail(conf, thumbReader, ext, false)
 						if err != nil {
 							return err
 						}
-
 						resizeFileName := u.bucketPath(conf, fmt.Sprintf("%s_thumb%s", fileUID, ext))
 						_, err = u.bucket.UploadFile(ctx, img, resizeFileName, fileHeader.Filename)
 						if err != nil {
 							return err
+						}
+
+						if conf.WebpEnabled { // Generate webp thumbnail
+							thumbReader = bytes.NewReader(fileByte)
+							webpImage, err := u.createThumbnail(conf, thumbReader, ext, true)
+							if err != nil {
+								return err
+							}
+							resizeWebpFileName := u.bucketPath(conf, fmt.Sprintf("%s_thumb_webp%s", fileUID, ext))
+							_, err = u.bucket.UploadFile(ctx, webpImage, resizeWebpFileName, fileHeader.Filename)
+							if err != nil {
+								return err
+							}
 						}
 						return nil
 					})
@@ -225,7 +270,7 @@ func (u UploadMiddleware) bucketPath(c UploadConfig, fileName string) string {
 }
 
 // createThumbnail creates thumbnail from multipart file
-func (u UploadMiddleware) createThumbnail(c UploadConfig, file io.Reader, ext string) (*bytes.Buffer, error) {
+func (u UploadMiddleware) createThumbnail(c UploadConfig, file io.Reader, ext string, isWebp bool) (*bytes.Buffer, error) {
 	var img image.Image
 	var err error
 
@@ -248,11 +293,25 @@ func (u UploadMiddleware) createThumbnail(c UploadConfig, file io.Reader, ext st
 		Quality:  75,
 	}
 
-	if Extension(ext) == JPGFile || Extension(ext) == JPEGFile || Extension(ext) == PNGFile {
+	if isWebp {
 		if err := webp.Encode(buff, resizeImage, options); err != nil {
 			return nil, err
 		}
+		return buff, nil
+	}
 
+	if !isWebp && (Extension(ext) == JPGFile || Extension(ext) == JPEGFile) {
+		if err := jpeg.Encode(buff, resizeImage, nil); err != nil {
+			return nil, err
+		}
+		return buff, nil
+
+	}
+	if !isWebp && (Extension(ext) == PNGFile) {
+		if err := png.Encode(buff, resizeImage); err != nil {
+			return nil, err
+		}
+		return buff, nil
 	}
 	return buff, nil
 }
