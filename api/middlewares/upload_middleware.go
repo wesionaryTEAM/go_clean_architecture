@@ -15,6 +15,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
+	"strings"
 
 	"github.com/chai2010/webp"
 	"github.com/gin-gonic/gin"
@@ -174,8 +175,8 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 							return err
 						}
 						uploadWebpFileName := u.bucketPath(conf, fmt.Sprintf("%s_webp%s", fileUID, ext))
-						fmt.Println("<--- webp file" + uploadWebpFileName)
-						if _, err := u.bucket.UploadFile(ctx, buff, uploadWebpFileName, fileHeader.Filename); err != nil {
+
+						if _, err := u.bucket.UploadFile(ctx, buff, uploadWebpFileName, strings.ReplaceAll(fileHeader.Filename, ext, "")+".webp"); err != nil {
 							return err
 						}
 					}
@@ -219,7 +220,7 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 								return err
 							}
 							resizeWebpFileName := u.bucketPath(conf, fmt.Sprintf("%s_thumb_webp%s", fileUID, ext))
-							_, err = u.bucket.UploadFile(ctx, webpImage, resizeWebpFileName, fileHeader.Filename)
+							_, err = u.bucket.UploadFile(ctx, webpImage, resizeWebpFileName, strings.ReplaceAll(fileHeader.Filename, ext, "")+".webp")
 							if err != nil {
 								return err
 							}
