@@ -248,22 +248,11 @@ func (u UploadMiddleware) createThumbnail(c UploadConfig, file io.Reader, ext st
 		Quality:  75,
 	}
 
-	if Extension(ext) == JPGFile || Extension(ext) == JPEGFile {
+	if Extension(ext) == JPGFile || Extension(ext) == JPEGFile || Extension(ext) == PNGFile {
 		if err := webp.Encode(buff, resizeImage, options); err != nil {
 			return nil, err
-		} else {
-
-			// jpeg.Encode(buff, resizeImage, nil)
 		}
 
 	}
-	if Extension(ext) == PNGFile {
-		if err := webp.Encode(buff, resizeImage, options); err != nil {
-			return nil, err
-		} else {
-			//png.Encode(buff, resizeImage)
-		}
-	}
-
 	return buff, nil
 }
