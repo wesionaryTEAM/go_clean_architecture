@@ -12,51 +12,31 @@ import (
 //Migrations -> Migration Struct
 type Migrations struct {
 	logger lib.Logger
-	env    lib.Env
+	db     Database
 }
 
 //NewMigrations -> return new Migrations struct
 func NewMigrations(
 	logger lib.Logger,
-	env lib.Env,
+	db Database,
 ) Migrations {
 	return Migrations{
 		logger: logger,
-		env:    env,
+		db:     db,
 	}
 }
 
 //Migrate -> migrates all table
 func (m Migrations) Migrate() {
-	m.logger.Info("Migrating schemas...")
-
-	USER := m.env.DBUsername
-	PASS := m.env.DBPassword
-	HOST := m.env.DBHost
-	PORT := m.env.DBPort
-	DBNAME := m.env.DBName
-	ENVIRONMENT := m.env.Environment
-
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", USER, PASS, HOST, PORT, DBNAME)
-
-	if ENVIRONMENT != "local" {
-		dsn = fmt.Sprintf(
-			"%s:%s@unix(/cloudsql/%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-			USER,
-			PASS,
-			HOST,
-			DBNAME,
-		)
-	}
-
-	migrations, err := migrate.New("file://migration/", "mysql://"+dsn)
+	migrations, err := migrate.New("file://migration/", "mysql://"+m.db.dsn)
 	if err != nil {
 		m.logger.Error("error in migration", err.Error())
+		m.logger.Panic(err)
 	}
 
 	m.logger.Info("--- Running Migration ---")
 	err = migrations.Steps(1000)
 	if err != nil {
-		m.logger.Error("Error in migration: ", err.Error())
+		fmt.Println("Error in migration: ", err)
 	}
 }
