@@ -110,7 +110,7 @@ func (cfg UploadConfig) ThumbEnable(enable bool) UploadConfig {
 }
 
 // WEBpEnabled enable thumbnail generation
-func (cfg UploadConfig) Webp(enable bool) UploadConfig {
+func (cfg UploadConfig) WebpEnable(enable bool) UploadConfig {
 	cfg.WebpEnabled = enable
 	return cfg
 }
