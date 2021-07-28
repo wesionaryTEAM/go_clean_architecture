@@ -40,6 +40,7 @@ func bootstrap(
 	logger lib.Logger,
 	cliApp cli.Application,
 	database infrastructure.Database,
+	migrations infrastructure.Migrations,
 ) {
 
 	appStop := func(context.Context) error {
@@ -69,6 +70,9 @@ func bootstrap(
 			logger.Info("-------------------------------------")
 			logger.Info("------- clean-architecture 📺 -------")
 			logger.Info("-------------------------------------")
+
+			logger.Info("Migrating database schemas")
+			migrations.Migrate()
 
 			go func() {
 				middlewares.Setup()
