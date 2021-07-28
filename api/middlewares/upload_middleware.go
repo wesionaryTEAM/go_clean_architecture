@@ -193,8 +193,6 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 
 				if conf.ThumbnailEnabled {
 					thumbReader := bytes.NewReader(fileByte)
-					errGroup, ctx := errgroup.WithContext(c.Request.Context())
-
 					errGroup.Go(func() error {
 						e := Extension(ext)
 						properExtension := e == JPEGFile || e == JPGFile || e == PNGFile
