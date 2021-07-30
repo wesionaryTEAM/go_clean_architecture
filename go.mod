@@ -6,11 +6,11 @@ require (
 	cloud.google.com/go/firestore v1.2.0
 	cloud.google.com/go/storage v1.10.0
 	firebase.google.com/go v3.13.0+incompatible
-	github.com/chai2010/webp v1.1.0 // indirect
+	github.com/chai2010/webp v1.1.0
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/getsentry/sentry-go v0.6.1
 	github.com/gin-contrib/cors v1.3.1
-	github.com/gin-gonic/gin v1.6.3
+	github.com/gin-gonic/gin v1.7.0
 	github.com/golang-migrate/migrate/v4 v4.14.1
 	github.com/google/uuid v1.1.2
 	github.com/joho/godotenv v1.3.0
