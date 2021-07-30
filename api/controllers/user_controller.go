@@ -57,7 +57,6 @@ func (u UserController) GetUser(c *gin.Context) {
 // SaveUser saves the user
 func (u UserController) SaveUser(c *gin.Context) {
 	user := models.User{}
-
 	if err := c.ShouldBindJSON(&user); err != nil {
 		u.logger.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
