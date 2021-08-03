@@ -2,9 +2,11 @@ package lib
 
 import (
 	"context"
+	"io"
 	"os"
 	"time"
 
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
@@ -12,15 +14,27 @@ import (
 )
 
 var globalLog *Logger
+var zapLogger *zap.Logger
 
 // Logger structure
 type Logger struct {
 	*zap.SugaredLogger
 }
 
+// GormLogger logger for gorm logging [subbed from main logger]
 type GormLogger struct {
 	*Logger
 	gormlogger.Config
+}
+
+// FxLogger logger for go-fx [subbed from main logger]
+type FxLogger struct {
+	*Logger
+}
+
+// GinLogger logger for gin framework [subbed from main logger]
+type GinLogger struct {
+	*Logger
 }
 
 // GetLogger gets the global instance of the logger
@@ -32,7 +46,7 @@ func GetLogger() Logger {
 	return *globalLog
 }
 
-// NewLogger sets up logger
+// newLogger sets up logger the main logger
 func newLogger() *Logger {
 
 	env := os.Getenv("ENVIRONMENT")
@@ -44,9 +58,9 @@ func newLogger() *Logger {
 		config.Level.SetLevel(zap.PanicLevel)
 	}
 
-	logger, _ := config.Build()
+	zapLogger, _ = config.Build()
 
-	globalLog := logger.Sugar()
+	globalLog := zapLogger.Sugar()
 
 	return &Logger{
 		SugaredLogger: globalLog,
@@ -54,13 +68,45 @@ func newLogger() *Logger {
 
 }
 
-// GetGormLogger build gorm logger from zap logger
+func newSugaredLogger(logger *zap.Logger) *Logger {
+	return &Logger{
+		SugaredLogger: logger.Sugar(),
+	}
+}
+
+// GetGormLogger build gorm logger from zap logger (sub-logger)
 func (l *Logger) GetGormLogger() gormlogger.Interface {
+
+	logger := zapLogger.WithOptions(
+		zap.AddCaller(),
+		zap.AddCallerSkip(3),
+	)
+
 	return &GormLogger{
-		Logger: l,
+		Logger: newSugaredLogger(logger),
 		Config: gormlogger.Config{
 			LogLevel: gormlogger.Info,
 		},
+	}
+}
+
+// GetFxLogger gets logger for go-fx
+func (l *Logger) GetFxLogger() fx.Printer {
+	logger := zapLogger.WithOptions(
+		zap.WithCaller(false),
+	)
+	return FxLogger{
+		Logger: newSugaredLogger(logger),
+	}
+}
+
+// GetGinLogger gets logger for gin framework debugging
+func (l *Logger) GetGinLogger() io.Writer {
+	logger := zapLogger.WithOptions(
+		zap.WithCaller(false),
+	)
+	return GinLogger{
+		Logger: newSugaredLogger(logger),
 	}
 }
 
@@ -121,6 +167,12 @@ func (l GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (strin
 }
 
 // Printf prints go-fx logs
-func (l Logger) Printf(str string, args ...interface{}) {
+func (l FxLogger) Printf(str string, args ...interface{}) {
 	l.Infof(str, args)
+}
+
+// Writer interface implementation for gin-framework
+func (l GinLogger) Write(p []byte) (n int, err error) {
+	l.Info(string(p))
+	return len(p), nil
 }

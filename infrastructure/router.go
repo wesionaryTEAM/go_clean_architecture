@@ -3,7 +3,6 @@ package infrastructure
 import (
 	"clean-architecture/lib"
 	"clean-architecture/utils"
-	"fmt"
 	"net/http"
 
 	"github.com/getsentry/sentry-go"
@@ -18,18 +17,23 @@ type Router struct {
 }
 
 //NewRouter : all the routes are defined here
-func NewRouter(env lib.Env) Router {
+func NewRouter(
+	env lib.Env,
+	logger lib.Logger,
+) Router {
 
 	if env.Environment != "local" && env.SentryDSN != "" {
 		if err := sentry.Init(sentry.ClientOptions{
 			Dsn:         env.SentryDSN,
 			Environment: `clean-backend-` + env.Environment,
 		}); err != nil {
-			fmt.Printf("Sentry initialization failed: %v\n", err)
+			logger.Infof("Sentry initialization failed: %v\n", err)
 		}
 	}
 
+	gin.DefaultWriter = logger.GetGinLogger()
 	httpRouter := gin.Default()
+
 	httpRouter.MaxMultipartMemory = env.MaxMultipartMemory
 
 	httpRouter.Use(cors.New(cors.Config{

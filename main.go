@@ -12,5 +12,5 @@ func main() {
 	godotenv.Load()
 
 	logger := lib.GetLogger()
-	fx.New(bootstrap.Module, fx.Logger(logger)).Run()
+	fx.New(bootstrap.Module, fx.Logger(logger.GetFxLogger())).Run()
 }
