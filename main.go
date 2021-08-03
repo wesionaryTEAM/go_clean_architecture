@@ -2,6 +2,7 @@ package main
 
 import (
 	"clean-architecture/bootstrap"
+	"clean-architecture/lib"
 
 	"github.com/joho/godotenv"
 	"go.uber.org/fx"
@@ -10,5 +11,6 @@ import (
 func main() {
 	godotenv.Load()
 
-	fx.New(bootstrap.Module).Run()
+	logger := lib.GetLogger()
+	fx.New(bootstrap.Module, fx.Logger(logger)).Run()
 }
