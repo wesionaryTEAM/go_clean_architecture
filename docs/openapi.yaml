@@ -1,0 +1,22 @@
+openapi: 3.0.0
+info:
+  title: API documentation
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000/
+tags:
+  - name: User
+paths:
+  /api/user:
+    $ref: './resources/user.yaml#/UserPath'
+  /api/user/{id}:
+    $ref: './resources/user.yaml#/UserPathWithID'
+
+components:
+  schemas:
+    User:
+      $ref: './schemas/user_schema.yaml'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
