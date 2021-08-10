@@ -41,15 +41,11 @@ services:
     image: swaggerapi/swagger-ui
     container_name: swagger-ui
     ports:
-        - "80:8080"
+        - ${SWAGGER_PORT}:8080
     volumes:
         - ./docs:/usr/share/nginx/html/docs
     environment:
         API_URL: docs/openapi.yaml
-        # For multiple specifications
-        # URLS: "[{ url: \"docs/first_openapi.yaml\", name: \"FirstApiSpec\" },
-        #         { url: \"docs/second_openapi.yaml\", name: \"SecondApiSpec\" },
-        #     ]"
 
 volumes:
   clean_db:
