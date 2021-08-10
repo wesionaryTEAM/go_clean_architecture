@@ -37,5 +37,15 @@ services:
     ports:
       - ${ADMINER_PORT}:8080
 
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: swagger-ui
+    ports:
+        - ${SWAGGER_PORT}:8080
+    volumes:
+        - ./docs:/usr/share/nginx/html/docs
+    environment:
+        API_URL: docs/openapi.yaml
+
 volumes:
   clean_db:

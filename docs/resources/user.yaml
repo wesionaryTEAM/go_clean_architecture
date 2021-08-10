@@ -1,0 +1,54 @@
+UserPath:
+  get:
+    tags:
+      - User
+    summary: Get all Users
+    responses:
+      '200':
+        $ref: '../responses/success_response.yaml'
+  post:
+    tags:
+      - User
+    summary: Register New User
+    requestBody:
+         content:
+          application/json:
+            schema:
+              $ref: '../schemas/user_schema.yaml'
+    responses:
+      '200':
+        $ref: '../responses/success_response.yaml'
+UserPathWithID:
+  get:
+    tags:
+      - User
+    summary: Get User by ID
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          example: 20df9163-1d54-46da-b7b6-5fac2bf2c38a
+    responses:
+      '200':
+        $ref : "../responses/success_response.yaml"
+  put:
+    tags:
+      - User
+    summary: Update User
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          example: 20df9163-1d54-46da-b7b6-5fac2bf2c38as
+    requestBody:
+      content:
+        multipart/form-data:
+          schema:
+            $ref: '../schemas/user_schema.yaml'
+    responses:
+      '200':
+        $ref: '../responses/success_response.yaml'

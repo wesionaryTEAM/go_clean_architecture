@@ -1,0 +1,23 @@
+type: object
+required:
+  - name
+  - email
+properties:
+  name:
+    type: string
+    example: User1
+  email:
+    type: string
+    example: user1@email.com
+  age:
+    type: integer
+    format: int
+    example: 20
+  time:
+    type: string
+    example: '2001-02-17T15:04:05Z'
+  member_number:
+    type: string
+  file:
+    type: string
+    format: binary
