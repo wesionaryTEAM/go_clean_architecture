@@ -1,6 +1,8 @@
 
 include .env
 
+RUNNER=docker-compose exec web migrate
+
 ifeq ($(p),host)
  	RUNNER=migrate
  endif
