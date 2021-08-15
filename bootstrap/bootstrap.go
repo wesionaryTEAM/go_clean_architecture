@@ -5,6 +5,7 @@ import (
 	"clean-architecture/api/middlewares"
 	"clean-architecture/api/routes"
 	"clean-architecture/cli"
+	"clean-architecture/cmd"
 	"clean-architecture/infrastructure"
 	"clean-architecture/lib"
 	"clean-architecture/repository"
@@ -55,7 +56,8 @@ func bootstrap(
 			OnStart: func(context.Context) error {
 				logger.Info("Starting hatsu cli Application")
 				logger.Info("------- 🤖 clean-architecture 🤖 (CLI) -------")
-				go cliApp.Start()
+				//go cliApp.Start()
+				go cmd.Execute()
 				return nil
 			},
 			OnStop: appStop,
@@ -73,7 +75,6 @@ func bootstrap(
 
 			logger.Info("Migrating database schemas")
 			migrations.Migrate()
-
 			go func() {
 				middlewares.Setup()
 				routes.Setup()

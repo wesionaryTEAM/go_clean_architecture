@@ -9,5 +9,5 @@ func main() {
 	//
 	//logger := lib.GetLogger()
 	//fx.New(bootstrap.Module, fx.Logger(logger.GetFxLogger())).Run()
-         cmd.Execute()
+	cmd.Execute()
 }
