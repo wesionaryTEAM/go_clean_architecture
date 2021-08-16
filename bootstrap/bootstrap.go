@@ -4,7 +4,6 @@ import (
 	"clean-architecture/api/controllers"
 	"clean-architecture/api/middlewares"
 	"clean-architecture/api/routes"
-	"clean-architecture/cli"
 	"clean-architecture/cmd"
 	"clean-architecture/infrastructure"
 	"clean-architecture/lib"
@@ -25,7 +24,7 @@ var Module = fx.Options(
 	repository.Module,
 	infrastructure.Module,
 	middlewares.Module,
-	cli.Module,
+	cmd.Module,
 	lib.Module,
 	fx.Invoke(bootstrap),
 )
@@ -39,7 +38,7 @@ func bootstrap(
 	env lib.Env,
 	middlewares middlewares.Middlewares,
 	logger lib.Logger,
-	cliApp cli.Application,
+	cobracliApp cmd.RootCommands,
 	database infrastructure.Database,
 	migrations infrastructure.Migrations,
 ) {
@@ -57,7 +56,7 @@ func bootstrap(
 				logger.Info("Starting hatsu cli Application")
 				logger.Info("------- 🤖 clean-architecture 🤖 (CLI) -------")
 				//go cliApp.Start()
-				go cmd.Execute()
+
 				return nil
 			},
 			OnStop: appStop,
@@ -74,7 +73,8 @@ func bootstrap(
 			logger.Info("-------------------------------------")
 
 			logger.Info("Migrating database schemas")
-			migrations.Migrate()
+			//migrations.Migrate()
+			go cobracliApp.Execute()
 			go func() {
 				middlewares.Setup()
 				routes.Setup()

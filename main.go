@@ -1,13 +1,16 @@
 package main
 
 import (
-	"clean-architecture/cmd"
+	"clean-architecture/bootstrap"
+	"clean-architecture/lib"
+	"github.com/joho/godotenv"
+	"go.uber.org/fx"
 )
 
 func main() {
-	//godotenv.Load()
-	//
-	//logger := lib.GetLogger()
-	//fx.New(bootstrap.Module, fx.Logger(logger.GetFxLogger())).Run()
-	cmd.Execute()
+	godotenv.Load()
+
+	logger := lib.GetLogger()
+	fx.New(bootstrap.Module, fx.Logger(logger.GetFxLogger())).Run()
+	//cmd.Execute()
 }
