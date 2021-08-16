@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"clean-architecture/lib"
 	"fmt"
 	"os"
 
@@ -8,11 +9,13 @@ import (
 )
 type RootCommands struct {
 	migrateCommands MigrateCommands
+	logger lib.Logger
 }
 
-func NewRootCommands(migrateCommands MigrateCommands) RootCommands {
+func NewRootCommands(migrateCommands MigrateCommands, logger lib.Logger) RootCommands {
 	return RootCommands{
 		migrateCommands: migrateCommands,
+		logger: logger,
 	}
 }
 
@@ -24,6 +27,7 @@ var rootCmd = &cobra.Command{
 }
 
 func (rc RootCommands) Execute() {
+	rc.logger.Info("Running migration ")
 	rc.migrateCommands.Migrate()
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

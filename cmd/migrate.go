@@ -2,18 +2,20 @@ package cmd
 
 import (
 	"clean-architecture/infrastructure"
+	"clean-architecture/lib"
 	"github.com/spf13/cobra"
 )
 type MigrateCommands struct {
-
 	migration infrastructure.Migrations
+	logger lib.Logger
 }
 func NewMigrateCommands(
-
 	migration infrastructure.Migrations,
+	logger lib.Logger,
 ) MigrateCommands {
 	return MigrateCommands{
 		migration: migration,
+		logger:logger,
 
 	}
 }

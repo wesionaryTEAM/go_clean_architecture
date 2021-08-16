@@ -56,7 +56,6 @@ func bootstrap(
 				logger.Info("Starting hatsu cli Application")
 				logger.Info("------- 🤖 clean-architecture 🤖 (CLI) -------")
 				//go cliApp.Start()
-
 				return nil
 			},
 			OnStop: appStop,
