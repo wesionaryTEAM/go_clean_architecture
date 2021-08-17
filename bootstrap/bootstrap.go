@@ -55,6 +55,7 @@ func bootstrap(
 			OnStart: func(context.Context) error {
 				logger.Info("Starting hatsu cli Application")
 				logger.Info("------- 🤖 clean-architecture 🤖 (CLI) -------")
+				go cobracliApp.Execute()
 				return nil
 			},
 			OnStop: appStop,
@@ -69,10 +70,9 @@ func bootstrap(
 			logger.Info("-------------------------------------")
 			logger.Info("------- clean-architecture 📺 -------")
 			logger.Info("-------------------------------------")
-
 			logger.Info("Migrating database schemas")
-			go cobracliApp.Execute()
-			//migrations.Migrate()
+
+			migrations.Migrate()
 			go func() {
 				middlewares.Setup()
 				routes.Setup()

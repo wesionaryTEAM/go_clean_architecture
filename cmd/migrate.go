@@ -3,7 +3,6 @@ package cmd
 import (
 	"clean-architecture/infrastructure"
 	"clean-architecture/lib"
-	"fmt"
 	"github.com/spf13/cobra"
 )
 type MigrateCommands struct {
@@ -29,7 +28,6 @@ var migrateCmd = &cobra.Command{
 func (mc MigrateCommands) Migrate() {
 	mc.logger.Info("------- 🤖 Running migration via cobra 🤖 (CLI) -------")
 	mc.MigrateUp()
-	fmt.Println("anc")
 	rootCmd.AddCommand(migrateCmd)
 }
 
