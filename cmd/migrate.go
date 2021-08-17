@@ -3,6 +3,7 @@ package cmd
 import (
 	"clean-architecture/infrastructure"
 	"clean-architecture/lib"
+	"fmt"
 	"github.com/spf13/cobra"
 )
 type MigrateCommands struct {
@@ -22,11 +23,13 @@ func NewMigrateCommands(
 var migrateCmd = &cobra.Command{
 	Use:   "migrate",
 	Short: "migrate cmd is used for database migration",
-	Long:  `migrate cmd is used for database migration: migrate < up | down >`,
+	Long:  `migrate cmd is used for database migration: migrate < up >`,
 }
 
 func (mc MigrateCommands) Migrate() {
+	mc.logger.Info("------- 🤖 Running migration via cobra 🤖 (CLI) -------")
 	mc.MigrateUp()
+	fmt.Println("anc")
 	rootCmd.AddCommand(migrateCmd)
 }
 

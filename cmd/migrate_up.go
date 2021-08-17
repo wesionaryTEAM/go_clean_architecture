@@ -11,7 +11,7 @@ func(cm MigrateCommands) MigrateUp(){
 		Short: "migrate up cmd",
 		Long:  `Command to install version 1 of our application`,
 		Run: func(cmd *cobra.Command, args []string) {
-			cm.logger.Info("Running migrate up command")
+			cm.logger.Info("------ 🤖 Running migrate up command 🤖 ------")
 			cm.migration.Migrate()
 		},
 
