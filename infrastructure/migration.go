@@ -4,9 +4,7 @@ import (
 	"clean-architecture/lib"
 	"fmt"
 
-	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/mysql"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
+	migrate "github.com/rubenv/sql-migrate"
 )
 
 //Migrations -> Migration Struct
@@ -28,14 +26,17 @@ func NewMigrations(
 
 //Migrate -> migrates all table
 func (m Migrations) Migrate() {
-	migrations, err := migrate.New("file://migration/", "mysql://"+m.db.dsn)
+	migrations := &migrate.FileMigrationSource{
+		Dir: "migration/",
+	}
+
+	sqlDB, err := m.db.DB.DB()
 	if err != nil {
 		m.logger.Error("error in migration", err.Error())
 		m.logger.Panic(err)
 	}
 
-	m.logger.Info("--- Running Migration ---")
-	err = migrations.Steps(1000)
+	_, err = migrate.Exec(sqlDB, "mysql", migrations, migrate.Up)
 	if err != nil {
 		fmt.Println("Error in migration: ", err)
 	}
