@@ -37,6 +37,7 @@ type RootCommand struct {
 	commands []Command
 }
 
+// NewRootCommand creates new root command
 func NewRootCommand(
 	logger lib.Logger,
 	randomCmd cli.RandomCommand,
@@ -52,6 +53,7 @@ func NewRootCommand(
 	return cmd
 }
 
+// InitCommands initializes the command and sub-commands
 func (r RootCommand) InitCommands() {
 	for _, c := range r.commands {
 		cmd := c.GetCommand()
