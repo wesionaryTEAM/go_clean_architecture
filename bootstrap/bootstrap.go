@@ -39,7 +39,6 @@ func bootstrap(
 	routes routes.Routes,
 	logger lib.Logger,
 	database infrastructure.Database,
-	migrations infrastructure.Migrations,
 	rootCmd cmd.RootCommand,
 ) {
 	lifecycle.Append(fx.Hook{
