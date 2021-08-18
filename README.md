@@ -5,19 +5,20 @@ Clean Architecture with Golang with Dependency Injection
 ### Run Migration Commands
 > ⚓️ &nbsp; Add argument `p=host` after `make` if you want to run the migration runner from the host environment instead of docker environment. example; `make p=host migrate-up`
 
-If you are not using docker; ensure that migrate is installed to use migration from the host environment. Browse https://github.com/golang-migrate/migrate/tree/master/cmd/migrate#installation to install migrate and run migrate command.
+If you are not using docker; ensure that sql-migrate is installed to use migration from the host environment.
+To install sql-migrate:
+> go get -v github.com/rubenv/sql-migrate/...
 
 <details>
     <summary>Migration commands available</summary>
 
-| Command             | Desc                                           |
-| ------------------- | ---------------------------------------------- |
-| `make migrate-up`   | runs migration up command                      |
-| `make migrate-down` | runs migration down command                    |
-| `make force`        | Set particular version but don't run migration |
-| `make goto`         | Migrate to particular version                  |
-| `make drop`         | Drop everything inside database                |
-| `make create`       | Create new migration file(up & down)           |
+| Command              | Desc                                                       |
+| -------------------- | ---------------------------------------------------------- |
+| `make migrate-status`| Show migration status                                      |
+| `make migrate-up`    | Migrates the database to the most recent version available |
+| `make migrate-down`  | Undo a database migration                                  |
+| `make redo`          | Reapply the last migration                                 |
+| `make create`        | Create new migration file                                  |
 
 </details>
 
