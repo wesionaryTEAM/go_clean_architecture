@@ -1,13 +1,13 @@
 package cmd
 
-
-
 import (
-"go.uber.org/fx"
+	"clean-architecture/cmd/cli"
+
+	"go.uber.org/fx"
 )
 
 // Module exports dependency
 var Module = fx.Options(
-	fx.Provide(NewRootCommands),
-	fx.Provide(NewMigrateCommands),
+	fx.Provide(NewRootCommand),
+	cli.Module,
 )

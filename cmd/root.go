@@ -1,40 +1,70 @@
 package cmd
 
 import (
+	"clean-architecture/cmd/cli"
 	"clean-architecture/lib"
-	"fmt"
-	"os"
 
 	"github.com/spf13/cobra"
 )
-type RootCommands struct {
-	migrateCommands MigrateCommands
-	logger lib.Logger
-}
-
-func NewRootCommands(migrateCommands MigrateCommands, logger lib.Logger) RootCommands {
-	return RootCommands{
-		migrateCommands: migrateCommands,
-		logger: logger,
-	}
-}
 
 var rootCmd = &cobra.Command{
 	Use:   "clean-architecture",
-	Short: "Root command for our application",
-	Long:  `Root command for our application`,
-
+	Short: "Commander for clean architecture",
+	Long: `
+		This is a command runner or cli for api architecture in golang. 
+		Using this we can use underlying dependency injection container for running scripts. 
+		Main advantage is that, we can use same services, repositories, infrastructure present in the application itself`,
+	TraverseChildren: true,
 }
 
-func (rc RootCommands) Execute() {
-	rc.logger.Info("Running root command of our application")
-	rc.migrateCommands.Migrate()
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+// Command command interface
+type Command interface {
+
+	// Init initializes the command by default only run commands are initilialized
+	Init()
+
+	// GetCommand gets the underlying cobra instance
+	GetCommand() *cobra.Command
+
+	// Run runs the command
+	Run(cmd *cobra.Command, args []string)
+}
+
+// RootCommand root of the application
+type RootCommand struct {
+	*cobra.Command
+	logger   lib.Logger
+	commands []Command
+}
+
+func NewRootCommand(
+	logger lib.Logger,
+	randomCmd cli.RandomCommand,
+) RootCommand {
+	cmd := RootCommand{
+		Command: rootCmd,
+		logger:  logger,
+		commands: []Command{
+			&randomCmd,
+		},
+	}
+	cmd.InitCommands()
+	return cmd
+}
+
+func (r RootCommand) InitCommands() {
+	for _, c := range r.commands {
+		cmd := c.GetCommand()
+		if cmd != nil {
+			cmd.Run = c.Run
+			c.Init()
+		}
+	}
+
+	for _, c := range r.commands {
+		cmd := c.GetCommand()
+		if cmd != nil {
+			rootCmd.AddCommand(cmd)
+		}
 	}
 }
-
-
-
-
