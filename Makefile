@@ -1,33 +1,30 @@
-
 include .env
+export
 
-RUNNER=docker-compose exec web migrate
+MIGRATE=docker-compose exec web sql-migrate
 
 ifeq ($(p),host)
- 	RUNNER=migrate
- endif
+ 	MIGRATE=sql-migrate
+endif
 
-MIGRATE=$(RUNNER) -path=migration -database "mysql://$(DB_USER):$(DB_PASS)@tcp($(DB_HOST):$(DB_PORT))/$(DB_NAME)" -verbose
+migrate-status:
+	$(MIGRATE) status
 
 migrate-up:
-		$(MIGRATE) up
+	$(MIGRATE) up
 
 migrate-down:
-		$(MIGRATE) down 
+	$(MIGRATE) down 
 
-force:
-		@read -p  "Which version do you want to force?" VERSION; \
-		$(MIGRATE) force $$VERSION
-
-goto:
-		@read -p  "Which version do you want to migrate?" VERSION; \
-		$(MIGRATE) goto $$VERSION
-
-drop:
-		$(MIGRATE) drop
+redo:
+	@read -p  "Are you sure to reapply the last migration? [y/n]" -n 1 -r; \
+	if [[ $$REPLY =~ ^[Yy] ]]; \
+	then \
+		$(MIGRATE) redo; \
+	fi
 
 create:
-		@read -p  "What is the name of migration?" NAME; \
-		${MIGRATE} create -ext sql -dir migration  $$NAME
+	@read -p  "What is the name of migration?" NAME; \
+	${MIGRATE} new $$NAME
 
-.PHONY: migrate-up migrate-down force goto drop create
+.PHONY: migrate-status migrate-up migrate-down redo create

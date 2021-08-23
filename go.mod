@@ -10,13 +10,13 @@ require (
 	github.com/getsentry/sentry-go v0.6.1
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.0
-	github.com/golang-migrate/migrate/v4 v4.14.1
 	github.com/google/uuid v1.1.2
 	github.com/joho/godotenv v1.3.0
-	github.com/manifoldco/promptui v0.8.0
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
+	github.com/rubenv/sql-migrate v0.0.0-20210614095031-55d5740dbbcc
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.8.1
+	github.com/ziutek/mymysql v1.5.4 // indirect
 	go.uber.org/fx v1.13.1
 	go.uber.org/zap v1.17.0
 	golang.org/x/oauth2 v0.0.0-20210402161424-2e8d93401602
