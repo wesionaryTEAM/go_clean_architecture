@@ -29,7 +29,7 @@ To install sql-migrate:
     > Assumes: Docker is already installed in the machine. 
 
 ## Checking API documents with swagger UI
-Browse to http://localhost:${SWAGGER_PORT}
+Browse to `http://localhost:${SWAGGER_PORT}`
 - You can see all the documented endpoints in Swagger-UI from the API specification
 - You can execute/test endpoint
 You can read the article to know more on this: https://medium.com/wesionary-team/swagger-ui-on-docker-for-testing-rest-apis-5b3d5fcdee7
