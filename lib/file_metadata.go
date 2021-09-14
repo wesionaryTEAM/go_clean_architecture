@@ -19,3 +19,13 @@ func (f UploadedFiles) GetFile(fieldName string) UploadMetadata {
 	}
 	return UploadMetadata{}
 }
+
+func (f UploadedFiles) GetMultipleFiles(fieldName string) []UploadMetadata {
+	var files []UploadMetadata
+	for _, file := range f {
+		if file.FieldName == fieldName {
+			files = append(files, file)
+		}
+	}
+	return files
+}
