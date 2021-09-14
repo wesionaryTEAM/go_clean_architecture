@@ -87,6 +87,7 @@ func (u UploadMiddleware) Config() UploadConfig {
 		Extensions:       []Extension{JPEGFile, PNGFile, JPGFile},
 		ThumbnailEnabled: false,
 		ThumbnailWidth:   100,
+		Multiple:         false,
 	}
 }
 
