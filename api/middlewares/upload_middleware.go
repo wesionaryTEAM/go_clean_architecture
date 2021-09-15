@@ -133,8 +133,6 @@ func (u UploadMiddleware) Push(config UploadConfig) UploadMiddleware {
 	return u
 }
 
-var uploadedFiles []lib.UploadMetadata
-
 // Handle handles file upload
 func (u UploadMiddleware) Handle() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -144,6 +142,8 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 		}
 
 		errGroup, ctx := errgroup.WithContext(c.Request.Context())
+
+		var uploadedFiles []lib.UploadMetadata
 
 		for i := range u.config {
 			conf := u.config[i]
@@ -159,7 +159,7 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 					}
 					defer file.Close()
 
-					err = u.uploadFile(errGroup, ctx, conf, file, files[j])
+					err = u.uploadFile(errGroup, ctx, conf, file, files[j], &uploadedFiles)
 					if err != nil {
 						u.logger.Error("file-upload-error: ", err.Error())
 						responses.ErrorJSON(c, http.StatusInternalServerError, err.Error())
@@ -169,10 +169,10 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 				}
 			} else {
 				file, fileHeader, _ := c.Request.FormFile(conf.FieldName)
-				err := u.uploadFile(errGroup, ctx, conf, file, fileHeader)
+				err := u.uploadFile(errGroup, ctx, conf, file, fileHeader, &uploadedFiles)
 				if err != nil {
 					u.logger.Error("file-upload-error: ", err.Error())
-					responses.ErrorJSON(c, http.StatusInternalServerError, ErrExtensionMismatch.Error())
+					responses.ErrorJSON(c, http.StatusInternalServerError, err.Error())
 					c.Abort()
 					return
 				}
@@ -196,7 +196,7 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 	}
 }
 
-func (u UploadMiddleware) uploadFile(errGroup *errgroup.Group, ctx context.Context, conf UploadConfig, file multipart.File, fileHeader *multipart.FileHeader) error {
+func (u UploadMiddleware) uploadFile(errGroup *errgroup.Group, ctx context.Context, conf UploadConfig, file multipart.File, fileHeader *multipart.FileHeader, uploadedFiles *[]lib.UploadMetadata) error {
 	if file != nil && fileHeader != nil {
 		ext := filepath.Ext(fileHeader.Filename)
 		if !u.matchesExtension(conf, ext) {
@@ -212,7 +212,7 @@ func (u UploadMiddleware) uploadFile(errGroup *errgroup.Group, ctx context.Conte
 		fileReader := bytes.NewReader(fileByte)
 		errGroup.Go(func() error {
 			urlResponse, err := u.bucket.UploadFile(ctx, fileReader, uploadFileName, fileHeader.Filename)
-			uploadedFiles = append(uploadedFiles, lib.UploadMetadata{
+			*uploadedFiles = append(*uploadedFiles, lib.UploadMetadata{
 				FieldName: conf.FieldName,
 				FileName:  fileHeader.Filename,
 				URL:       urlResponse,
