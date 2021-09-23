@@ -145,13 +145,12 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 
 		var uploadedFiles []lib.UploadMetadata
 
-		for i := range u.config {
-			conf := u.config[i]
+		for _, conf := range u.config {
 			if conf.Multiple {
 				form, _ := c.MultipartForm()
 				files := form.File[conf.FieldName]
-				for j := range files {
-					file, err := files[j].Open()
+				for _, fileHeader := range files {
+					file, err := fileHeader.Open()
 					if err != nil {
 						responses.ErrorJSON(c, http.StatusInternalServerError, err)
 						c.Abort()
@@ -159,7 +158,7 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 					}
 					defer file.Close()
 
-					err = u.uploadFile(errGroup, ctx, conf, file, files[j], &uploadedFiles)
+					err = u.uploadFile(errGroup, ctx, conf, file, fileHeader, &uploadedFiles)
 					if err != nil {
 						u.logger.Error("file-upload-error: ", err.Error())
 						responses.ErrorJSON(c, http.StatusInternalServerError, err.Error())
@@ -196,102 +195,113 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 	}
 }
 
-func (u UploadMiddleware) uploadFile(errGroup *errgroup.Group, ctx context.Context, conf UploadConfig, file multipart.File, fileHeader *multipart.FileHeader, uploadedFiles *[]lib.UploadMetadata) error {
-	if file != nil && fileHeader != nil {
-		ext := filepath.Ext(fileHeader.Filename)
-		if !u.matchesExtension(conf, ext) {
-			return ErrExtensionMismatch
-		}
+func (u UploadMiddleware) uploadFile(
+	errGroup *errgroup.Group,
+	ctx context.Context,
+	conf UploadConfig,
+	file multipart.File,
+	fileHeader *multipart.FileHeader,
+	uploadedFiles *[]lib.UploadMetadata,
+) error {
 
-		fileByte, err := ioutil.ReadAll(file)
-		if err != nil {
-			return ErrFileRead
-		}
+	if file == nil || fileHeader == nil {
+		u.logger.Info("file and fileheader nil value is passed")
+		return nil
+	}
 
-		uploadFileName, fileUID := u.randomFileName(conf, ext)
-		fileReader := bytes.NewReader(fileByte)
+	ext := strings.ToLower(filepath.Ext(fileHeader.Filename))
+	if !u.matchesExtension(conf, ext) {
+		return ErrExtensionMismatch
+	}
+
+	fileByte, err := ioutil.ReadAll(file)
+	if err != nil {
+		return ErrFileRead
+	}
+
+	uploadFileName, fileUID := u.randomFileName(conf, ext)
+	fileReader := bytes.NewReader(fileByte)
+	errGroup.Go(func() error {
+		urlResponse, err := u.bucket.UploadFile(ctx, fileReader, uploadFileName, fileHeader.Filename)
+		*uploadedFiles = append(*uploadedFiles, lib.UploadMetadata{
+			FieldName: conf.FieldName,
+			FileName:  fileHeader.Filename,
+			URL:       urlResponse,
+			FileUID:   fileUID,
+			Size:      fileHeader.Size,
+		})
+		return err
+	})
+
+	// original image
+	if conf.WebpEnabled && u.properExtension(ext) {
+		origWebpReader := bytes.NewReader(fileByte)
 		errGroup.Go(func() error {
-			urlResponse, err := u.bucket.UploadFile(ctx, fileReader, uploadFileName, fileHeader.Filename)
-			*uploadedFiles = append(*uploadedFiles, lib.UploadMetadata{
-				FieldName: conf.FieldName,
-				FileName:  fileHeader.Filename,
-				URL:       urlResponse,
-				FileUID:   fileUID,
-				Size:      fileHeader.Size,
-			})
-			return err
+			var webpBuf bytes.Buffer
+			img, err := u.getImage(origWebpReader, ext)
+			if err != nil {
+				return err
+			}
+
+			if err := webp.Encode(&webpBuf, img, &webp.Options{Lossless: true}); err != nil {
+				return err
+			}
+
+			webpReader := bytes.NewReader(webpBuf.Bytes())
+			resizeFileName := u.bucketPath(conf, fmt.Sprintf("%s_webp%s", fileUID, ext))
+
+			if _, err := u.bucket.UploadFile(ctx, webpReader, resizeFileName, strings.ReplaceAll(fileHeader.Filename, ext, "")+".webp"); err != nil {
+				return err
+			}
+
+			return nil
+		})
+	}
+
+	if conf.ThumbnailEnabled {
+		thumbReader := bytes.NewReader(fileByte)
+		errGroup.Go(func() error {
+			if !u.properExtension(ext) {
+				return ErrExtensionMismatch
+			}
+			// Genrate non-webp thumbnail
+			img, err := u.createThumbnail(conf, thumbReader, ext)
+			if err != nil {
+				return err
+			}
+
+			resizeFileName := u.bucketPath(conf, fmt.Sprintf("%s_thumb%s", fileUID, ext))
+			_, err = u.bucket.UploadFile(ctx, img, resizeFileName, fileHeader.Filename)
+			if err != nil {
+				return err
+			}
+			return nil
 		})
 
-		// original image
 		if conf.WebpEnabled && u.properExtension(ext) {
-			origWebpReader := bytes.NewReader(fileByte)
+			webpReader := bytes.NewReader(fileByte)
 			errGroup.Go(func() error {
 				var webpBuf bytes.Buffer
-				img, err := u.getImage(origWebpReader, ext)
+				img, err := u.getImage(webpReader, ext)
 				if err != nil {
 					return err
 				}
 
-				if err := webp.Encode(&webpBuf, img, &webp.Options{Lossless: true}); err != nil {
+				resizeImage := resize.Resize(conf.ThumbnailWidth, 0, img, resize.Lanczos3)
+				if err := webp.Encode(&webpBuf, resizeImage, &webp.Options{Lossless: true}); err != nil {
 					return err
 				}
 
 				webpReader := bytes.NewReader(webpBuf.Bytes())
-				resizeFileName := u.bucketPath(conf, fmt.Sprintf("%s_webp%s", fileUID, ext))
+				resizeFileName := u.bucketPath(conf, fmt.Sprintf("%s_thumb%s", fileUID, ".webp"))
 
-				if _, err := u.bucket.UploadFile(ctx, webpReader, resizeFileName, strings.ReplaceAll(fileHeader.Filename, ext, "")+".webp"); err != nil {
+				_, err = u.bucket.UploadFile(ctx, webpReader, resizeFileName, fileHeader.Filename)
+				if err != nil {
 					return err
 				}
 
 				return nil
 			})
-		}
-
-		if conf.ThumbnailEnabled {
-			thumbReader := bytes.NewReader(fileByte)
-			errGroup.Go(func() error {
-				if !u.properExtension(ext) {
-					return ErrExtensionMismatch
-				}
-				// Genrate non-webp thumbnail
-				img, err := u.createThumbnail(conf, thumbReader, ext)
-				if err != nil {
-					return err
-				}
-
-				resizeFileName := u.bucketPath(conf, fmt.Sprintf("%s_thumb%s", fileUID, ext))
-				_, err = u.bucket.UploadFile(ctx, img, resizeFileName, fileHeader.Filename)
-				if err != nil {
-					return err
-				}
-				return nil
-			})
-
-			if conf.WebpEnabled && u.properExtension(ext) {
-				webpReader := bytes.NewReader(fileByte)
-				errGroup.Go(func() error {
-					var webpBuf bytes.Buffer
-					img, err := u.getImage(webpReader, ext)
-					if err != nil {
-						return err
-					}
-
-					resizeImage := resize.Resize(conf.ThumbnailWidth, 0, img, resize.Lanczos3)
-					if err := webp.Encode(&webpBuf, resizeImage, &webp.Options{Lossless: true}); err != nil {
-						return err
-					}
-
-					webpReader := bytes.NewReader(webpBuf.Bytes())
-					resizeFileName := u.bucketPath(conf, fmt.Sprintf("%s_thumb%s", fileUID, ".webp"))
-
-					_, err = u.bucket.UploadFile(ctx, webpReader, resizeFileName, fileHeader.Filename)
-					if err != nil {
-						return err
-					}
-
-					return nil
-				})
-			}
 		}
 	}
 	return nil
