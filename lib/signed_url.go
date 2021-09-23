@@ -53,7 +53,9 @@ func (s SignedURL) getObjectSignedURL() (string, error) {
 		PrivateKey:     conf.PrivateKey,
 		Expires:        time.Now().Add(15 * time.Minute),
 	}
-
+	if s == "" {
+		return "", nil
+	}
 	u, err := storage.SignedURL(bucketName, string(s), opts)
 
 	if err != nil {
