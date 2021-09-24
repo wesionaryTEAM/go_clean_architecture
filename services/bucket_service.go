@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/url"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -119,6 +120,8 @@ func (s BucketService) GetObjectSignedURL(
 func (s BucketService) RemoveObject(
 	objectName string,
 	bucketName string,
+	thumb bool,
+	webp bool,
 ) error {
 	ctx := context.Background()
 
@@ -126,9 +129,41 @@ func (s BucketService) RemoveObject(
 	defer cancel()
 
 	objectToDelete := s.client.Bucket(bucketName).Object(objectName)
-
-	if err := objectToDelete.Delete(ctx); err != nil {
+	err := objectToDelete.Delete(ctx)
+	if err != nil {
 		return err
+	}
+
+	if thumb || webp {
+		ext := filepath.Ext(objectName)
+		fileName := strings.TrimSuffix(objectName, ext)
+
+		// Remove image thumbnail
+		if thumb {
+			objectToDelete = s.client.Bucket(bucketName).Object(fileName + "_thumb" + ext)
+			err = objectToDelete.Delete(ctx)
+			if err != nil {
+				s.logger.Error("Error while deleting file's thumbnail")
+			}
+		}
+
+		// Remove webp of image
+		if webp {
+			objectToDelete = s.client.Bucket(bucketName).Object(fileName + "_webp" + ext)
+			err = objectToDelete.Delete(ctx)
+			if err != nil {
+				s.logger.Error("Error while deleting file's webp format")
+			}
+
+			// Remove thumbnail of webp image
+			if thumb {
+				objectToDelete = s.client.Bucket(bucketName).Object(fileName + "_thumb" + ".webp")
+				err = objectToDelete.Delete(ctx)
+				if err != nil {
+					s.logger.Error("Error while deleting file's webp thumbnail")
+				}
+			}
+		}
 	}
 
 	return nil

@@ -6,6 +6,7 @@ import (
 	"clean-architecture/models"
 	"clean-architecture/services"
 	"clean-architecture/utils"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -63,6 +64,12 @@ func (u UserController) SaveUser(c *gin.Context) {
 			"error": err.Error(),
 		})
 		return
+	}
+
+	metadata, _ := c.MustGet(constants.File).(lib.UploadedFiles)
+	files := metadata.GetMultipleFiles("files[]")
+	for i := range files {
+		fmt.Println(files[i])
 	}
 
 	if err := u.service.Create(user); err != nil {

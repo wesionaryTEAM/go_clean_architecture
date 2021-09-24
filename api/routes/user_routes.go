@@ -39,7 +39,9 @@ func (s UserRoutes) Setup() {
 	{
 		api.GET("/user", s.userController.GetUser)
 		api.GET("/user/:id", s.userController.GetOneUser)
-		api.POST("/user", s.userController.SaveUser)
+		api.POST("/user",
+			s.uploadMiddleware.Push(s.uploadMiddleware.Config().Field("files[]").ThumbEnable(true).WebpEnable(true).MultipleFilesUpload(true)).Handle(),
+			s.userController.SaveUser)
 		api.PUT("/user/:id",
 			s.uploadMiddleware.Push(s.uploadMiddleware.Config().ThumbEnable(true).WebpEnable(true)).Handle(),
 			s.userController.UpdateUser,
