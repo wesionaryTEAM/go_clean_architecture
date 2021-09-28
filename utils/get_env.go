@@ -7,12 +7,12 @@ import (
 	"github.com/joho/godotenv"
 )
 
-//GetEnvWithKey : get env value
+// GetEnvWithKey : get env value
 func GetEnvWithKey(key string) string {
 	return os.Getenv(key)
 }
 
-//LoadEnv initially load env
+// LoadEnv initially load env
 func LoadEnv() {
 	// load .env file
 	err := godotenv.Load(".env")

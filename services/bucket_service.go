@@ -18,14 +18,14 @@ import (
 type BucketService struct {
 	logger lib.Logger
 	client *storage.Client
-	env    lib.Env
+	env    *lib.Env
 }
 
 // NewBucketService -> initilization for the BucketService struct
 func NewBucketService(
 	logger lib.Logger,
 	client *storage.Client,
-	env lib.Env,
+	env *lib.Env,
 ) BucketService {
 	return BucketService{
 		logger: logger,
@@ -35,7 +35,7 @@ func NewBucketService(
 }
 
 // UploadFile -> uploads the file to the cloud storage
-func (s BucketService) UploadFile(
+func (s *BucketService) UploadFile(
 	ctx context.Context,
 	file io.Reader,
 	fileName string,
@@ -61,11 +61,13 @@ func (s BucketService) UploadFile(
 	wc.ContentType = "application/octet-stream"
 	wc.ContentDisposition = "attachment; filename=" + originalFileName
 
-	if _, err := io.Copy(wc, file); err != nil {
+	_, err = io.Copy(wc, file)
+	if err != nil {
 		return "", err
 	}
 
-	if err := wc.Close(); err != nil {
+	err = wc.Close()
+	if err != nil {
 		return "", err
 	}
 
@@ -83,7 +85,7 @@ func (s BucketService) UploadFile(
 }
 
 // GetObjectSignedURL -> gets the signed url for the stored object
-func (s BucketService) GetObjectSignedURL(
+func (s *BucketService) GetObjectSignedURL(
 	object string,
 ) (string, error) {
 	var bucketName = s.env.StorageBucketName
@@ -117,7 +119,7 @@ func (s BucketService) GetObjectSignedURL(
 }
 
 // RemoveObject -> removes the file from the storage bucket
-func (s BucketService) RemoveObject(
+func (s *BucketService) RemoveObject(
 	objectName string,
 	bucketName string,
 	thumb bool,

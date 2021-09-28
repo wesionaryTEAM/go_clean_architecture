@@ -12,7 +12,7 @@ import (
 )
 
 // NewGmailService -> receive gmail service client
-func NewGmailService(logger lib.Logger, env lib.Env) *gmail.Service {
+func NewGmailService(logger lib.Logger, env *lib.Env) *gmail.Service {
 	ctx := context.Background()
 
 	config := oauth2.Config{
