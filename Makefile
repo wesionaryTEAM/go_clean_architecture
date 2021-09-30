@@ -27,4 +27,12 @@ create:
 	@read -p  "What is the name of migration?" NAME; \
 	${MIGRATE} new $$NAME
 
-.PHONY: migrate-status migrate-up migrate-down redo create
+lint-setup:
+	curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
+	sudo python2 get-pip.py
+	sudo pip install pre-commit
+	rm get-pip.py
+	pre-commit install
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOPATH)/bin v1.42.1
+
+.PHONY: migrate-status migrate-up migrate-down redo create lint-setup
