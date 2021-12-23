@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"clean-architecture/api/responses"
 	"clean-architecture/constants"
 	"clean-architecture/lib"
 	"clean-architecture/models"
@@ -53,15 +54,7 @@ func (u UserController) GetUser(c *gin.Context) {
 		u.logger.Error(err)
 	}
 
-	limit := c.MustGet(constants.Limit).(int64)
-	size := c.MustGet(constants.Page).(int64)
-
-	c.JSON(
-		200,
-		gin.H{
-			"data":       users["data"],
-			"pagination": gin.H{"has_next": (users["count"].(int64) - limit*size) > 0, "count": users["count"]},
-		})
+	responses.JSONWithPagination(c, 200, users)
 }
 
 // SaveUser saves the user
