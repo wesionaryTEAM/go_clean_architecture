@@ -5,13 +5,15 @@ import (
 	"clean-architecture/models"
 	"clean-architecture/repository"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 // UserService service layer
 type UserService struct {
-	logger     lib.Logger
-	repository repository.UserRepository
+	logger          lib.Logger
+	repository      repository.UserRepository
+	paginationScope *gorm.DB
 }
 
 // NewUserService creates a new userservice
@@ -31,14 +33,33 @@ func (u UserService) WithTrx(trxHandle *gorm.DB) UserService {
 	return u
 }
 
+// PaginationScope
+func (u UserService) SetPaginationScope(scope func(*gorm.DB) *gorm.DB) UserService {
+	u.paginationScope = u.repository.WithTrx(u.repository.Scopes(scope)).DB
+	return u
+}
+
 // GetOneUser gets one user
 func (s UserService) GetOneUser(userID lib.BinaryUUID) (user models.User, err error) {
 	return user, s.repository.First(&user, "id = ?", userID).Error
 }
 
 // GetAllUser get all the user
-func (s UserService) GetAllUser() (users []models.User, err error) {
-	return users, s.repository.Find(&users).Error
+func (s UserService) GetAllUser() (response map[string]interface{}, err error) {
+	var users []models.User
+	var count int64
+
+	err = s.repository.WithTrx(s.paginationScope).Find(&users).Error
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.repository.Model(&models.User{}).Count(&count).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return gin.H{"data": users, "count": count}, nil
 }
 
 // UpdateUser updates the user

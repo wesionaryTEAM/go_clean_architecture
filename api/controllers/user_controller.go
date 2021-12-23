@@ -48,11 +48,20 @@ func (u UserController) GetOneUser(c *gin.Context) {
 
 // GetUser gets the user
 func (u UserController) GetUser(c *gin.Context) {
-	users, err := u.service.GetAllUser()
+	users, err := u.service.SetPaginationScope(utils.Paginate(c)).GetAllUser()
 	if err != nil {
 		u.logger.Error(err)
 	}
-	c.JSON(200, gin.H{"data": users})
+
+	limit := c.MustGet(constants.Limit).(int64)
+	size := c.MustGet(constants.Page).(int64)
+
+	c.JSON(
+		200,
+		gin.H{
+			"data":       users["data"],
+			"pagination": gin.H{"has_next": (users["count"].(int64) - limit*size) > 0, "count": users["count"]},
+		})
 }
 
 // SaveUser saves the user
