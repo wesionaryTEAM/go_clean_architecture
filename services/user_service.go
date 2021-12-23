@@ -49,12 +49,7 @@ func (s UserService) GetAllUser() (response map[string]interface{}, err error) {
 	var users []models.User
 	var count int64
 
-	err = s.repository.WithTrx(s.paginationScope).Find(&users).Error
-	if err != nil {
-		return nil, err
-	}
-
-	err = s.repository.Model(&models.User{}).Count(&count).Error
+	err = s.repository.WithTrx(s.paginationScope).Find(&users).Offset(-1).Limit(-1).Count(&count).Error
 	if err != nil {
 		return nil, err
 	}
