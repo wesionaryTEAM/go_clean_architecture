@@ -12,21 +12,18 @@ import (
 
 //DBTransactionMiddleware -> struct for transaction
 type DBTransactionMiddleware struct {
-	handler infrastructure.Router
-	logger  lib.Logger
-	db      infrastructure.Database
+	logger lib.Logger
+	db     infrastructure.Database
 }
 
 //NewDBTransactionMiddleware -> new instance of transaction
 func NewDBTransactionMiddleware(
-	handler infrastructure.Router,
 	logger lib.Logger,
 	db infrastructure.Database,
 ) DBTransactionMiddleware {
 	return DBTransactionMiddleware{
-		handler: handler,
-		logger:  logger,
-		db:      db,
+		logger: logger,
+		db:     db,
 	}
 }
 
