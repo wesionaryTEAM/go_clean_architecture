@@ -13,7 +13,10 @@ import (
 
 // CustomBind custom bind the data
 func CustomBind(source *http.Request, dest interface{}) error {
-	source.ParseMultipartForm(1000)
+	err := source.ParseMultipartForm(1000)
+	if err != nil {
+		return err
+	}
 	if source == nil {
 		return nil
 	}
@@ -32,7 +35,6 @@ func CustomBind(source *http.Request, dest interface{}) error {
 	}
 
 	for i := 0; i < destType.Elem().NumField(); i++ {
-
 		currentField := destType.Elem().Field(i)
 		fieldValue := destValue.Elem().Field(i)
 

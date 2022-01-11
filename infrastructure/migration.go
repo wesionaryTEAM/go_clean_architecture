@@ -7,13 +7,13 @@ import (
 	migrate "github.com/rubenv/sql-migrate"
 )
 
-//Migrations -> Migration Struct
+// Migrations -> Migration Struct
 type Migrations struct {
 	logger lib.Logger
 	db     Database
 }
 
-//NewMigrations -> return new Migrations struct
+// NewMigrations -> return new Migrations struct
 func NewMigrations(
 	logger lib.Logger,
 	db Database,
@@ -24,7 +24,7 @@ func NewMigrations(
 	}
 }
 
-//Migrate -> migrates all table
+// Migrate -> migrates all table
 func (m Migrations) Migrate() {
 	migrations := &migrate.FileMigrationSource{
 		Dir: "migration/",

@@ -13,6 +13,4 @@ func IsCli() bool {
 		}
 	}
 	return false
-
-
 }

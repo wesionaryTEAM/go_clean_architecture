@@ -16,9 +16,9 @@ type Router struct {
 	*gin.Engine
 }
 
-//NewRouter : all the routes are defined here
+// NewRouter : all the routes are defined here
 func NewRouter(
-	env lib.Env,
+	env *lib.Env,
 	logger lib.Logger,
 ) Router {
 

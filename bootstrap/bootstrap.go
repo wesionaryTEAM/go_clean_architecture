@@ -33,10 +33,10 @@ var flushTimeout = 2 * time.Second
 
 func bootstrap(
 	lifecycle fx.Lifecycle,
-	middlewares middlewares.Middlewares,
-	env lib.Env,
+	middleware middlewares.Middlewares,
+	env *lib.Env,
 	router infrastructure.Router,
-	routes routes.Routes,
+	route *routes.Routes,
 	logger lib.Logger,
 	database infrastructure.Database,
 	rootCmd cmd.RootCommand,
@@ -47,12 +47,12 @@ func bootstrap(
 				logger.Info(`+-----------------------+`)
 				logger.Info(`| GO CLEAN ARCHITECTURE |`)
 				logger.Info(`+-----------------------+`)
-				middlewares.Setup()
-				routes.Setup()
+				middleware.Setup()
+				route.Setup()
 				if env.ServerPort == "" {
-					router.Run()
+					_ = router.Run()
 				} else {
-					router.Run(":" + env.ServerPort)
+					_ = router.Run(":" + env.ServerPort)
 				}
 				if env.Environment != "local" && env.SentryDSN != "" {
 					err := sentry.Init(sentry.ClientOptions{
@@ -65,7 +65,7 @@ func bootstrap(
 					}
 				}
 			}
-			go rootCmd.Execute()
+			go rootCmd.Execute() //nolint:errcheck // For better performance
 			return nil
 		},
 		OnStop: func(context.Context) error {

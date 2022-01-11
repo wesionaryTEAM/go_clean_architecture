@@ -1,38 +1,49 @@
-# options for analysis running
-run:
-  # default concurrency is a available CPU number
-  concurrency: 4
-  # timeout for analysis
-  timeout: 1m
-  # exit code when at least one issue was found, default is 1
-  issues-exit-code: 1
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+  goconst:
+    min-len: 2
+    min-occurrences: 3
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+  govet:
+    check-shadowing: true
+  nolintlint:
+    require-explanation: true
+    require-specific: true
 
 linters:
   disable-all: true
   enable:
     - bodyclose
     - deadcode
+    - depguard
     - errcheck
-    - funlen
+    - exportloopref
     - goconst
     - gocritic
+    - gofmt
+    - goimports
     - gocyclo
-    - golint
     - gosec
     - gosimple
     - govet
     - ineffassign
-    - interfacer
-    - lll
     - misspell
     - nakedret
-    - rowserrcheck
+    - prealloc
+    - predeclared
+    - revive
     - staticcheck
     - structcheck
-    - stylecheck
     - typecheck
     - unconvert
     - unparam
-    - unused
     - varcheck
-    - whitespace
+
+run:
+  issues-exit-code: 1
