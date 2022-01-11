@@ -33,6 +33,6 @@ lint-setup:
 	sudo pip install pre-commit
 	rm get-pip.py
 	pre-commit install
-	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.43.0
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOPATH)/bin v1.43.0
 
 .PHONY: migrate-status migrate-up migrate-down redo create lint-setup
