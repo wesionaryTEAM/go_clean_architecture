@@ -64,7 +64,7 @@ func (s UserService) UpdateUser(user *models.User) error {
 
 // DeleteUser deletes the user
 func (s UserService) DeleteUser(uuid lib.BinaryUUID) error {
-	return s.repository.Delete(&models.User{}, uuid).Error
+	return s.repository.Where("id = ?", uuid).Delete(&models.User{}).Error
 }
 
 // DeleteUser deletes the user
