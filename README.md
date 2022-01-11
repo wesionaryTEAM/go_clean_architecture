@@ -41,13 +41,6 @@ Browse to `http://localhost:${SWAGGER_PORT}`
 You can read the article to know more on this: https://medium.com/wesionary-team/swagger-ui-on-docker-for-testing-rest-apis-5b3d5fcdee7
 
 ## Update Dependencies
-List all of the modules that are dependencies of your current module, along with the latest version available for each:
-> go list -m -u all
-
-Display the latest version available for a specific module:
-> go list -m -u example.com/theirmodule
-
-## Update Dependencies
 <details>
     <summary><b>Steps to Update Dependencies</b></summary>
     
