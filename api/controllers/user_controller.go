@@ -7,7 +7,6 @@ import (
 	"clean-architecture/models"
 	"clean-architecture/services"
 	"clean-architecture/utils"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,20 +14,20 @@ import (
 
 // UserController data type
 type UserController struct {
-	service services.UserService
+	service *services.UserService
 	logger  lib.Logger
 }
 
 // NewUserController creates new user controller
-func NewUserController(userService services.UserService, logger lib.Logger) UserController {
-	return UserController{
+func NewUserController(userService *services.UserService, logger lib.Logger) *UserController {
+	return &UserController{
 		service: userService,
 		logger:  logger,
 	}
 }
 
 // GetOneUser gets one user
-func (u UserController) GetOneUser(c *gin.Context) {
+func (u *UserController) GetOneUser(c *gin.Context) {
 	paramID := c.Param("id")
 
 	user, err := u.service.GetOneUser(lib.ParseUUID(paramID))
@@ -48,7 +47,7 @@ func (u UserController) GetOneUser(c *gin.Context) {
 }
 
 // GetUser gets the user
-func (u UserController) GetUser(c *gin.Context) {
+func (u *UserController) GetUser(c *gin.Context) {
 	users, err := u.service.SetPaginationScope(utils.Paginate(c)).GetAllUser()
 	if err != nil {
 		u.logger.Error(err)
@@ -58,7 +57,7 @@ func (u UserController) GetUser(c *gin.Context) {
 }
 
 // SaveUser saves the user
-func (u UserController) SaveUser(c *gin.Context) {
+func (u *UserController) SaveUser(c *gin.Context) {
 	user := models.User{}
 	if err := c.Bind(&user); err != nil {
 		u.logger.Error(err)
@@ -68,13 +67,7 @@ func (u UserController) SaveUser(c *gin.Context) {
 		return
 	}
 
-	metadata, _ := c.MustGet(constants.File).(lib.UploadedFiles)
-	files := metadata.GetMultipleFiles("files[]")
-	for i := range files {
-		fmt.Println(files[i])
-	}
-
-	if err := u.service.Create(user); err != nil {
+	if err := u.service.Create(&user); err != nil {
 		u.logger.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -86,7 +79,7 @@ func (u UserController) SaveUser(c *gin.Context) {
 }
 
 // UpdateUser updates user
-func (u UserController) UpdateUser(c *gin.Context) {
+func (u *UserController) UpdateUser(c *gin.Context) {
 	paramID := lib.ParseUUID(c.Param("id"))
 
 	user, err := u.service.GetOneUser(paramID)
@@ -109,7 +102,7 @@ func (u UserController) UpdateUser(c *gin.Context) {
 	metadata, _ := c.MustGet(constants.File).(lib.UploadedFiles)
 	user.ProfilePic = lib.SignedURL(metadata.GetFile("file").URL)
 
-	if err := u.service.UpdateUser(user); err != nil {
+	if err := u.service.UpdateUser(&user); err != nil {
 		u.logger.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -121,7 +114,7 @@ func (u UserController) UpdateUser(c *gin.Context) {
 }
 
 // DeleteUser deletes user
-func (u UserController) DeleteUser(c *gin.Context) {
+func (u *UserController) DeleteUser(c *gin.Context) {
 	paramID := c.Param("id")
 
 	if err := u.service.DeleteUser(lib.ParseUUID(paramID)); err != nil {

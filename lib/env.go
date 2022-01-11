@@ -28,7 +28,7 @@ func GetEnv() Env {
 	return globalEnv
 }
 
-func NewEnv(logger Logger) Env {
+func NewEnv(logger Logger) *Env {
 	viper.SetConfigFile(".env")
 
 	err := viper.ReadInConfig()
@@ -41,5 +41,5 @@ func NewEnv(logger Logger) Env {
 		logger.Fatal("environment cant be loaded: ", err)
 	}
 
-	return globalEnv
+	return &globalEnv
 }

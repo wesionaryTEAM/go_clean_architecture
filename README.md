@@ -2,6 +2,12 @@
 Clean Architecture with Golang with Dependency Injection
 
 
+### Use of Linter in the project
+To install all the packages and run the linter in git pre-commit hook; Run
+> Make lint-setup
+<br/>
+
+
 ### Run Migration Commands
 > ⚓️ &nbsp; Add argument `p=host` after `make` if you want to run the migration runner from the host environment instead of docker environment. example; `make p=host migrate-up`
 

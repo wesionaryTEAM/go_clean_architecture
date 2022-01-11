@@ -10,13 +10,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//DBTransactionMiddleware -> struct for transaction
+// DBTransactionMiddleware -> struct for transaction
 type DBTransactionMiddleware struct {
 	logger lib.Logger
 	db     infrastructure.Database
 }
 
-//NewDBTransactionMiddleware -> new instance of transaction
+// NewDBTransactionMiddleware -> new instance of transaction
 func NewDBTransactionMiddleware(
 	logger lib.Logger,
 	db infrastructure.Database,
@@ -27,7 +27,7 @@ func NewDBTransactionMiddleware(
 	}
 }
 
-//Handle -> It setup the database transaction middleware
+// Handle -> It setup the database transaction middleware
 func (m DBTransactionMiddleware) Handle() gin.HandlerFunc {
 	m.logger.Info("setting up database transaction middleware")
 

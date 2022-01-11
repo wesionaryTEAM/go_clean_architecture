@@ -11,7 +11,7 @@ import (
 type UserRoutes struct {
 	logger           lib.Logger
 	handler          infrastructure.Router
-	userController   controllers.UserController
+	userController   *controllers.UserController
 	authMiddleware   middlewares.FirebaseAuthMiddleware
 	uploadMiddleware middlewares.UploadMiddleware
 	middlewares.PaginationMiddleware
@@ -20,12 +20,12 @@ type UserRoutes struct {
 func NewUserRoutes(
 	logger lib.Logger,
 	handler infrastructure.Router,
-	userController controllers.UserController,
+	userController *controllers.UserController,
 	authMiddleware middlewares.FirebaseAuthMiddleware,
 	uploadMiddleware middlewares.UploadMiddleware,
 	pagination middlewares.PaginationMiddleware,
-) UserRoutes {
-	return UserRoutes{
+) *UserRoutes {
+	return &UserRoutes{
 		handler:              handler,
 		logger:               logger,
 		userController:       userController,
@@ -36,19 +36,17 @@ func NewUserRoutes(
 }
 
 // Setup user routes
-func (s UserRoutes) Setup() {
+func (s *UserRoutes) Setup() {
 	s.logger.Info("Setting up routes")
+
 	api := s.handler.Group("/api")
-	{
-		api.GET("/user", s.PaginationMiddleware.Handle(), s.userController.GetUser)
-		api.GET("/user/:id", s.userController.GetOneUser)
-		api.POST("/user",
-			s.uploadMiddleware.Push(s.uploadMiddleware.Config().Field("files[]").ThumbEnable(true).WebpEnable(true).MultipleFilesUpload(true)).Handle(),
-			s.userController.SaveUser)
-		api.PUT("/user/:id",
-			s.uploadMiddleware.Push(s.uploadMiddleware.Config().ThumbEnable(true).WebpEnable(true)).Handle(),
-			s.userController.UpdateUser,
-		)
-		api.DELETE("/user/:id", s.userController.DeleteUser)
-	}
+	api.GET("/user", s.PaginationMiddleware.Handle(), s.userController.GetUser)
+	api.GET("/user/:id", s.userController.GetOneUser)
+	api.POST("/user", s.userController.SaveUser)
+	api.PUT("/user/:id",
+		s.uploadMiddleware.Push(s.uploadMiddleware.Config().ThumbEnable(true).WebpEnable(true)).Handle(),
+		s.userController.UpdateUser,
+	)
+	api.DELETE("/user/:id", s.userController.DeleteUser)
+
 }

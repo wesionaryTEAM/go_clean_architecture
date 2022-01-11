@@ -19,24 +19,24 @@ type UserService struct {
 // NewUserService creates a new userservice
 func NewUserService(
 	logger lib.Logger,
-	repository repository.UserRepository,
-) UserService {
-	return UserService{
+	userRepository repository.UserRepository,
+) *UserService {
+	return &UserService{
 		logger:     logger,
-		repository: repository,
+		repository: userRepository,
 	}
 }
 
 // WithTrx delegates transaction to repository database
-func (u UserService) WithTrx(trxHandle *gorm.DB) UserService {
-	u.repository = u.repository.WithTrx(trxHandle)
-	return u
+func (s UserService) WithTrx(trxHandle *gorm.DB) UserService {
+	s.repository = s.repository.WithTrx(trxHandle)
+	return s
 }
 
 // PaginationScope
-func (u UserService) SetPaginationScope(scope func(*gorm.DB) *gorm.DB) UserService {
-	u.paginationScope = u.repository.WithTrx(u.repository.Scopes(scope)).DB
-	return u
+func (s UserService) SetPaginationScope(scope func(*gorm.DB) *gorm.DB) UserService {
+	s.paginationScope = s.repository.WithTrx(s.repository.Scopes(scope)).DB
+	return s
 }
 
 // GetOneUser gets one user
@@ -58,7 +58,7 @@ func (s UserService) GetAllUser() (response map[string]interface{}, err error) {
 }
 
 // UpdateUser updates the user
-func (s UserService) UpdateUser(user models.User) error {
+func (s UserService) UpdateUser(user *models.User) error {
 	return s.repository.Save(&user).Error
 }
 
@@ -68,6 +68,6 @@ func (s UserService) DeleteUser(uuid lib.BinaryUUID) error {
 }
 
 // DeleteUser deletes the user
-func (s UserService) Create(user models.User) error {
+func (s UserService) Create(user *models.User) error {
 	return s.repository.Create(&user).Error
 }

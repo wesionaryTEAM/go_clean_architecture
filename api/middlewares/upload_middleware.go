@@ -13,7 +13,6 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"path/filepath"
@@ -128,9 +127,9 @@ func (cfg UploadConfig) MultipleFilesUpload(enable bool) UploadConfig {
 }
 
 // Push adds file upload configuration
-func (u UploadMiddleware) Push(config UploadConfig) UploadMiddleware {
+func (u *UploadMiddleware) Push(config UploadConfig) UploadMiddleware {
 	u.config = append(u.config, config)
-	return u
+	return *u
 }
 
 // Handle handles file upload
@@ -158,7 +157,7 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 					}
 					defer file.Close()
 
-					err = u.uploadFile(errGroup, ctx, conf, file, fileHeader, &uploadedFiles)
+					err = u.uploadFile(ctx, errGroup, conf, file, fileHeader, &uploadedFiles)
 					if err != nil {
 						u.logger.Error("file-upload-error: ", err.Error())
 						responses.ErrorJSON(c, http.StatusInternalServerError, err.Error())
@@ -168,7 +167,7 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 				}
 			} else {
 				file, fileHeader, _ := c.Request.FormFile(conf.FieldName)
-				err := u.uploadFile(errGroup, ctx, conf, file, fileHeader, &uploadedFiles)
+				err := u.uploadFile(ctx, errGroup, conf, file, fileHeader, &uploadedFiles)
 				if err != nil {
 					u.logger.Error("file-upload-error: ", err.Error())
 					responses.ErrorJSON(c, http.StatusInternalServerError, err.Error())
@@ -196,8 +195,8 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 }
 
 func (u UploadMiddleware) uploadFile(
-	errGroup *errgroup.Group,
 	ctx context.Context,
+	errGroup *errgroup.Group,
 	conf UploadConfig,
 	file multipart.File,
 	fileHeader *multipart.FileHeader,
@@ -214,7 +213,7 @@ func (u UploadMiddleware) uploadFile(
 		return ErrExtensionMismatch
 	}
 
-	fileByte, err := ioutil.ReadAll(file)
+	fileByte, err := io.ReadAll(file)
 	if err != nil {
 		return ErrFileRead
 	}
@@ -288,7 +287,8 @@ func (u UploadMiddleware) uploadFile(
 				}
 
 				resizeImage := resize.Resize(conf.ThumbnailWidth, 0, img, resize.Lanczos3)
-				if err := webp.Encode(&webpBuf, resizeImage, &webp.Options{Lossless: true}); err != nil {
+				err = webp.Encode(&webpBuf, resizeImage, &webp.Options{Lossless: true})
+				if err != nil {
 					return err
 				}
 
@@ -307,12 +307,12 @@ func (u UploadMiddleware) uploadFile(
 	return nil
 }
 
-func (u UploadMiddleware) properExtension(ext string) bool {
+func (u *UploadMiddleware) properExtension(ext string) bool {
 	e := Extension(ext)
 	return e == JPEGFile || e == JPGFile || e == PNGFile
 }
 
-func (u UploadMiddleware) matchesExtension(c UploadConfig, ext string) bool {
+func (u *UploadMiddleware) matchesExtension(c UploadConfig, ext string) bool {
 	for _, e := range c.Extensions {
 		if e == Extension(ext) {
 			return true
@@ -321,20 +321,20 @@ func (u UploadMiddleware) matchesExtension(c UploadConfig, ext string) bool {
 	return false
 }
 
-func (u UploadMiddleware) randomFileName(c UploadConfig, ext string) (string, string) {
+func (u *UploadMiddleware) randomFileName(c UploadConfig, ext string) (randomName, uid string) {
 	randUUID, _ := uuid.NewRandom()
 	fileName := randUUID.String() + ext
 	return u.bucketPath(c, fileName), randUUID.String()
 }
 
-func (u UploadMiddleware) bucketPath(c UploadConfig, fileName string) string {
+func (u *UploadMiddleware) bucketPath(c UploadConfig, fileName string) string {
 	if c.BucketFolder != "" {
 		return fmt.Sprintf("%s/%s", c.BucketFolder, fileName)
 	}
 	return fileName
 }
 
-func (u UploadMiddleware) getImage(file io.Reader, ext string) (image.Image, error) {
+func (u *UploadMiddleware) getImage(file io.Reader, ext string) (image.Image, error) {
 	if Extension(ext) == JPGFile || Extension(ext) == JPEGFile {
 		return jpeg.Decode(file)
 	}

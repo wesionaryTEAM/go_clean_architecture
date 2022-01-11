@@ -20,9 +20,9 @@ func (p PaginationMiddleware) Handle() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		p.logger.Info("setting up pagination middleware")
 
-		per_page, err := strconv.ParseInt(c.Query("per_page"), 10, 0)
+		perPage, err := strconv.ParseInt(c.Query("per_page"), 10, 0)
 		if err != nil {
-			per_page = 10
+			perPage = 10
 		}
 
 		page, err := strconv.ParseInt(c.Query("page"), 10, 0)
@@ -30,7 +30,7 @@ func (p PaginationMiddleware) Handle() gin.HandlerFunc {
 			page = 0
 		}
 
-		c.Set(constants.Limit, per_page)
+		c.Set(constants.Limit, perPage)
 		c.Set(constants.Page, page)
 
 		c.Next()

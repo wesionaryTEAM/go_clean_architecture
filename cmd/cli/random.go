@@ -42,7 +42,7 @@ func (t *RandomCommand) Run(cmd *cobra.Command, args []string) {
 	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	b := make([]rune, t.num)
 	for i := range b {
-		b[i] = letters[rand.Intn(len(letters))]
+		b[i] = letters[rand.Intn(len(letters))] //nolint:gosec // for faster performance
 	}
 	t.logger.Info(string(b))
 }

@@ -9,7 +9,7 @@ import (
 )
 
 // NewBucketStorage creates a new storage client
-func NewBucketStorage(logger lib.Logger, env lib.Env) *storage.Client {
+func NewBucketStorage(logger lib.Logger, env *lib.Env) *storage.Client {
 	bucketName := env.StorageBucketName
 	ctx := context.Background()
 	if bucketName == "" {

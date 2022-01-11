@@ -9,8 +9,8 @@ import (
 
 func Paginate(c *gin.Context) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		limit := c.MustGet(constants.Limit).(int64)
-		page := c.MustGet(constants.Page).(int64)
+		limit, _ := c.MustGet(constants.Limit).(int64)
+		page, _ := c.MustGet(constants.Page).(int64)
 
 		offset := (page - 1) * limit
 

@@ -23,8 +23,8 @@ func SuccessJSON(c *gin.Context, statusCode int, data interface{}) {
 
 // JSONWithPagination : json response function
 func JSONWithPagination(c *gin.Context, statusCode int, response map[string]interface{}) {
-	limit := c.MustGet(constants.Limit).(int64)
-	size := c.MustGet(constants.Page).(int64)
+	limit, _ := c.MustGet(constants.Limit).(int64)
+	size, _ := c.MustGet(constants.Page).(int64)
 
 	c.JSON(
 		200,

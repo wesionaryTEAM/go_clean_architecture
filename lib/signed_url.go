@@ -2,7 +2,7 @@ package lib
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"time"
 
 	"cloud.google.com/go/storage"
@@ -35,7 +35,7 @@ func (s SignedURL) getObjectSignedURL() (string, error) {
 	env := GetEnv()
 	bucketName := env.StorageBucketName
 
-	jsonKey, err := ioutil.ReadFile("serviceAccountKey.json")
+	jsonKey, err := os.ReadFile("serviceAccountKey.json")
 	if err != nil {
 		return "", nil
 	}
