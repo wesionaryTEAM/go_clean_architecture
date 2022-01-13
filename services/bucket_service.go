@@ -4,8 +4,8 @@ import (
 	"clean-architecture/lib"
 	"context"
 	"io"
-	"io/ioutil"
 	"net/url"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -90,7 +90,7 @@ func (s *BucketService) GetObjectSignedURL(
 ) (string, error) {
 	var bucketName = s.env.StorageBucketName
 
-	jsonKey, err := ioutil.ReadFile("serviceAccountKey.json")
+	jsonKey, err := os.ReadFile("serviceAccountKey.json")
 	if err != nil {
 		return "", nil
 	}

@@ -1,6 +1,8 @@
 package responses
 
 import (
+	"clean-architecture/constants"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,7 +21,15 @@ func SuccessJSON(c *gin.Context, statusCode int, data interface{}) {
 	c.JSON(statusCode, gin.H{"msg": data})
 }
 
-// JSONCount : json response function
-func JSONCount(c *gin.Context, statusCode int, data interface{}, count int) {
-	c.JSON(statusCode, gin.H{"data": data, "count": count})
+// JSONWithPagination : json response function
+func JSONWithPagination(c *gin.Context, statusCode int, response map[string]interface{}) {
+	limit, _ := c.MustGet(constants.Limit).(int64)
+	size, _ := c.MustGet(constants.Page).(int64)
+
+	c.JSON(
+		200,
+		gin.H{
+			"data":       response["data"],
+			"pagination": gin.H{"has_next": (response["count"].(int64) - limit*size) > 0, "count": response["count"]},
+		})
 }

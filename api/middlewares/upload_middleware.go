@@ -13,7 +13,6 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"path/filepath"
@@ -214,7 +213,7 @@ func (u UploadMiddleware) uploadFile(
 		return ErrExtensionMismatch
 	}
 
-	fileByte, err := ioutil.ReadAll(file)
+	fileByte, err := io.ReadAll(file)
 	if err != nil {
 		return ErrFileRead
 	}

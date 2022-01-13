@@ -12,4 +12,10 @@ const (
 
 	// File uploaded file from file upload middleware
 	File = "@uploaded_file"
+
+	// Limit for get all api
+	Limit = "Limit"
+
+	// Page
+	Page = "Page"
 )

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"clean-architecture/api/responses"
 	"clean-architecture/constants"
 	"clean-architecture/lib"
 	"clean-architecture/models"
@@ -47,17 +48,18 @@ func (u *UserController) GetOneUser(c *gin.Context) {
 
 // GetUser gets the user
 func (u *UserController) GetUser(c *gin.Context) {
-	users, err := u.service.GetAllUser()
+	users, err := u.service.SetPaginationScope(utils.Paginate(c)).GetAllUser()
 	if err != nil {
 		u.logger.Error(err)
 	}
-	c.JSON(200, gin.H{"data": users})
+
+	responses.JSONWithPagination(c, 200, users)
 }
 
 // SaveUser saves the user
 func (u *UserController) SaveUser(c *gin.Context) {
 	user := models.User{}
-	if err := c.ShouldBindJSON(&user); err != nil {
+	if err := c.Bind(&user); err != nil {
 		u.logger.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),

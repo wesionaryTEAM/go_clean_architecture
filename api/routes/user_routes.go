@@ -14,6 +14,7 @@ type UserRoutes struct {
 	userController   *controllers.UserController
 	authMiddleware   middlewares.FirebaseAuthMiddleware
 	uploadMiddleware middlewares.UploadMiddleware
+	middlewares.PaginationMiddleware
 }
 
 func NewUserRoutes(
@@ -22,13 +23,15 @@ func NewUserRoutes(
 	userController *controllers.UserController,
 	authMiddleware middlewares.FirebaseAuthMiddleware,
 	uploadMiddleware middlewares.UploadMiddleware,
+	pagination middlewares.PaginationMiddleware,
 ) *UserRoutes {
 	return &UserRoutes{
-		handler:          handler,
-		logger:           logger,
-		userController:   userController,
-		authMiddleware:   authMiddleware,
-		uploadMiddleware: uploadMiddleware,
+		handler:              handler,
+		logger:               logger,
+		userController:       userController,
+		authMiddleware:       authMiddleware,
+		uploadMiddleware:     uploadMiddleware,
+		PaginationMiddleware: pagination,
 	}
 }
 
@@ -37,8 +40,7 @@ func (s *UserRoutes) Setup() {
 	s.logger.Info("Setting up routes")
 
 	api := s.handler.Group("/api")
-
-	api.GET("/user", s.userController.GetUser)
+	api.GET("/user", s.PaginationMiddleware.Handle(), s.userController.GetUser)
 	api.GET("/user/:id", s.userController.GetOneUser)
 	api.POST("/user", s.userController.SaveUser)
 	api.PUT("/user/:id",
@@ -46,4 +48,5 @@ func (s *UserRoutes) Setup() {
 		s.userController.UpdateUser,
 	)
 	api.DELETE("/user/:id", s.userController.DeleteUser)
+
 }
