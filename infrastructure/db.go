@@ -38,7 +38,6 @@ func NewDatabase(logger lib.Logger, env *lib.Env) Database {
 	}
 
 	logger.Info("Database connection established")
-
 	return Database{
 		DB:  db,
 		dsn: url,
