@@ -43,6 +43,7 @@ func (s *ServeCommand) Run() lib.CommandRunner {
 				logger.Error(err.Error())
 			}
 		}
+		logger.Info("Running server")
 		if env.ServerPort == "" {
 			_ = router.Run()
 		} else {

@@ -13,6 +13,7 @@ type Env struct {
 	DBHost             string `mapstructure:"DB_HOST"`
 	DBPort             string `mapstructure:"DB_PORT"`
 	DBName             string `mapstructure:"DB_NAME"`
+	DBType             string `mapstructure:"DB_TYPE"`
 	MaxMultipartMemory int64  `mapstructure:"MAX_MULTIPART_MEMORY"`
 	SentryDSN          string `mapstructure:"SENTRY_DSN"`
 	StorageBucketName  string `mapstructure:"STORAGE_BUCKET_NAME"`
