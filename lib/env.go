@@ -1,6 +1,8 @@
 package lib
 
 import (
+	"os"
+
 	"github.com/spf13/viper"
 )
 
@@ -31,11 +33,21 @@ func GetEnv() Env {
 }
 
 func NewEnv(logger Logger) *Env {
-	viper.SetConfigFile(".env")
 
+	execEnv := os.Getenv("ENVIRONMENT")
+	if execEnv == "test" {
+		viper.AddConfigPath(".")
+		viper.AddConfigPath("../")
+		viper.AddConfigPath("../../")
+		viper.SetConfigName(".test.env")
+	} else {
+		viper.AddConfigPath(".")
+		viper.SetConfigName(".env")
+	}
+	viper.SetConfigType("env")
 	err := viper.ReadInConfig()
 	if err != nil {
-		logger.Fatal("cannot read cofiguration")
+		logger.Fatal("cannot read cofiguration", err)
 	}
 
 	err = viper.Unmarshal(&globalEnv)
