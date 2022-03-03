@@ -50,14 +50,30 @@ func GetLogger() Logger {
 func newLogger() *Logger {
 
 	env := os.Getenv("ENVIRONMENT")
+	logLevel := os.Getenv("LOG_LEVEL")
+
 	config := zap.NewDevelopmentConfig()
 
 	if env == "local" {
 		config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
-	} else {
-		config.Level.SetLevel(zap.PanicLevel)
 	}
 
+	level := zap.PanicLevel
+	switch logLevel {
+	case "debug":
+		level = zapcore.DebugLevel
+	case "info":
+		level = zapcore.InfoLevel
+	case "warn":
+		level = zapcore.WarnLevel
+	case "error":
+		level = zapcore.ErrorLevel
+	case "fatal":
+		level = zapcore.FatalLevel
+	default:
+		level = zap.PanicLevel
+	}
+	config.Level.SetLevel(level)
 	zapLogger, _ = config.Build()
 
 	globalLog := zapLogger.Sugar()
@@ -168,7 +184,7 @@ func (l GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (strin
 
 // Printf prints go-fx logs
 func (l FxLogger) Printf(str string, args ...interface{}) {
-	l.Infof(str, args)
+	l.Debugf(str, args)
 }
 
 // Writer interface implementation for gin-framework
