@@ -7,6 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
+	"go.uber.org/fx/fxevent"
 )
 
 var cmds = map[string]lib.Command{
@@ -30,7 +31,9 @@ func WrapSubCommand(name string, cmd lib.Command, opt fx.Option) *cobra.Command 
 		Run: func(c *cobra.Command, args []string) {
 			logger := lib.GetLogger()
 			opts := fx.Options(
-				fx.Logger(logger.GetFxLogger()),
+				fx.WithLogger(func() fxevent.Logger {
+					return logger.GetFxLogger()
+				}),
 				fx.Invoke(cmd.Run()),
 			)
 			ctx := context.Background()
