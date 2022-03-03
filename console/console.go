@@ -11,8 +11,10 @@ import (
 )
 
 var cmds = map[string]lib.Command{
-	"cmd:random": commands.NewRandomCommand(),
-	"app:serve":  NewServeCommand(),
+	"cmd:random":   commands.NewRandomCommand(),
+	"app:serve":    NewServeCommand(),
+	"test:db-up":   commands.NewTestDBSetupCommand(),
+	"test:db-down": commands.NewTestDBTeardownCommand(),
 }
 
 // GetSubCommands gives a list of sub commands
