@@ -16,6 +16,7 @@ require (
 	github.com/rubenv/sql-migrate v1.1.1
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/viper v1.10.1
+	github.com/stretchr/testify v1.7.0
 	go.uber.org/fx v1.17.0
 	go.uber.org/zap v1.21.0
 	golang.org/x/oauth2 v0.0.0-20220223155221-ee480838109b
