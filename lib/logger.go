@@ -184,7 +184,10 @@ func (l GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (strin
 
 // Printf prints go-fx logs
 func (l FxLogger) Printf(str string, args ...interface{}) {
-	l.Debugf(str, args)
+	if len(args) > 0 {
+		l.Debugf(str, args)
+	}
+	l.Debug(str)
 }
 
 // Writer interface implementation for gin-framework
