@@ -4,46 +4,45 @@ import (
 	"context"
 
 	"firebase.google.com/go/auth"
+	"github.com/gin-gonic/gin"
 )
 
-type firebaseService struct {
-	Firebase *auth.Client
-}
-
-// FirebaseService : represent the firebase's services
-type FirebaseService interface {
-	VerifyToken(idToken string) (*auth.Token, error)
-	CreateUser(email, password string) (string, error)
-	DeleteUser(uid string) error
+type FirebaseService struct {
+	*auth.Client
 }
 
 // NewFirebaseService : get injected firebase
 func NewFirebaseService(fb *auth.Client) FirebaseService {
-	return &firebaseService{
-		Firebase: fb,
+	return FirebaseService{
+		fb,
 	}
 }
 
-func (fb *firebaseService) VerifyToken(idToken string) (*auth.Token, error) {
-	token, err := fb.Firebase.VerifyIDToken(context.Background(), idToken)
+func (fb *FirebaseService) VerifyToken(idToken string) (*auth.Token, error) {
+	token, err := fb.VerifyIDToken(context.Background(), idToken)
 	return token, err
 }
 
-func (fb *firebaseService) CreateUser(email, password string) (string, error) {
+// claims format : gin.H{"user": true}
+func (fb *FirebaseService) CreateUserWithClaims(email, password string, claims gin.H) (string, error) {
 	params := (&auth.UserToCreate{}).
 		Email(email).
 		Password(password)
-	u, err := fb.Firebase.CreateUser(context.Background(), params)
+	u, err := fb.CreateUser(context.Background(), params)
 	if err != nil {
 		return "", err
 	}
 
-	claims := map[string]interface{}{"user": true}
-	err = fb.Firebase.SetCustomUserClaims(context.Background(), u.UID, claims)
+	err = fb.SetCustomUserClaims(context.Background(), u.UID, claims)
 	return u.UID, err
 }
 
-func (fb *firebaseService) DeleteUser(uid string) error {
-	err := fb.Firebase.DeleteUser(context.Background(), uid)
+func (fb *FirebaseService) DeleteUserFromFirebase(uid string) error {
+	err := fb.DeleteUser(context.Background(), uid)
 	return err
+}
+
+func (fb *FirebaseService) RetrieveUserByEmail(email string) (*auth.UserRecord, error) {
+	user, err := fb.GetUserByEmail(context.Background(), email)
+	return user, err
 }
