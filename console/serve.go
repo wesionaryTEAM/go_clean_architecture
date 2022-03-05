@@ -46,9 +46,15 @@ func (s *ServeCommand) Run() lib.CommandRunner {
 		}
 		logger.Info("Running server")
 		if env.ServerPort == "" {
-			_ = router.Run()
+			if err := router.Run(); err != nil {
+				logger.Fatal(err)
+				return
+			}
 		} else {
-			_ = router.Run(":" + env.ServerPort)
+			if err := router.Run(":" + env.ServerPort); err != nil {
+				logger.Fatal(err)
+				return
+			}
 		}
 	}
 }
