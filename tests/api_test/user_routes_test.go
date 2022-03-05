@@ -36,6 +36,6 @@ func TestUserRoutes(t *testing.T) {
 		response := httptest.NewRecorder()
 		request := httptest.NewRequest(testMethod, testPath, nil)
 		router.ServeHTTP(response, request)
-		assert.Equal(t, http.StatusNotFound, response.Code, "status code match")
+		assert.Equal(t, http.StatusInternalServerError, response.Code, "status code match")
 	})
 }
