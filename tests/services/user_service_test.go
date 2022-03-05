@@ -4,7 +4,6 @@ import (
 	"clean-architecture/models"
 	"clean-architecture/services"
 	"clean-architecture/tests/setup"
-	"fmt"
 	"log"
 	"testing"
 
@@ -22,16 +21,17 @@ func TestUserService(t *testing.T) {
 	}
 
 	t.Run("User can be created", func(t *testing.T) {
-		err := s.Create(&models.User{
+		user := models.User{
 			Name:  "dipesh",
 			Age:   2,
 			Email: "dipesh.dulal@wesionary.team",
-		})
+		}
+		err := s.Create(&user)
 		assert.NoError(t, err, "user creation fails")
 
-		users, err := s.GetAllUser()
+		gotUser, err := s.GetOneUser(user.ID)
 		assert.NoError(t, err, "user get fails")
-
-		fmt.Println(users)
+		assert.Equal(t, user.Email, gotUser.Email, "same user returned from db")
 	})
+
 }
