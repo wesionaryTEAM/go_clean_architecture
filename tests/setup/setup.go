@@ -18,7 +18,7 @@ import (
 
 func SetupDI(t *testing.T, option fx.Option) (context.Context, context.CancelFunc, error) {
 	var middleware middlewares.Middlewares
-	var route *routes.Routes
+	var route routes.Routes
 	app := fxtest.New(t,
 		fx.Options(
 			TestModule,

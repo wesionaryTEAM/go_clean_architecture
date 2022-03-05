@@ -26,7 +26,7 @@ func (s *ServeCommand) Run() lib.CommandRunner {
 		middleware middlewares.Middlewares,
 		env *lib.Env,
 		router infrastructure.Router,
-		route *routes.Routes,
+		route routes.Routes,
 		logger lib.Logger,
 	) {
 		logger.Info(`+-----------------------+`)

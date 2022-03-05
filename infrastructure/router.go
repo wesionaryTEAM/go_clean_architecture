@@ -20,7 +20,7 @@ type Router struct {
 func NewRouter(
 	env *lib.Env,
 	logger lib.Logger,
-) *Router {
+) Router {
 
 	if env.Environment != "local" && env.SentryDSN != "" {
 		if err := sentry.Init(sentry.ClientOptions{
@@ -60,7 +60,7 @@ func NewRouter(
 		c.JSON(http.StatusOK, gin.H{"data": "clean architecture 📺 API Up and Running"})
 	})
 
-	return &Router{
+	return Router{
 		httpRouter,
 	}
 }
