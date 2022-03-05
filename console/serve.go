@@ -26,7 +26,6 @@ func (s *ServeCommand) Run() lib.CommandRunner {
 		router infrastructure.Router,
 		route *routes.Routes,
 		logger lib.Logger,
-		database infrastructure.Database,
 	) {
 		logger.Info(`+-----------------------+`)
 		logger.Info(`| GO CLEAN ARCHITECTURE |`)

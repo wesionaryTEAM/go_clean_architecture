@@ -1,7 +1,9 @@
 package commands
 
 import (
+	"clean-architecture/infrastructure"
 	"clean-architecture/lib"
+	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -19,9 +21,7 @@ func (t *TestDBTeardownCommand) Short() string {
 // For example,
 //  cmd.Flags().IntVarP(&r.num, "num", "n", 5, "description")
 //
-func (t *TestDBTeardownCommand) Setup(cmd *cobra.Command) {
-
-}
+func (t *TestDBTeardownCommand) Setup(cmd *cobra.Command) {}
 
 // Run runs the command runner
 // run returns command runner which is a function with dependency
@@ -35,8 +35,14 @@ func (t *TestDBTeardownCommand) Setup(cmd *cobra.Command) {
 //  }
 //
 func (t *TestDBTeardownCommand) Run() lib.CommandRunner {
-	return func(l lib.Logger) {
-		l.Info("test db teardown command")
+	return func(l lib.Logger, db infrastructure.Database, env *lib.Env) {
+		dbName := fmt.Sprintf("%s_test", env.DBName)
+		l.Info("test database: ", dbName)
+		err := db.Exec("DROP DATABASE IF EXISTS " + dbName).Error
+		if err != nil {
+			l.Fatalf("couldn't teardown database: %s", err)
+		}
+		l.Info("test database teardown successfull")
 	}
 }
 

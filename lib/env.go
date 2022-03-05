@@ -1,8 +1,6 @@
 package lib
 
 import (
-	"os"
-
 	"github.com/spf13/viper"
 )
 
@@ -14,6 +12,7 @@ type Env struct {
 	DBPassword         string `mapstructure:"DB_PASS"`
 	DBHost             string `mapstructure:"DB_HOST"`
 	DBPort             string `mapstructure:"DB_PORT"`
+	TestDBPort         string `mapstructure:"TEST_DB_PORT"`
 	DBName             string `mapstructure:"DB_NAME"`
 	DBType             string `mapstructure:"DB_TYPE"`
 	MaxMultipartMemory int64  `mapstructure:"MAX_MULTIPART_MEMORY"`
@@ -34,17 +33,10 @@ func GetEnv() Env {
 
 func NewEnv(logger Logger) *Env {
 
-	execEnv := os.Getenv("ENVIRONMENT")
-	if execEnv == "test" {
-		viper.AddConfigPath(".")
-		viper.AddConfigPath("../")
-		viper.AddConfigPath("../../")
-		viper.SetConfigName(".test.env")
-	} else {
-		viper.AddConfigPath(".")
-		viper.SetConfigName(".env")
-	}
+	viper.AddConfigPath(".")
 	viper.SetConfigType("env")
+	viper.SetConfigName(".env")
+
 	err := viper.ReadInConfig()
 	if err != nil {
 		logger.Fatal("cannot read cofiguration", err)
