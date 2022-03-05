@@ -20,6 +20,8 @@ func (r *RandomCommand) Setup(cmd *cobra.Command) {
 	cmd.Flags().IntVarP(&r.num, "num", "n", 5, "length of random number to generate")
 }
 
+func (*RandomCommand) PreRun(cmd *cobra.Command, args []string) {}
+
 func (r *RandomCommand) Run() lib.CommandRunner {
 	return func(l lib.Logger) {
 		l.Info("running random command")
