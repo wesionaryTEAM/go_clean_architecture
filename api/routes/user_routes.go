@@ -10,7 +10,7 @@ import (
 // UserRoutes struct
 type UserRoutes struct {
 	logger           lib.Logger
-	handler          infrastructure.Router
+	handler          *infrastructure.Router
 	userController   *controllers.UserController
 	authMiddleware   middlewares.FirebaseAuthMiddleware
 	uploadMiddleware middlewares.UploadMiddleware
@@ -19,7 +19,7 @@ type UserRoutes struct {
 
 func NewUserRoutes(
 	logger lib.Logger,
-	handler infrastructure.Router,
+	handler *infrastructure.Router,
 	userController *controllers.UserController,
 	authMiddleware middlewares.FirebaseAuthMiddleware,
 	uploadMiddleware middlewares.UploadMiddleware,
