@@ -18,7 +18,7 @@ type Database struct {
 func NewDatabase(logger lib.Logger, env *lib.Env) Database {
 	url := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", env.DBUsername, env.DBPassword, env.DBHost, env.DBPort, env.DBName)
 
-	if env.Environment != "local" {
+	if env.DBType != "mysql" {
 		url = fmt.Sprintf(
 			"%s:%s@unix(/cloudsql/%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 			env.DBUsername,

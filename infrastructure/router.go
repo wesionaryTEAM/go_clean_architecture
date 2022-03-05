@@ -32,6 +32,13 @@ func NewRouter(
 	}
 
 	gin.DefaultWriter = logger.GetGinLogger()
+	appEnv := env.Environment
+	if appEnv == "production" {
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		gin.SetMode(gin.DebugMode)
+	}
+
 	httpRouter := gin.Default()
 
 	httpRouter.MaxMultipartMemory = env.MaxMultipartMemory
