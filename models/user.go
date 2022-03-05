@@ -11,7 +11,7 @@ import (
 
 // User model
 type User struct {
-	Base
+	lib.ModelBase
 	Name         string         `json:"name" form:"name"`
 	Email        string         `json:"email" form:"email"`
 	Age          int            `json:"age" form:"age"`

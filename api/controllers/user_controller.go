@@ -91,7 +91,7 @@ func (u *UserController) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	if err := utils.CustomBind(c.Request, &user); err != nil {
+	if err := lib.CustomBind(c.Request, &user); err != nil {
 		u.logger.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
