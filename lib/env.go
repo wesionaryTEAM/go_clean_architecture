@@ -1,28 +1,8 @@
 package lib
 
 import (
-	"clean-architecture/utils"
-
 	"github.com/spf13/viper"
 )
-
-var _testOverride = false
-
-// ForceTestOverride forces test environment
-// when overridden test database will be used
-func ForceTestOverride() {
-	_testOverride = true
-}
-
-// DBEnv has information related to database environment variables
-type DBEnv struct {
-	Username string
-	Password string
-	Host     string
-	Port     string
-	Name     string
-	Type     string
-}
 
 type Env struct {
 	LogLevel    string `mapstructure:"LOG_LEVEL"`
@@ -35,13 +15,6 @@ type Env struct {
 	DBPort     string `mapstructure:"DB_PORT"`
 	DBName     string `mapstructure:"DB_NAME"`
 	DBType     string `mapstructure:"DB_TYPE"`
-
-	TestDBUsername string `mapstructure:"TEST_DB_USER"`
-	TestDBPassword string `mapstructure:"TEST_DB_PASS"`
-	TestDBHost     string `mapstructure:"TEST_DB_HOST"`
-	TestDBPort     string `mapstructure:"TEST_DB_PORT"`
-	TestDBName     string `mapstructure:"TEST_DB_NAME"`
-	TestDBType     string `mapstructure:"TEST_DB_TYPE"`
 
 	MailClientID     string `mapstructure:"MAIL_CLIENT_ID"`
 	MailClientSecret string `mapstructure:"MAIL_CLIENT_SECRET"`
@@ -61,10 +34,7 @@ func GetEnv() Env {
 }
 
 func NewEnv(logger Logger) *Env {
-
-	viper.AddConfigPath(".")
-	viper.SetConfigType("env")
-	viper.SetConfigName(".env")
+	viper.SetConfigFile(".env")
 
 	err := viper.ReadInConfig()
 	if err != nil {
@@ -77,25 +47,4 @@ func NewEnv(logger Logger) *Env {
 	}
 
 	return &globalEnv
-}
-
-func NewDBEnv(env *Env) DBEnv {
-	if utils.IsTestEnv() || _testOverride {
-		return DBEnv{
-			Username: env.TestDBUsername,
-			Password: env.TestDBPassword,
-			Host:     env.TestDBHost,
-			Port:     env.TestDBPort,
-			Name:     env.TestDBName,
-			Type:     env.TestDBType,
-		}
-	}
-	return DBEnv{
-		Username: env.DBUsername,
-		Password: env.DBPassword,
-		Host:     env.DBHost,
-		Port:     env.DBPort,
-		Name:     env.DBName,
-		Type:     env.DBType,
-	}
 }

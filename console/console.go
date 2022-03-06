@@ -11,9 +11,8 @@ import (
 )
 
 var cmds = map[string]lib.Command{
-	"cmd:random":   commands.NewRandomCommand(),
-	"app:serve":    NewServeCommand(),
-	"test:db-down": commands.NewTestDBTeardownCommand(),
+	"cmd:random": commands.NewRandomCommand(),
+	"app:serve":  NewServeCommand(),
 }
 
 // GetSubCommands gives a list of sub commands
@@ -31,6 +30,7 @@ func WrapSubCommand(name string, cmd lib.Command, opt fx.Option) *cobra.Command 
 		Short: cmd.Short(),
 		Run: func(c *cobra.Command, args []string) {
 			logger := lib.GetLogger()
+
 			opts := fx.Options(
 				fx.WithLogger(func() fxevent.Logger {
 					return logger.GetFxLogger()

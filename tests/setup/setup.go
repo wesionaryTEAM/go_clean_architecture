@@ -8,15 +8,22 @@ import (
 	"log"
 	"os"
 	"path"
+	"path/filepath"
 	"runtime"
-	"testing"
 
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/fx/fxtest"
 )
 
-func SetupDI(t *testing.T, option fx.Option) (context.Context, context.CancelFunc, error) {
+var _caller string
+
+// GetCaller get's the test caller
+func GetCaller() string {
+	return _caller
+}
+
+func SetupDI(t fxtest.TB, option fx.Option) (context.Context, context.CancelFunc, error) {
 	var middleware middlewares.Middlewares
 	var route routes.Routes
 	app := fxtest.New(t,
@@ -41,6 +48,7 @@ func SetupDI(t *testing.T, option fx.Option) (context.Context, context.CancelFun
 // init sets up working directory for tests
 func init() {
 	_, filename, _, _ := runtime.Caller(0)
+	_caller = filepath.Base(filename)
 	dir := path.Join(path.Dir(filename), "..", "..")
 	if err := os.Chdir(dir); err != nil {
 		log.Fatal(err)

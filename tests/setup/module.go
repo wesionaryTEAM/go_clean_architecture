@@ -20,4 +20,5 @@ var TestModule = fx.Options(
 	infrastructure.Module,
 	middlewares.Module,
 	lib.Module,
+	fx.Decorate(TestEnvReplacer),
 )
