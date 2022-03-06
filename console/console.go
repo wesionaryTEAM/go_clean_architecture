@@ -45,7 +45,6 @@ func WrapSubCommand(name string, cmd lib.Command, opt fx.Option) *cobra.Command 
 				logger.Fatal(err)
 			}
 		},
-		PreRun: cmd.PreRun,
 	}
 	cmd.Setup(wrappedCmd)
 	return wrappedCmd

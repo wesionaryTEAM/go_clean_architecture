@@ -31,7 +31,4 @@ type Command interface {
 	//  }
 	//
 	Run() CommandRunner
-
-	// PreRun is executed before running the commands
-	PreRun(cmd *cobra.Command, args []string)
 }
