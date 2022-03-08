@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"clean-architecture/api/responses"
+	"clean-architecture/api_errors"
 	"clean-architecture/constants"
 	"clean-architecture/services"
 	"net/http"
@@ -31,7 +32,7 @@ func (m FirebaseAuthMiddleware) Handle() gin.HandlerFunc {
 		token, err := m.getTokenFromHeader(c)
 
 		if err != nil {
-			responses.ErrorJSON(c, http.StatusUnauthorized, err.Error())
+			responses.ErrorJSON(c, http.StatusUnauthorized, api_errors.ErrUnauthorizedAccess.Error())
 			c.Abort()
 			return
 		}
@@ -49,7 +50,7 @@ func (m FirebaseAuthMiddleware) HandleAdminOnly() gin.HandlerFunc {
 		token, err := m.getTokenFromHeader(c)
 
 		if err != nil {
-			responses.ErrorJSON(c, http.StatusUnauthorized, err.Error())
+			responses.ErrorJSON(c, http.StatusUnauthorized, api_errors.ErrUnauthorizedAccess.Error())
 			c.Abort()
 			return
 		}
@@ -74,7 +75,7 @@ func (m FirebaseAuthMiddleware) getTokenFromHeader(c *gin.Context) (*auth.Token,
 
 	token, err := m.service.VerifyToken(idToken)
 	if err != nil {
-		return nil, err
+		return nil, api_errors.NewErrTokenVerification(idToken)
 	}
 
 	// set email to the sentry message
