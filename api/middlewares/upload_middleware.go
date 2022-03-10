@@ -3,11 +3,11 @@ package middlewares
 import (
 	"bytes"
 	"clean-architecture/api/responses"
+	"clean-architecture/api_errors"
 	"clean-architecture/constants"
 	"clean-architecture/lib"
 	"clean-architecture/services"
 	"context"
-	"errors"
 	"fmt"
 	"image"
 	"image/jpeg"
@@ -31,12 +31,6 @@ const (
 	JPEGFile Extension = ".jpeg"
 	JPGFile  Extension = ".jpg"
 	PNGFile  Extension = ".png"
-)
-
-var (
-	ErrExtensionMismatch      = errors.New("file extension not supported")
-	ErrThumbExtensionMismatch = errors.New("file extension not supported for thumbnail")
-	ErrFileRead               = errors.New("file read error")
 )
 
 type UploadConfig struct {
@@ -179,7 +173,7 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 		}
 		if err := errGroup.Wait(); err != nil {
 			u.logger.Error("file-upload-error: ", err.Error())
-			if err == ErrThumbExtensionMismatch {
+			if err == api_errors.ErrThumbExtensionMismatch {
 				responses.ErrorJSON(c, http.StatusBadRequest, err)
 			} else {
 				responses.ErrorJSON(c, http.StatusInternalServerError, err)
@@ -210,12 +204,12 @@ func (u UploadMiddleware) uploadFile(
 
 	ext := strings.ToLower(filepath.Ext(fileHeader.Filename))
 	if !u.matchesExtension(conf, ext) {
-		return ErrExtensionMismatch
+		return api_errors.ErrExtensionMismatch
 	}
 
 	fileByte, err := io.ReadAll(file)
 	if err != nil {
-		return ErrFileRead
+		return api_errors.ErrFileRead
 	}
 
 	uploadFileName, fileUID := u.randomFileName(conf, ext)
@@ -261,7 +255,7 @@ func (u UploadMiddleware) uploadFile(
 		thumbReader := bytes.NewReader(fileByte)
 		errGroup.Go(func() error {
 			if !u.properExtension(ext) {
-				return ErrExtensionMismatch
+				return api_errors.ErrExtensionMismatch
 			}
 			// Genrate non-webp thumbnail
 			img, err := u.createThumbnail(conf, thumbReader, ext)
@@ -341,7 +335,7 @@ func (u *UploadMiddleware) getImage(file io.Reader, ext string) (image.Image, er
 	if Extension(ext) == PNGFile {
 		return png.Decode(file)
 	}
-	return nil, ErrExtensionMismatch
+	return nil, api_errors.ErrExtensionMismatch
 }
 
 // createThumbnail creates thumbnail from multipart file
