@@ -20,6 +20,8 @@ type Env struct {
 	MailClientID       string `mapstructure:"MAIL_CLIENT_ID"`
 	MailClientSecret   string `mapstructure:"MAIL_CLIENT_SECRET"`
 	MailTokenType      string `mapstructure:"MAIL_TOKEN_TYPE"`
+	AdminEmail         string `mapstructure:"ADMIN_EMAIL"`
+	AdminPassword      string `mapstructure:"ADMIN_PASSWORD"`
 }
 
 var globalEnv = Env{

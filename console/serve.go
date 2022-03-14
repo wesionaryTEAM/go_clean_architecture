@@ -5,6 +5,7 @@ import (
 	"clean-architecture/api/routes"
 	"clean-architecture/infrastructure"
 	"clean-architecture/lib"
+	"clean-architecture/seeds"
 
 	"github.com/getsentry/sentry-go"
 	"github.com/spf13/cobra"
@@ -27,12 +28,17 @@ func (s *ServeCommand) Run() lib.CommandRunner {
 		route *routes.Routes,
 		logger lib.Logger,
 		database infrastructure.Database,
+		migrations infrastructure.Migrations,
+		seeds seeds.Seeds,
 	) {
 		logger.Info(`+-----------------------+`)
 		logger.Info(`| GO CLEAN ARCHITECTURE |`)
 		logger.Info(`+-----------------------+`)
+		migrations.Migrate()
 		middleware.Setup()
 		route.Setup()
+		seeds.Setup()
+
 		if env.Environment != "local" && env.SentryDSN != "" {
 			err := sentry.Init(sentry.ClientOptions{
 				Dsn:              env.SentryDSN,

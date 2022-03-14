@@ -39,7 +39,7 @@ func NewUserRoutes(
 func (s *UserRoutes) Setup() {
 	s.logger.Info("Setting up routes")
 
-	api := s.handler.Group("/api")
+	api := s.handler.Group("/api").Use(s.authMiddleware.HandleAdminOnly)
 	api.GET("/user", s.PaginationMiddleware.Handle(), s.userController.GetUser)
 	api.GET("/user/:id", s.userController.GetOneUser)
 	api.POST("/user", s.userController.SaveUser)
