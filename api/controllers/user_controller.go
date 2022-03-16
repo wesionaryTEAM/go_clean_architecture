@@ -2,12 +2,12 @@ package controllers
 
 import (
 	"clean-architecture/api/responses"
+	"clean-architecture/api_errors"
 	"clean-architecture/constants"
 	"clean-architecture/lib"
 	"clean-architecture/models"
 	"clean-architecture/services"
 	"clean-architecture/utils"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,13 +30,15 @@ func NewUserController(userService *services.UserService, logger lib.Logger) *Us
 func (u *UserController) GetOneUser(c *gin.Context) {
 	paramID := c.Param("id")
 
-	user, err := u.service.GetOneUser(lib.ParseUUID(paramID))
-
+	userId, err := lib.ShouldParseUUID(paramID)
 	if err != nil {
-		u.logger.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		handleValidationError(u.logger, c, api_errors.ErrInvalidUUID)
+		return
+	}
+
+	user, err := u.service.GetOneUser(userId)
+	if err != nil {
+		handleError(u.logger, c, err)
 		return
 	}
 
@@ -60,18 +62,12 @@ func (u *UserController) GetUser(c *gin.Context) {
 func (u *UserController) SaveUser(c *gin.Context) {
 	user := models.User{}
 	if err := c.Bind(&user); err != nil {
-		u.logger.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		handleError(u.logger, c, err)
 		return
 	}
 
 	if err := u.service.Create(&user); err != nil {
-		u.logger.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		handleError(u.logger, c, err)
 		return
 	}
 
@@ -80,22 +76,22 @@ func (u *UserController) SaveUser(c *gin.Context) {
 
 // UpdateUser updates user
 func (u *UserController) UpdateUser(c *gin.Context) {
-	paramID := lib.ParseUUID(c.Param("id"))
+	paramID := c.Param("id")
 
-	user, err := u.service.GetOneUser(paramID)
+	userId, err := lib.ShouldParseUUID(paramID)
 	if err != nil {
-		u.logger.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		handleValidationError(u.logger, c, api_errors.ErrInvalidUUID)
+		return
+	}
+
+	user, err := u.service.GetOneUser(userId)
+	if err != nil {
+		handleError(u.logger, c, err)
 		return
 	}
 
 	if err := utils.CustomBind(c.Request, &user); err != nil {
-		u.logger.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		handleError(u.logger, c, err)
 		return
 	}
 
@@ -103,10 +99,7 @@ func (u *UserController) UpdateUser(c *gin.Context) {
 	user.ProfilePic = lib.SignedURL(metadata.GetFile("file").URL)
 
 	if err := u.service.UpdateUser(&user); err != nil {
-		u.logger.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		handleError(u.logger, c, err)
 		return
 	}
 
@@ -117,11 +110,14 @@ func (u *UserController) UpdateUser(c *gin.Context) {
 func (u *UserController) DeleteUser(c *gin.Context) {
 	paramID := c.Param("id")
 
-	if err := u.service.DeleteUser(lib.ParseUUID(paramID)); err != nil {
-		u.logger.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+	userId, err := lib.ShouldParseUUID(paramID)
+	if err != nil {
+		handleValidationError(u.logger, c, api_errors.ErrInvalidUUID)
+		return
+	}
+
+	if err := u.service.DeleteUser(userId); err != nil {
+		handleError(u.logger, c, err)
 		return
 	}
 

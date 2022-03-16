@@ -1,5 +1,6 @@
 package constants
 
 const (
-	RoleIsAdmin = "admin"
+	RoleIsAdmin        = "admin"
+	RoleIsGeneralAdmin = "general"
 )

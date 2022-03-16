@@ -28,16 +28,22 @@ func NewFirebaseAuthMiddleware(service services.FirebaseService) FirebaseAuthMid
 
 // Handle handles auth requests
 func (m FirebaseAuthMiddleware) Handle(c *gin.Context) {
-	m.HandleWithRole(c, nil)
+	m.handleWithRole(c, nil)
 }
 
 // HandleAdminOnly handles middleware for admin role only
 func (m FirebaseAuthMiddleware) HandleAdminOnly(c *gin.Context) {
 	role := constants.RoleIsAdmin
-	m.HandleWithRole(c, &role)
+	m.handleWithRole(c, &role)
 }
 
-func (m FirebaseAuthMiddleware) HandleWithRole(c *gin.Context, role *string) {
+// HandleStoreAdminOnly handles middleware for general_admin role only
+func (m FirebaseAuthMiddleware) HandleGeneralAdminOnly(c *gin.Context) {
+	role := constants.RoleIsGeneralAdmin
+	m.handleWithRole(c, &role)
+}
+
+func (m FirebaseAuthMiddleware) handleWithRole(c *gin.Context, role *string) {
 	token, err := m.getTokenFromHeader(c)
 	if err != nil {
 		responses.ErrorJSON(c, http.StatusUnauthorized, err.Error())
@@ -50,6 +56,7 @@ func (m FirebaseAuthMiddleware) HandleWithRole(c *gin.Context, role *string) {
 		c.Abort()
 		return
 	}
+
 	c.Set(constants.Claims, token.Claims)
 	c.Set(constants.UID, token.UID)
 
@@ -60,7 +67,7 @@ func (m FirebaseAuthMiddleware) HandleWithRole(c *gin.Context, role *string) {
 func (m FirebaseAuthMiddleware) getTokenFromHeader(c *gin.Context) (*auth.Token, error) {
 	header := c.GetHeader("Authorization")
 	idToken := strings.TrimSpace(strings.Replace(header, "Bearer", "", 1))
-	fmt.Println(idToken, "is--")
+	fmt.Println(idToken, "is---")
 	token, err := m.service.VerifyToken(idToken)
 	if err != nil {
 		return nil, err

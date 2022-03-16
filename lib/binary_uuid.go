@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"clean-architecture/api_errors"
 	"database/sql/driver"
 	"errors"
 	"fmt"
@@ -14,6 +15,15 @@ type BinaryUUID uuid.UUID
 // ParseUUID -> parses string uuid to binary uuid
 func ParseUUID(id string) BinaryUUID {
 	return BinaryUUID(uuid.MustParse(id))
+}
+
+// ShouldParseUUID -> parses string uuid to binary uuid with error
+func ShouldParseUUID(id string) (BinaryUUID, error) {
+	uuid, err := uuid.Parse(id)
+	if err != nil {
+		return BinaryUUID{}, api_errors.ErrInvalidUUID
+	}
+	return BinaryUUID(uuid), err
 }
 
 func (b BinaryUUID) String() string {
