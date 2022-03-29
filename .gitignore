@@ -4,6 +4,7 @@ log/access.log
 log
 .idea/
 .DS_Store
+.go-version
 
 __debug_bin
 
