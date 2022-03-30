@@ -12,7 +12,7 @@ import (
 )
 
 // CustomBind custom bind the data
-func CustomBind(source *http.Request, dest interface{}) error {
+func CustomBind(source *http.Request, dest any) error {
 	err := source.ParseMultipartForm(1000)
 	if err != nil {
 		return err

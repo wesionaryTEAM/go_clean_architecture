@@ -45,7 +45,7 @@ func (s UserService) GetOneUser(userID lib.BinaryUUID) (user models.User, err er
 }
 
 // GetAllUser get all the user
-func (s UserService) GetAllUser() (response map[string]interface{}, err error) {
+func (s UserService) GetAllUser() (response map[string]any, err error) {
 	var users []models.User
 	var count int64
 

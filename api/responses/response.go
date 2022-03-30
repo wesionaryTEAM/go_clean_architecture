@@ -7,22 +7,22 @@ import (
 )
 
 // JSON : json response function
-func JSON(c *gin.Context, statusCode int, data interface{}) {
+func JSON(c *gin.Context, statusCode int, data any) {
 	c.JSON(statusCode, gin.H{"data": data})
 }
 
 // ErrorJSON : json error response function
-func ErrorJSON(c *gin.Context, statusCode int, data interface{}) {
+func ErrorJSON(c *gin.Context, statusCode int, data any) {
 	c.JSON(statusCode, gin.H{"error": data})
 }
 
 // SuccessJSON : json error response function
-func SuccessJSON(c *gin.Context, statusCode int, data interface{}) {
+func SuccessJSON(c *gin.Context, statusCode int, data any) {
 	c.JSON(statusCode, gin.H{"msg": data})
 }
 
 // JSONWithPagination : json response function
-func JSONWithPagination(c *gin.Context, statusCode int, response map[string]interface{}) {
+func JSONWithPagination(c *gin.Context, statusCode int, response map[string]any) {
 	limit, _ := c.MustGet(constants.Limit).(int64)
 	size, _ := c.MustGet(constants.Page).(int64)
 
