@@ -39,6 +39,7 @@ type CustomComparable interface {
 	uint | lib.BinaryUUID | string
 }
 
+// GetDifferenceFromArrays --> Return array containing unique items of array1
 func GetDifferenceFromArrays[T CustomComparable](array1, array2 []T) (difference []T) {
 	makeArray2 := make(map[T]struct{}, len(array2))
 	for _, item := range array2 {
