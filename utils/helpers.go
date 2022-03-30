@@ -23,12 +23,12 @@ func ItemInList[T comparable](item T, itemList []T) bool {
 }
 
 // RemoveDuplicate --> remove duplicate items from  array or slice of comparable datatypes
-func RemoveDuplicate[K comparable](s []K) (result []K) {
-	inResultMap := make(map[K]bool)
+func RemoveDuplicate[T comparable](s []T) (result []T) {
+	inResultMap := make(map[T]struct{})
 
 	for _, iter := range s {
 		if _, found := inResultMap[iter]; !found {
-			inResultMap[iter] = true
+			inResultMap[iter] = struct{}{}
 			result = append(result, iter)
 		}
 	}
