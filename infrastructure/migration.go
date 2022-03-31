@@ -2,7 +2,6 @@ package infrastructure
 
 import (
 	"clean-architecture/lib"
-	"fmt"
 
 	migrate "github.com/rubenv/sql-migrate"
 )
@@ -24,20 +23,29 @@ func NewMigrations(
 	}
 }
 
-// Migrate -> migrates all table
-func (m Migrations) Migrate() {
+// Migrate migrates all migrations that are defined
+func (m Migrations) Migrate() error {
+
 	migrations := &migrate.FileMigrationSource{
 		Dir: "migration/",
 	}
 
 	sqlDB, err := m.db.DB.DB()
 	if err != nil {
-		m.logger.Error("error in migration", err.Error())
-		m.logger.Panic(err)
+		return err
 	}
 
+	m.logger.Info("running migration.")
 	_, err = migrate.Exec(sqlDB, "mysql", migrations, migrate.Up)
 	if err != nil {
-		fmt.Println("Error in migration: ", err)
+		return err
 	}
+	m.logger.Info("migration completed.")
+	return nil
+}
+
+// RunMigration runs the migration provided logger and database instance
+func RunMigration(logger lib.Logger, db Database) error {
+	m := Migrations{logger, db}
+	return m.Migrate()
 }

@@ -1,46 +1,67 @@
 ### Go Clean Architecture
+
 Clean Architecture with Golang with Dependency Injection
 
-
 ### Use of Linter in the project
-To install all the packages and run the linter in git pre-commit hook; Run
-> Make lint-setup
-<br/>
 
+To install all the packages and run the linter in git pre-commit hook; Run
+
+> Make lint-setup
+> <br/>
 
 ### Run Migration Commands
+
 > ⚓️ &nbsp; Add argument `p=host` after `make` if you want to run the migration runner from the host environment instead of docker environment. example; `make p=host migrate-up`
 
 If you are not using docker; ensure that sql-migrate is installed to use migration from the host environment.
 To install sql-migrate:
+
 > go get -v github.com/rubenv/sql-migrate/...
 
 <details>
     <summary>Migration commands available</summary>
 
-| Command              | Desc                                                       |
-| -------------------- | ---------------------------------------------------------- |
-| `make migrate-status`| Show migration status                                      |
-| `make migrate-up`    | Migrates the database to the most recent version available |
-| `make migrate-down`  | Undo a database migration                                  |
-| `make redo`          | Reapply the last migration                                 |
-| `make create`        | Create new migration file                                  |
+| Command               | Desc                                                       |
+| --------------------- | ---------------------------------------------------------- |
+| `make migrate-status` | Show migration status                                      |
+| `make migrate-up`     | Migrates the database to the most recent version available |
+| `make migrate-down`   | Undo a database migration                                  |
+| `make redo`           | Reapply the last migration                                 |
+| `make create`         | Create new migration file                                  |
 
 </details>
 
-
 ### Run app with docker
-- Update database env variables with credentials defined in `docker-compose.yml`
-- Start server using command `docker-compose up -d` or `sudo docker-compose up -d` if permission issues
-    > Assumes: Docker is already installed in the machine. 
+
+-   Update database env variables with credentials defined in `docker-compose.yml`
+-   Start server using command `docker-compose up -d` or `sudo docker-compose up -d` if permission issues
+    > Assumes: Docker is already installed in the machine.
+
+### Run app without docker
+
+-   Run `go run main.go app:serve` to run app server.
+-   There are other commands available as well. You can run `go run main.go -help` to know about other commands available.
+
+## Testing
+
+The framework comes with unit and integration testing support out of the box. You can check examples written in tests directory.
+To run the test just run: `go test ./... -v`
+
+### For test coverage
+
+-   `go test ./... -v -coverprofile cover.txt -coverpkg=./...`
+-   `go tool cover -html=cover.txt -o index.html`
 
 ## Checking API documents with swagger UI
+
 Browse to `http://localhost:${SWAGGER_PORT}`
-- You can see all the documented endpoints in Swagger-UI from the API specification
-- You can execute/test endpoint
-You can read the article to know more on this: https://medium.com/wesionary-team/swagger-ui-on-docker-for-testing-rest-apis-5b3d5fcdee7
+
+-   You can see all the documented endpoints in Swagger-UI from the API specification
+-   You can execute/test endpoint
+    You can read the article to know more on this: https://medium.com/wesionary-team/swagger-ui-on-docker-for-testing-rest-apis-5b3d5fcdee7
 
 ## Update Dependencies
+
 <details>
     <summary><b>Steps to Update Dependencies</b></summary>
     
@@ -56,11 +77,14 @@ List all of the modules that are dependencies of your current module, along with
 > $ go list -m -u all
 
 Display the latest version available for a specific module:
+
 > $ go list -m -u example.com/theirmodule
 
 <b>Example:</b>
+
 > $ go list -m -u cloud.google.com/go/firestore<br/>
-cloud.google.com/go/firestore v1.2.0 [v1.6.1]
+> cloud.google.com/go/firestore v1.2.0 [v1.6.1]
+
 </details>
 
 <details>
@@ -70,7 +94,9 @@ To get a specific numbered version, append the module path with an @ sign follow
 > $ go get example.com/theirmodule@v1.3.4
 
 To get the latest version, append the module path with @latest:
+
 > $ go get example.com/theirmodule@latest
+
 </details>
 
 <details>
@@ -78,4 +104,3 @@ To get the latest version, append the module path with @latest:
  
 > $ go mod tidy
 </details>
-

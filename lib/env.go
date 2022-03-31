@@ -5,21 +5,24 @@ import (
 )
 
 type Env struct {
-	ServerPort         string `mapstructure:"SERVER_PORT"`
-	Environment        string `mapstructure:"ENVIRONMENT"`
-	LogLevel           string `mapstructure:"LOG_LEVEL"`
-	DBUsername         string `mapstructure:"DB_USER"`
-	DBPassword         string `mapstructure:"DB_PASS"`
-	DBHost             string `mapstructure:"DB_HOST"`
-	DBPort             string `mapstructure:"DB_PORT"`
-	DBName             string `mapstructure:"DB_NAME"`
-	DBType             string `mapstructure:"DB_TYPE"`
-	MaxMultipartMemory int64  `mapstructure:"MAX_MULTIPART_MEMORY"`
+	LogLevel    string `mapstructure:"LOG_LEVEL"`
+	ServerPort  string `mapstructure:"SERVER_PORT"`
+	Environment string `mapstructure:"ENVIRONMENT"`
+
+	DBUsername string `mapstructure:"DB_USER"`
+	DBPassword string `mapstructure:"DB_PASS"`
+	DBHost     string `mapstructure:"DB_HOST"`
+	DBPort     string `mapstructure:"DB_PORT"`
+	DBName     string `mapstructure:"DB_NAME"`
+	DBType     string `mapstructure:"DB_TYPE"`
+
+	MailClientID     string `mapstructure:"MAIL_CLIENT_ID"`
+	MailClientSecret string `mapstructure:"MAIL_CLIENT_SECRET"`
+	MailTokenType    string `mapstructure:"MAIL_TOKEN_TYPE"`
+
 	SentryDSN          string `mapstructure:"SENTRY_DSN"`
+	MaxMultipartMemory int64  `mapstructure:"MAX_MULTIPART_MEMORY"`
 	StorageBucketName  string `mapstructure:"STORAGE_BUCKET_NAME"`
-	MailClientID       string `mapstructure:"MAIL_CLIENT_ID"`
-	MailClientSecret   string `mapstructure:"MAIL_CLIENT_SECRET"`
-	MailTokenType      string `mapstructure:"MAIL_TOKEN_TYPE"`
 }
 
 var globalEnv = Env{
@@ -35,7 +38,7 @@ func NewEnv(logger Logger) *Env {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		logger.Fatal("cannot read cofiguration")
+		logger.Fatal("cannot read cofiguration", err)
 	}
 
 	err = viper.Unmarshal(&globalEnv)

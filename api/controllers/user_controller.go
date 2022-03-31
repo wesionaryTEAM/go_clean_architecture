@@ -90,7 +90,7 @@ func (u *UserController) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	if err := utils.CustomBind(c.Request, &user); err != nil {
+	if err := lib.CustomBind(c.Request, &user); err != nil {
 		handleError(u.logger, c, err)
 		return
 	}

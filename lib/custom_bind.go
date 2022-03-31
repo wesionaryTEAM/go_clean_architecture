@@ -1,7 +1,6 @@
-package utils
+package lib
 
 import (
-	"clean-architecture/models"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -38,7 +37,7 @@ func CustomBind(source *http.Request, dest interface{}) error {
 		currentField := destType.Elem().Field(i)
 		fieldValue := destValue.Elem().Field(i)
 
-		if currentField.Type == reflect.TypeOf(models.Base{}) {
+		if currentField.Type == reflect.TypeOf(ModelBase{}) {
 			if err := CustomBind(source, fieldValue.Addr().Interface()); err != nil {
 				return err
 			}
