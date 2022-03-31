@@ -27,7 +27,7 @@ func TestUserRoutes(t *testing.T) {
 		response := httptest.NewRecorder()
 		request := httptest.NewRequest(testMethod, testPath, nil)
 		router.ServeHTTP(response, request)
-		assert.Equal(t, http.StatusInternalServerError, response.Code, "status code match")
+		assert.Equal(t, http.StatusBadRequest, response.Code, "status code match")
 	})
 
 	t.Run("user get error if uuid not in database is provided", func(t *testing.T) {
