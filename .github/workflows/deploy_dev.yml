@@ -1,0 +1,110 @@
+name: Deploy to development environment.
+on:
+  push:
+    branches:
+      - develop
+  #For manual trigger of workflow.
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    environment: development
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: Get timestamp
+        uses: gerred/actions/current-time@master
+        id: current-time
+
+      - name: Run string replace
+        uses: frabert/replace-string-action@master
+        id: format-time
+        with:
+          pattern: '[:\.]+'
+          string: "${{ steps.current-time.outputs.time }}"
+          replace-with: "-"
+          flags: "g"
+
+      - name: Create .env file
+        run: |
+          echo "creating .env file"
+          echo ${{ secrets.API_ENV }} | base64 --decode > .env
+          printf "\nAPI_VERSION=${{ steps.format-time.outputs.replaced }}" >> .env
+      
+      - name: Create Service Account Key 
+        run: |
+          echo ${{secrets.SERVICE_ACCOUNT_KEY_BASE64}} | base64 --decode > serviceAccountKey.json
+      
+      - name: Generate deployment package
+        run: zip -r deploy.zip . -x '*.git*'
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v16
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ secrets.AWS_APPLICATION_NAME }}
+          environment_name: ${{ secrets.AWS_ENVIRONMENT_NAME }}
+          version_label: "${{ secrets.AWS_APPLICATION_NAME }}-${{ steps.format-time.outputs.replaced }}"
+          region: ${{ secrets.AWS_REGION }}
+          deployment_package: deploy.zip
+      - name: Slack Notification on SUCCESS
+        if: success()
+        uses: tokorom/action-slack-incoming-webhook@main
+        env:
+          INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          text: A development deployment job for api has succeeded :tada:.
+          attachments: |
+            [
+              {
+                "color": "good",
+                "author_name": "${{ github.actor }}",
+                "author_icon": "${{ github.event.sender.avatar_url }}",
+                "fields": [
+                  {
+                    "title": "Commit Message",
+                    "value": "${{ github.event.head_commit.message }}"
+                  },
+                  {
+                    "title": "GitHub Actions URL",
+                    "value": "${{ github.event.repository.url }}/actions/runs/${{ github.run_id }}"
+                  },
+                  {
+                    "title": "Compare URL",
+                    "value": "${{ github.event.compare }}"
+                  }
+                ]
+              }
+            ]
+      - name: Slack Notification on FAILURE
+        if: failure()
+        uses: tokorom/action-slack-incoming-webhook@main
+        env:
+          INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          text: A development deployment job for api has failed :crying_cat_face:.
+          attachments: |
+            [
+              {
+                "color": "danger",
+                "author_name": "${{ github.actor }}",
+                "author_icon": "${{ github.event.sender.avatar_url }}",
+                "fields": [
+                  {
+                    "title": "Commit Message",
+                    "value": "${{ github.event.head_commit.message }}"
+                  },
+                  {
+                    "title": "GitHub Actions URL",
+                    "value": "${{ github.event.repository.url }}/actions/runs/${{ github.run_id }}"
+                  },
+                  {
+                    "title": "Compare URL",
+                    "value": "${{ github.event.compare }}"
+                  }
+                ]
+              }
+            ]
