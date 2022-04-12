@@ -1,0 +1,170 @@
+name: Build and deploy Go clean architecture application
+
+on:
+  push:
+    branches:
+      - BAC-*
+      - main
+      - develop
+    tags:
+      - v*
+
+env:
+  GITHUB_REF: ${{ github.ref }}
+  GITHUB_EVENT_NAME: ${{ github.event_name }}
+
+jobs:
+  setup_environment:
+    runs-on: ubuntu-latest
+    outputs:
+      env_name: ${{ steps.get_env.outputs.env }}
+    steps:
+
+    - id: get_env
+      run: |
+        if grep -q "refs/tags/v" <<< $GITHUB_REF; then
+          echo "::set-output name=env::PROD"
+        else
+          echo "::set-output name=env::DEV"
+        fi
+
+    - id: print_env
+      name: Print environment
+      run: echo  "Environment :- ${{ steps.get_env.outputs.env }}"
+
+  build_and_deploy:
+    name: Build and deploy the go-clean-architecture repository
+    runs-on: ubuntu-latest
+    needs: setup_environment
+    environment: ${{needs.setup_environment.outputs.env_name}}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use golang ${{matrix.go-version}}
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.18'
+      - run: go version
+      
+      - name: Set up MySQL
+        run: |
+          sudo systemctl start mysql
+          mysql -e 'CREATE DATABASE clean_architecture;' -uroot -proot
+          mysql -e "show databases;" -uroot -proot
+
+      - name: Initialize the environment variables for testing
+        run: |
+          echo "ENVIRONMENT=local
+          SERVER_PORT=8080
+          DB_HOST=localhost
+          DB_PORT=3306
+          DB_NAME=clean_architecture
+          DB_USER=root
+          DB_PASS=root
+          DEBUG_PORT=5002     
+          " > .env
+
+      - name: Initialize service account key file
+        run: |
+          echo ${{secrets.SERVICE_ACCOUNT_KEY_BASE64}} | base64 --decode > serviceAccountKey.json
+      
+      - name: Build the repository
+        run: go build main.go
+
+      - name: Start the service
+        run: |
+          ./main &
+
+      - name: Validate if the service is working or not via health check api
+        run: |
+          sleep 5
+          curl http://localhost:8080/health-check
+     
+      - name: Initialize the environment variables with deployment env
+        run: |
+          rm -rf .env
+          echo "ENVIRONMENT=${{secrets.ENVIRONMENT}}
+          SERVER_PORT=8080
+          DB_HOST=${{secrets.DB_HOST}}
+          DB_PORT=${{secrets.DB_PORT}}
+          DB_NAME=${{secrets.DB_NAME}}
+          DB_USER=${{secrets.DB_USER}}
+          DB_PASS=${{secrets.DB_PASS}}
+          DEBUG_PORT=5002     
+          " > .env
+
+      - name: Setup Cloud SDK
+        if: ${{ $GITHUB_EVENT_NAME == 'push' && ($GITHUB_REF == 'refs/heads/develop' || startsWith($GITHUB_REF, 'refs/tags/v')) }}
+        uses: google-github-actions/setup-gcloud@v0.2.0
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCLOUD_SERVICE_KEY }}
+      
+      - name: Deploy to App Engine
+        if: ${{ $GITHUB_EVENT_NAME == 'push' && ($GITHUB_REF == 'refs/heads/develop' || startsWith($GITHUB_REF, 'refs/tags/v')) }}
+        run: gcloud app deploy app.yaml --quiet --project ${{secrets.GCP_PROJECT_ID}}
+
+
+      - name: Slack Notification on SUCCESS
+        if: success()
+        uses: tokorom/action-slack-incoming-webhook@main
+        env:
+          INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          AUTHOR: ${{ github.actor }}
+          AUTHOR_ICON: ${{ github.event.sender.avatar_url }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          GITHUB_ACTIONS_URL: ${{ github.event.repository.url }}/actions/runs/${{ github.run_id }}
+          COMPARE_URL: ${{ github.event.compare }}
+        with:
+          text: A build and *deploy job for go_clean_architecture has succeeded :tada:.
+          attachments: |
+            [
+              {
+                "color": "good",
+                "author_name": "$AUTHOR",
+                "author_icon": "$AUTHOR_ICON",
+                "fields": [
+                  {
+                    "title": "Commit Message",
+                    "value": "$COMMIT_MESSAGE"
+                  },
+                  {
+                    "title": "GitHub Actions URL",
+                    "value": "$GITHUB_ACTIONS_URL"
+                  },
+                  {
+                    "title": "Compare URL",
+                    "value": "$COMPARE_URL"
+                  }
+                ]
+              }
+            ]
+      - name: Slack Notification on FAILURE
+        if: failure()
+        uses: tokorom/action-slack-incoming-webhook@main
+        env:
+          INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          text: A build and *deploy job for go_clean_architecture has failed :crying_cat_face:.
+          attachments: |
+            [
+              {
+                "color": "danger",
+                "author_name": "$AUTHOR",
+                "author_icon": "$AUTHOR_ICON",
+                "fields": [
+                  {
+                    "title": "Commit Message",
+                    "value": "$COMMIT_MESSAGE"
+                  },
+                  {
+                    "title": "GitHub Actions URL",
+                    "value": "$GITHUB_ACTIONS_URL"
+                  },
+                  {
+                    "title": "Compare URL",
+                    "value": "$COMPARE_URL"
+                  }
+                ]
+              }
+            ]
