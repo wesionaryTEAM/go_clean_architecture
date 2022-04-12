@@ -1,0 +1,33 @@
+name: Build and deploy Go clean architecture application
+
+on:
+  push:
+    branches:
+      - BAC-*
+      - main
+      - develop
+    tags:
+      - v*
+
+env:
+  GITHUB_REF: ${{ github.ref }}
+  GITHUB_EVENT_NAME: ${{ github.event_name }}
+
+jobs:
+  setup_environment:
+    runs-on: ubuntu-latest
+    outputs:
+      env_name: ${{ steps.get_env.outputs.env }}
+    steps:
+    
+    - id: get_env
+      run: |
+        if grep -q "refs/tags/v" <<< $GITHUB_REF; then
+          echo "::set-output name=env::PROD"
+        else
+          echo "::set-output name=env::DEV"
+        fi
+
+    - id: print_env
+      name: Print environment
+      run: echo  "Environment :- ${{ steps.get_env.outputs.env }}"
