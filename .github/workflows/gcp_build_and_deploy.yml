@@ -121,35 +121,30 @@ jobs:
         uses: tokorom/action-slack-incoming-webhook@main
         env:
           INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          AUTHOR: ${{ github.actor }}
-          AUTHOR_ICON: ${{ github.event.sender.avatar_url }}
-          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
-          GITHUB_ACTIONS_URL: ${{ github.event.repository.url }}/actions/runs/${{ github.run_id }}
-          COMPARE_URL: ${{ github.event.compare }}
         with:
-          text: A build and *deploy job for go_clean_architecture has succeeded :tada:.
+          text: A job for go_clean_architecture has succeeded :tada:.
           attachments: |
             [
               {
                 "color": "good",
-                "author_name": "$AUTHOR",
-                "author_icon": "$AUTHOR_ICON",
+                "author_name": "${{ github.actor }}",
+                "author_icon": "${{ github.event.sender.avatar_url }}",
                 "fields": [
                   {
                     "title": "Commit Message",
-                    "value": "$COMMIT_MESSAGE"
+                    "value": "${{ github.event.head_commit.message }}"
                   },
                   {
                     "title": "GitHub Actions URL",
-                    "value": "$GITHUB_ACTIONS_URL"
+                    "value": "${{ github.event.repository.url }}/actions/runs/${{ github.run_id }}"
                   },
                   {
                     "title": "Compare URL",
-                    "value": "$COMPARE_URL"
+                    "value":  "${{ github.event.compare }}"
                   }
                 ]
               }
-            ]
+            ] 
       - name: Slack Notification on FAILURE
         if: failure()
         uses: tokorom/action-slack-incoming-webhook@main
@@ -161,21 +156,21 @@ jobs:
             [
               {
                 "color": "danger",
-                "author_name": "$AUTHOR",
-                "author_icon": "$AUTHOR_ICON",
+                "author_name": "${{ github.actor }}",
+                "author_icon": "${{ github.event.sender.avatar_url }}",
                 "fields": [
                   {
                     "title": "Commit Message",
-                    "value": "$COMMIT_MESSAGE"
+                    "value": "${{ github.event.head_commit.message }}"
                   },
                   {
                     "title": "GitHub Actions URL",
-                    "value": "$GITHUB_ACTIONS_URL"
+                    "value": "${{ github.event.repository.url }}/actions/runs/${{ github.run_id }}"
                   },
                   {
                     "title": "Compare URL",
-                    "value": "$COMPARE_URL"
+                    "value":  "${{ github.event.compare }}"
                   }
                 ]
               }
-            ]
+            ] 
