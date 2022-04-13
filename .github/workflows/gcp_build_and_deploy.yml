@@ -9,15 +9,13 @@ on:
     tags:
       - v*
 
-env:
-  GITHUB_REF: ${{ github.ref }}
-  GITHUB_EVENT_NAME: ${{ github.event_name }}
-
 jobs:
   setup_environment:
     runs-on: ubuntu-latest
     outputs:
       env_name: ${{ steps.get_env.outputs.env }}
+    env:
+     GITHUB_REF: ${{ github.ref }}
     steps:
 
     - id: get_env
@@ -105,14 +103,14 @@ jobs:
           " > .env
 
       - name: Setup Cloud SDK
-        if: ${{ $GITHUB_EVENT_NAME == 'push' && ($GITHUB_REF == 'refs/heads/develop' || startsWith($GITHUB_REF, 'refs/tags/v')) }}
+        if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v')) }}
         uses: google-github-actions/setup-gcloud@v0.2.0
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GCLOUD_SERVICE_KEY }}
       
       - name: Deploy to App Engine
-        if: ${{ $GITHUB_EVENT_NAME == 'push' && ($GITHUB_REF == 'refs/heads/develop' || startsWith($GITHUB_REF, 'refs/tags/v')) }}
+        if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v')) }}
         run: gcloud app deploy app.yaml --quiet --project ${{secrets.GCP_PROJECT_ID}}
 
 
