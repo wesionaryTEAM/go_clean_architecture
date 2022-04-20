@@ -30,6 +30,7 @@ func WrapSubCommand(name string, cmd lib.Command, opt fx.Option) *cobra.Command 
 		Short: cmd.Short(),
 		Run: func(c *cobra.Command, args []string) {
 			logger := lib.GetLogger()
+
 			opts := fx.Options(
 				fx.WithLogger(func() fxevent.Logger {
 					return logger.GetFxLogger()

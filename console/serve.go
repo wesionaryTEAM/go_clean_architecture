@@ -25,11 +25,12 @@ func (s *ServeCommand) Run() lib.CommandRunner {
 		middleware middlewares.Middlewares,
 		env *lib.Env,
 		router infrastructure.Router,
-		route *routes.Routes,
+		route routes.Routes,
 		logger lib.Logger,
 		database infrastructure.Database,
 		migrations infrastructure.Migrations,
 		seeds seeds.Seeds,
+
 	) {
 		logger.Info(`+-----------------------+`)
 		logger.Info(`| GO CLEAN ARCHITECTURE |`)
@@ -51,9 +52,15 @@ func (s *ServeCommand) Run() lib.CommandRunner {
 		}
 		logger.Info("Running server")
 		if env.ServerPort == "" {
-			_ = router.Run()
+			if err := router.Run(); err != nil {
+				logger.Fatal(err)
+				return
+			}
 		} else {
-			_ = router.Run(":" + env.ServerPort)
+			if err := router.Run(":" + env.ServerPort); err != nil {
+				logger.Fatal(err)
+				return
+			}
 		}
 	}
 }

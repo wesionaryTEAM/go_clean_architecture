@@ -17,8 +17,8 @@ type Route interface {
 }
 
 // NewRoutes sets up routes
-func NewRoutes(userRoutes *UserRoutes) *Routes {
-	return &Routes{
+func NewRoutes(userRoutes *UserRoutes) Routes {
+	return Routes{
 		userRoutes,
 	}
 }
