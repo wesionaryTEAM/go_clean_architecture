@@ -31,15 +31,7 @@ func (m FirebaseAuthMiddleware) Handle(c *gin.Context) {
 	m.handleWithRole(c, nil)
 }
 
-// HandleAdminOnly handles middleware for admin role only
-func (m FirebaseAuthMiddleware) HandleAdminOnly(c *gin.Context) {
-	role := constants.RoleIsAdmin
-	m.handleWithRole(c, &role)
-}
-
-// HandleGeneralAdminOnly handles middleware for general_admin role only
-func (m FirebaseAuthMiddleware) HandleGeneralAdminOnly(c *gin.Context) {
-	role := constants.RoleIsGeneralAdmin
+func (m FirebaseAuthMiddleware) HandleRoles(c *gin.Context, role string) {
 	m.handleWithRole(c, &role)
 }
 

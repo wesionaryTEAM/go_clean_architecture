@@ -3,8 +3,11 @@ package routes
 import (
 	"clean-architecture/api/controllers"
 	"clean-architecture/api/middlewares"
+	"clean-architecture/constants"
 	"clean-architecture/infrastructure"
 	"clean-architecture/lib"
+
+	"github.com/gin-gonic/gin"
 )
 
 // UserRoutes struct
@@ -39,7 +42,10 @@ func NewUserRoutes(
 func (s *UserRoutes) Setup() {
 	s.logger.Info("Setting up routes")
 
-	api := s.handler.Group("/api").Use(s.authMiddleware.HandleAdminOnly)
+	api := s.handler.Group("/api").Use(func(ctx *gin.Context) {
+		s.authMiddleware.HandleRoles(ctx, constants.RoleIsAdmin)
+
+	})
 	api.GET("/user", s.PaginationMiddleware.Handle(), s.userController.GetUser)
 	api.GET("/user/:id", s.userController.GetOneUser)
 	api.POST("/user", s.userController.SaveUser)
