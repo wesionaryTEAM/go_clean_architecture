@@ -26,11 +26,6 @@ func NewFirebaseAuthMiddleware(service services.FirebaseService) FirebaseAuthMid
 	}
 }
 
-// Handle handles auth requests
-func (m FirebaseAuthMiddleware) Handle(c *gin.Context) {
-	m.handleWithRole(c, nil)
-}
-
 // Handle handles multiple roles
 func (m FirebaseAuthMiddleware) HandleRoles(c *gin.Context, role string) {
 	m.handleWithRole(c, &role)
