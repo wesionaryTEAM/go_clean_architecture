@@ -4,7 +4,6 @@ import (
 	"clean-architecture/api/responses"
 	"clean-architecture/constants"
 	"clean-architecture/services"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -55,7 +54,6 @@ func (m FirebaseAuthMiddleware) handleWithRole(c *gin.Context, role *string) {
 func (m FirebaseAuthMiddleware) getTokenFromHeader(c *gin.Context) (*auth.Token, error) {
 	header := c.GetHeader("Authorization")
 	idToken := strings.TrimSpace(strings.Replace(header, "Bearer", "", 1))
-	fmt.Println(idToken, "is---")
 	token, err := m.service.VerifyToken(idToken)
 	if err != nil {
 		return nil, err
