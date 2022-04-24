@@ -35,7 +35,6 @@ func (s *ServeCommand) Run() lib.CommandRunner {
 		logger.Info(`+-----------------------+`)
 		logger.Info(`| GO CLEAN ARCHITECTURE |`)
 		logger.Info(`+-----------------------+`)
-		migrations.Migrate()
 		middleware.Setup()
 		route.Setup()
 		seeds.Setup()
