@@ -36,6 +36,7 @@ func DI(t fxtest.TB, option fx.Option) (context.Context, context.CancelFunc, err
 			fx.Populate(&middleware),
 			fx.Populate(&route),
 		),
+		fx.NopLogger,
 	)
 	ctx, cancel := context.WithCancel(context.Background())
 	err := app.Start(ctx)
