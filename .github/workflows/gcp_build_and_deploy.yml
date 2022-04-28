@@ -60,22 +60,12 @@ jobs:
           DB_USER=root
           DB_PASS=root
           DEBUG_PORT=5002     
+          DB_TYPE=mysql
           " > .env
 
       - name: Initialize service account key file
         run: |
-          echo '{
-            "type": "${{secrets.TYPE_SERVICE_ACCOUNT_KEY}}",
-            "project_id": "${{secrets.PROJECT_ID_SERVICE_ACCOUNT_KEY}}",
-            "private_key": "${{secrets.PRIVATE_KEY_SERVICE_ACCOUNT_KEY}}",
-            "private_key_id": "${{secrets.PRIVATE_KEY_ID_SERVICE_ACCOUNT_KEY}}",
-            "client_email": "${{secrets.CLIENT_EMAIL_SERVICE_ACCOUNT_KEY}}",
-            "client_id": "${{secrets.CLIENT_ID_SERVICE_ACCOUNT_KEY}}",
-            "auth_uri": "${{secrets.AUTH_URI_SERVICE_ACCOUNT_KEY}}",
-            "token_uri": "${{secrets.TOKEN_URI_SERVICE_ACCOUNT_KEY}}",
-            "auth_provider_x509_cert_url": "${{secrets.AUTH_PROVIDER_X509_CERT_URL_SERVICE_ACCOUNT_KEY}}",
-            "client_x509_cert_url": "${{secrets.CLIENT_X509_CERT_URL_SERVICE_ACCOUNT_KEY}}"
-          }' > serviceAccountKey.json
+          echo ${{secrets.FIREBASE_SERVICE_ACCOUNT_KEY_BASE64}} | base64 --decode > serviceAccountKey.json
           
       - name: Build the repository
         run: go build main.go
@@ -99,6 +89,7 @@ jobs:
           DB_NAME=${{secrets.DB_NAME}}
           DB_USER=${{secrets.DB_USER}}
           DB_PASS=${{secrets.DB_PASS}}
+          DB_TYPE=${{secrets.DB_TYPE}}
           DEBUG_PORT=5002     
           " > .env
 
