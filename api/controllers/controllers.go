@@ -26,12 +26,12 @@ func handleValidationError(logger lib.Logger, c *gin.Context, err error) {
 	})
 }
 
-func handleErrorWithStatus(logger lib.Logger, c *gin.Context, statusCode int, err error) {
-	logger.Error(err)
-	c.JSON(statusCode, gin.H{
-		"error": err.Error(),
-	})
-}
+// func handleErrorWithStatus(logger lib.Logger, c *gin.Context, statusCode int, err error) {
+// 	logger.Error(err)
+// 	c.JSON(statusCode, gin.H{
+// 		"error": err.Error(),
+// 	})
+// }
 
 // list static errors to filter
 var exceptStaticError = []error{

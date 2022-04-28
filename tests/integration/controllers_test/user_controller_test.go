@@ -18,7 +18,7 @@ import (
 func TestUserController(t *testing.T) {
 	var uc *controllers.UserController
 
-	_, cancel, err := setup.SetupDI(t, fx.Options(fx.Populate(&uc)))
+	_, cancel, err := setup.DI(t, fx.Options(fx.Populate(&uc)))
 	defer cancel()
 	if err != nil {
 		log.Println(err)
