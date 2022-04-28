@@ -1,4 +1,4 @@
-package api_test
+package controllers_test
 
 import (
 	"clean-architecture/tests/setup"
