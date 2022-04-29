@@ -23,6 +23,8 @@ type Env struct {
 	SentryDSN          string `mapstructure:"SENTRY_DSN"`
 	MaxMultipartMemory int64  `mapstructure:"MAX_MULTIPART_MEMORY"`
 	StorageBucketName  string `mapstructure:"STORAGE_BUCKET_NAME"`
+
+	TimeZone string `mapstructure:"TIMEZONE"`
 }
 
 var globalEnv = Env{
@@ -40,6 +42,8 @@ func NewEnv(logger Logger) *Env {
 	if err != nil {
 		logger.Fatal("cannot read cofiguration", err)
 	}
+
+	viper.SetDefault("TIMEZONE", "UTC")
 
 	err = viper.Unmarshal(&globalEnv)
 	if err != nil {
