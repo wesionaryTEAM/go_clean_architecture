@@ -28,7 +28,6 @@ func (s *ServeCommand) Run() lib.CommandRunner {
 		route routes.Routes,
 		logger lib.Logger,
 		database infrastructure.Database,
-		migrations infrastructure.Migrations,
 		seeds seeds.Seeds,
 
 	) {
