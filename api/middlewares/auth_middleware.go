@@ -67,19 +67,3 @@ func (m FirebaseAuthMiddleware) getTokenFromHeader(c *gin.Context) (*auth.Token,
 
 	return token, nil
 }
-<<<<<<< HEAD
-
-// isAdmin check if cliams is admin
-func (m FirebaseAuthMiddleware) isAdmin(claims map[string]any) bool {
-
-	role := claims["role"]
-	isAdmin := false
-	if role != nil {
-		isAdmin = role.(string) == "admin"
-	}
-
-	return isAdmin
-
-}
-=======
->>>>>>> 83f30b52df04e14dc2e9984dfb5f3627af9576b1
