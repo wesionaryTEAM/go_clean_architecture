@@ -3,6 +3,7 @@ package routes
 import (
 	"clean-architecture/api/controllers"
 	"clean-architecture/api/middlewares"
+	"clean-architecture/constants"
 	"clean-architecture/infrastructure"
 	"clean-architecture/lib"
 )
@@ -39,7 +40,8 @@ func NewUserRoutes(
 func (s *UserRoutes) Setup() {
 	s.logger.Info("Setting up routes")
 
-	api := s.handler.Group("/api")
+	api := s.handler.Group("/api").Use(s.authMiddleware.HandleAuthWithRole(constants.RoleIsAdmin))
+
 	api.GET("/user", s.PaginationMiddleware.Handle(), s.userController.GetUser)
 	api.GET("/user/:id", s.userController.GetOneUser)
 	api.POST("/user", s.userController.SaveUser)

@@ -23,6 +23,8 @@ type Env struct {
 	SentryDSN          string `mapstructure:"SENTRY_DSN"`
 	MaxMultipartMemory int64  `mapstructure:"MAX_MULTIPART_MEMORY"`
 	StorageBucketName  string `mapstructure:"STORAGE_BUCKET_NAME"`
+	AdminEmail         string `mapstructure:"ADMIN_EMAIL"`
+	AdminPassword      string `mapstructure:"ADMIN_PASSWORD"`
 }
 
 var globalEnv = Env{
