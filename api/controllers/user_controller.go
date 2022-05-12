@@ -32,13 +32,13 @@ func (u *UserController) GetOneUser(c *gin.Context) {
 
 	userId, err := lib.ShouldParseUUID(paramID)
 	if err != nil {
-		handleValidationError(u.logger, c, api_errors.ErrInvalidUUID)
+		utils.HandleValidationError(u.logger, c, api_errors.ErrInvalidUUID)
 		return
 	}
 
 	user, err := u.service.GetOneUser(userId)
 	if err != nil {
-		handleError(u.logger, c, err)
+		utils.HandleError(u.logger, c, err)
 		return
 	}
 
@@ -62,12 +62,12 @@ func (u *UserController) GetUser(c *gin.Context) {
 func (u *UserController) SaveUser(c *gin.Context) {
 	user := models.User{}
 	if err := c.Bind(&user); err != nil {
-		handleError(u.logger, c, err)
+		utils.HandleError(u.logger, c, err)
 		return
 	}
 
 	if err := u.service.Create(&user); err != nil {
-		handleError(u.logger, c, err)
+		utils.HandleError(u.logger, c, err)
 		return
 	}
 
@@ -80,18 +80,18 @@ func (u *UserController) UpdateUser(c *gin.Context) {
 
 	userId, err := lib.ShouldParseUUID(paramID)
 	if err != nil {
-		handleValidationError(u.logger, c, api_errors.ErrInvalidUUID)
+		utils.HandleValidationError(u.logger, c, api_errors.ErrInvalidUUID)
 		return
 	}
 
 	user, err := u.service.GetOneUser(userId)
 	if err != nil {
-		handleError(u.logger, c, err)
+		utils.HandleError(u.logger, c, err)
 		return
 	}
 
 	if err := lib.CustomBind(c.Request, &user); err != nil {
-		handleError(u.logger, c, err)
+		utils.HandleError(u.logger, c, err)
 		return
 	}
 
@@ -99,7 +99,7 @@ func (u *UserController) UpdateUser(c *gin.Context) {
 	user.ProfilePic = lib.SignedURL(metadata.GetFile("file").URL)
 
 	if err := u.service.UpdateUser(&user); err != nil {
-		handleError(u.logger, c, err)
+		utils.HandleError(u.logger, c, err)
 		return
 	}
 
@@ -112,12 +112,12 @@ func (u *UserController) DeleteUser(c *gin.Context) {
 
 	userId, err := lib.ShouldParseUUID(paramID)
 	if err != nil {
-		handleValidationError(u.logger, c, api_errors.ErrInvalidUUID)
+		utils.HandleValidationError(u.logger, c, api_errors.ErrInvalidUUID)
 		return
 	}
 
 	if err := u.service.DeleteUser(userId); err != nil {
-		handleError(u.logger, c, err)
+		utils.HandleError(u.logger, c, err)
 		return
 	}
 

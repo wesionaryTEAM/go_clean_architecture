@@ -24,7 +24,9 @@ type Env struct {
 	MaxMultipartMemory int64  `mapstructure:"MAX_MULTIPART_MEMORY"`
 	StorageBucketName  string `mapstructure:"STORAGE_BUCKET_NAME"`
 
-	TimeZone string `mapstructure:"TIMEZONE"`
+	TimeZone      string `mapstructure:"TIMEZONE"`
+	AdminEmail    string `mapstructure:"ADMIN_EMAIL"`
+	AdminPassword string `mapstructure:"ADMIN_PASSWORD"`
 }
 
 var globalEnv = Env{
