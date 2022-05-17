@@ -7,6 +7,7 @@ import (
 	"clean-architecture/infrastructure"
 	"clean-architecture/lib"
 	"clean-architecture/repository"
+	"clean-architecture/seeds"
 	"clean-architecture/services"
 
 	"go.uber.org/fx"
@@ -20,4 +21,5 @@ var CommonModules = fx.Options(
 	infrastructure.Module,
 	middlewares.Module,
 	lib.Module,
+	seeds.Module,
 )
