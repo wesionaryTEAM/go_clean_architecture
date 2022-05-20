@@ -20,6 +20,51 @@ make lint-setup
 
 ---
 
+## Run application
+
+-   Setup environment variables
+
+```zsh
+cp .env.example .env
+```
+
+-   Update your database credentials environment variables in `.env` file
+
+### Locally
+
+-   Run `go run main.go app:serve` to start the server.
+-   There are other commands available as well. You can run `go run main.go -help` to know about other commands available.
+
+### Using `Docker`
+
+> Ensure Docker is already installed in the machine.
+
+-   Start server using command `docker-compose up -d` or `sudo docker-compose up -d` if permission issues
+
+---
+
+## Folder Structure :file_folder:
+
+-   `/api` → contains all the `middlwares`, `controllers` and `routes` of the server in their respective folders
+-   `/api-errors` → server error handlers
+-   `/bootstrap` → contains modules required to start the application
+-   `/console` → server commands, run `go run main.go -help` for all the available server commands
+-   `/constants` → global application constants
+-   `/docker` → `docker` files required for `docker compose`
+-   `/docs` → API endpoints documentation using `swagger`
+-   `/hooks` → `git` hooks
+-   `/infrastructure` → third-party services connections like `gmail`, `firebase`, `s3-bucket`, ...
+-   `/lib` → contains library code
+-   `/migration` → database migration files
+-   `/models` → ORM models
+-   `/repository` → contains repository part of clean architecture. Mainly database queries are added here.
+-   `/seeds` → seeds for already migrated tables
+-   `/services` → service layers, contains the functionality that compounds the core of the application
+-   `/tests` → includes application tests
+-   `/utils` → global utility/helper functions
+
+---
+
 ## Migration Commands
 
 ⚓️ &nbsp; If you want to run the migration runner from the host environment instead of the docker environment; ensure that `sql-migrate` is installed on your local machine.
@@ -62,51 +107,6 @@ make p=host migrate-up
 | `make create`         | Create new migration file                                  |
 
 </details>
-
----
-
-## Run application
-
--   Setup environment variables
-
-```zsh
-cp .env.dev .env
-```
-
--   Update your database credentials environment variables in `.env` file
-
-### Locally
-
--   Run `go run main.go app:serve` to start the server.
--   There are other commands available as well. You can run `go run main.go -help` to know about other commands available.
-
-### Using `Docker`
-
-> Ensure Docker is already installed in the machine.
-
--   Start server using command `docker-compose up -d` or `sudo docker-compose up -d` if permission issues
-
----
-
-## Folder Structure :file_folder:
-
--   `/api` → contains all the `middlwares`, `controllers` and `routes` of the server in their respective folders
--   `/api-errors` → server error handlers
--   `/bootstrap` →
--   `/console` → server commands, run `go run main.go -help` for all the available server commands
--   `/constants` → global application constants
--   `/docker` → `docker` files required for `docker compose`
--   `/docs` → API endpoints documentation using `swagger`
--   `/hooks` → `git` hooks
--   `/infrastructure` → third-party services connections like `gmail`, `firebase`, `s3-bucket`, ...
--   `/lib` →
--   `/migration` → database migration files
--   `/models` → ORM models
--   `/repository` →
--   `/seeds` → seeds for already migrated tables
--   `/services` → service layers, contains the functionality that compounds the core of the application
--   `/tests` → includes application tests
--   `/utils` → global utility/helper functions
 
 ---
 
