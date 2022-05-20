@@ -2,7 +2,7 @@
 
 Clean Architecture with [Gin Web Framework](https://github.com/gin-gonic/gin)
 
-### Features :star:
+## Features :star:
 
 -   Clean Architecture written in Go
 -   Application backbone with [Gin Web Framework](https://github.com/gin-gonic/gin)
@@ -45,23 +45,31 @@ cp .env.example .env
 
 ## Folder Structure :file_folder:
 
--   `/api` → contains all the `middlwares`, `controllers` and `routes` of the server in their respective folders
--   `/api-errors` → server error handlers
--   `/bootstrap` → contains modules required to start the application
--   `/console` → server commands, run `go run main.go -help` for all the available server commands
--   `/constants` → global application constants
--   `/docker` → `docker` files required for `docker compose`
--   `/docs` → API endpoints documentation using `swagger`
--   `/hooks` → `git` hooks
--   `/infrastructure` → third-party services connections like `gmail`, `firebase`, `s3-bucket`, ...
--   `/lib` → contains library code
--   `/migration` → database migration files
--   `/models` → ORM models
--   `/repository` → contains repository part of clean architecture. Mainly database queries are added here.
--   `/seeds` → seeds for already migrated tables
--   `/services` → service layers, contains the functionality that compounds the core of the application
--   `/tests` → includes application tests
--   `/utils` → global utility/helper functions
+| Folder Path                      | Description                                                                                         |
+| -------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `/api`                           | contains all the `middlwares`, `controllers` and `routes` of the server in their respective folders |
+| `/api-errors`                    | server error handlers                                                                               |
+| `/bootstrap`                     | contains modules required to start the application                                                  |
+| `/console`                       | server commands, run `go run main.go -help` for all the available server commands                   |
+| `/constants`                     | global application constants                                                                        |
+| `/docker`                        | `docker` files required for `docker compose`                                                        |
+| `/docs`                          | API endpoints documentation using `swagger`                                                         |
+| `/hooks`                         | `git` hooks                                                                                         |
+| `/infrastructure`                | third-party services connections like `gmail`, `firebase`, `s3-bucket`, ...                         |
+| `/lib`                           | contains library code                                                                               |
+| `/migration`                     | database migration files                                                                            |
+| `/models`                        | ORM models                                                                                          |
+| `/repository`                    | contains repository part of clean architecture. Mainly database queries are added here.             |
+| `/seeds`                         | seeds for already migrated tables                                                                   |
+| `/services`                      | service layers, contains the functionality that compounds the core of the application               |
+| `/tests`                         | includes application tests                                                                          |
+| `/utils`                         | global utility/helper functions                                                                     |
+| `.env.example`                   | sample environment variables                                                                        |
+| `dbconfig.yml`                   | database configuration file for `sql-migrate` command                                               |
+| `docker-compose.yml`             | `docker compose` file for service application via `Docker`                                          |
+| `main.go`                        | entry-point of the server                                                                           |
+| `Makefile`                       | stores frequently used commands; can be invoked using `make` command                                |
+| `serviceAccountKey.json.example` | sample credentials file for accessing Google Cloud                                                  |
 
 ---
 
