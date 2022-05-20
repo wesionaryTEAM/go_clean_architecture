@@ -1,25 +1,57 @@
-### Go Clean Architecture
+# Go Clean Architecture
 
-Clean Architecture with Golang with Dependency Injection
+Clean Architecture with [Gin Web Framework](https://github.com/gin-gonic/gin)
 
-### Use of Linter in the project
+### Features :star:
 
-To install all the packages and run the linter in git pre-commit hook; Run
+-   Clean Architecture written in Go
+-   Application backbone with [Gin Web Framework](https://github.com/gin-gonic/gin)
+-   Dependency injection using [uber-go/fx](https://pkg.go.dev/go.uber.org/fx)
+-   API endpoints documentation with [Swagger-UI](https://swagger.io/tools/swagger-ui/download/)
+-   Uses fully featured [GORM](https://gorm.io/index.html)
 
-> Make lint-setup
-> <br/>
+## Linter setup
 
-### Run Migration Commands
+To add linter in git pre-commit hook, and install all the required packages for setting up linter.
 
-> ⚓️ &nbsp; Add argument `p=host` after `make` if you want to run the migration runner from the host environment instead of docker environment. example; `make p=host migrate-up`
+```zsh
+make lint-setup
+```
 
-If you are not using docker; ensure that sql-migrate is installed to use migration from the host environment.
-To install sql-migrate:
+---
 
-> go get -v github.com/rubenv/sql-migrate/...
+## Migration Commands
+
+⚓️ &nbsp; If you want to run the migration runner from the host environment instead of the docker environment; ensure that `sql-migrate` is installed on your local machine.
+
+### Install `sql-migrate`
+
+> You can skip this step if `sql-migrate` has already been installed on your local machine.
+
+**Note:** Starting in Go 1.17, installing executables with `go get` is deprecated. `go install` may be used instead. [Read more](https://go.dev/doc/go-get-install-deprecation)
+
+```zsh
+go install github.com/rubenv/sql-migrate/...@latest
+```
+
+If you're using Go version below `1.18`
+
+```zsh
+go get -v github.com/rubenv/sql-migrate/...
+```
+
+### Running migration
+
+Add argument `p=host` after `make` command to run migration commands on local environment
+
+<b>Example:</b>
+
+```zsh
+make p=host migrate-up
+```
 
 <details>
-    <summary>Migration commands available</summary>
+    <summary>Available migration commands</summary>
 
 | Command               | Desc                                                       |
 | --------------------- | ---------------------------------------------------------- |
@@ -31,76 +63,135 @@ To install sql-migrate:
 
 </details>
 
-### Run app with docker
+---
 
--   Update database env variables with credentials defined in `docker-compose.yml`
--   Start server using command `docker-compose up -d` or `sudo docker-compose up -d` if permission issues
-    > Assumes: Docker is already installed in the machine.
+## Run application
 
-### Run app without docker
+-   Setup environment variables
 
--   Run `go run main.go app:serve` to run app server.
+```zsh
+cp .env.dev .env
+```
+
+-   Update your database credentials environment variables in `.env` file
+
+### Locally
+
+-   Run `go run main.go app:serve` to start the server.
 -   There are other commands available as well. You can run `go run main.go -help` to know about other commands available.
+
+### Using `Docker`
+
+> Ensure Docker is already installed in the machine.
+
+-   Start server using command `docker-compose up -d` or `sudo docker-compose up -d` if permission issues
+
+---
+
+## Folder Structure :file_folder:
+
+-   `/api` → contains all the `middlwares`, `controllers` and `routes` of the server in their respective folders
+-   `/api-errors` → server error handlers
+-   `/bootstrap` →
+-   `/console` → server commands, run `go run main.go -help` for all the available server commands
+-   `/constants` → global application constants
+-   `/docker` → `docker` files required for `docker compose`
+-   `/docs` → API endpoints documentation using `swagger`
+-   `/hooks` → `git` hooks
+-   `/infrastructure` → third-party services connections like `gmail`, `firebase`, `s3-bucket`, ...
+-   `/lib` →
+-   `/migration` → database migration files
+-   `/models` → ORM models
+-   `/repository` →
+-   `/seeds` → seeds for already migrated tables
+-   `/services` → service layers, contains the functionality that compounds the core of the application
+-   `/tests` → includes application tests
+-   `/utils` → global utility/helper functions
+
+---
 
 ## Testing
 
 The framework comes with unit and integration testing support out of the box. You can check examples written in tests directory.
-To run the test just run: `go test ./... -v`
+
+To run the test just run:
+
+```zsh
+go test ./... -v
+```
 
 ### For test coverage
 
--   `go test ./... -v -coverprofile cover.txt -coverpkg=./...`
--   `go tool cover -html=cover.txt -o index.html`
+```zsh
+go test ./... -v -coverprofile cover.txt -coverpkg=./...
+go tool cover -html=cover.txt -o index.html
+```
+
+---
 
 ## Checking API documents with swagger UI
 
 Browse to `http://localhost:${SWAGGER_PORT}`
 
 -   You can see all the documented endpoints in Swagger-UI from the API specification
--   You can execute/test endpoint
-    You can read the article to know more on this: https://medium.com/wesionary-team/swagger-ui-on-docker-for-testing-rest-apis-5b3d5fcdee7
+-   You can execute/test endpoint. [Read article](https://medium.com/wesionary-team/swagger-ui-on-docker-for-testing-rest-apis-5b3d5fcdee7)
+
+---
 
 ## Update Dependencies
 
 <details>
     <summary><b>Steps to Update Dependencies</b></summary>
     
-1. ```go get -u```
-2. Remove all the dependencies packages that has ```// indirect``` from the modules
-3. ```go mod tidy```
+1. `go get -u`
+2. Remove all the dependencies packages that has `// indirect` from the modules
+3. `go mod tidy`
 </details>
 
 <details>
     <summary><b>Discovering available updates</b></summary>
     
 List all of the modules that are dependencies of your current module, along with the latest version available for each:
-> $ go list -m -u all
+```zsh 
+go list -m -u all
+```
 
 Display the latest version available for a specific module:
 
-> $ go list -m -u example.com/theirmodule
+```zsh
+go list -m -u example.com/theirmodule
+```
 
 <b>Example:</b>
 
-> $ go list -m -u cloud.google.com/go/firestore<br/>
-> cloud.google.com/go/firestore v1.2.0 [v1.6.1]
+```zsh
+go list -m -u cloud.google.com/go/firestore
+cloud.google.com/go/firestore v1.2.0 [v1.6.1]
+```
 
 </details>
 
 <details>
     <summary><b>Getting a specific dependency version</b></summary>
     
-To get a specific numbered version, append the module path with an @ sign followed by the version you want:
-> $ go get example.com/theirmodule@v1.3.4
+To get a specific numbered version, append the module path with an `@` sign followed by the `version` you want:
+
+```zsh
+go get example.com/theirmodule@v1.3.4
+```
 
 To get the latest version, append the module path with @latest:
 
-> $ go get example.com/theirmodule@latest
+```zsh
+go get example.com/theirmodule@latest
+```
 
 </details>
 
 <details>
     <summary><b>Synchronizing your code’s dependencies</b></summary>
  
-> $ go mod tidy
+```zsh
+go mod tidy
+```
 </details>
