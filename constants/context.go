@@ -18,4 +18,7 @@ const (
 
 	// Page
 	Page = "Page"
+
+	// Rate Limit
+	RateLimit = "RateLimit"
 )
