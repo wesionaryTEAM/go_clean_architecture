@@ -12,6 +12,8 @@ import (
 	"github.com/ulule/limiter/v3/drivers/store/memory"
 )
 
+// Global store
+// using in-memory store with goroutine which clears expired keys.
 var store = memory.NewStoreWithOptions(limiter.StoreOptions{CleanUpInterval: 10 * time.Second})
 
 type RateLimitMiddleware struct {
@@ -26,28 +28,36 @@ func NewRateLimitMiddleware(logger lib.Logger) RateLimitMiddleware {
 
 func (lm RateLimitMiddleware) Handle(period time.Duration, limit int64) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		key := c.ClientIP()
+		key := c.ClientIP() // Gets client IP Address
 
 		lm.logger.Info("Setting up rate limit middleware")
+
+		// Setting up rate limit
+		// Limit -> # of API Calls
+		// Period -> in a given time frame
 		rate := limiter.Rate{
-			Period: period,
 			Limit:  limit,
+			Period: period,
 		}
 
-		// using in-memory store with goroutine which clears expired keys.
+		// Limiter instance
 		instance := limiter.New(store, rate)
 
-		context, err := instance.Get(c, key)
+		// Returns the rate limit details for given identifier.
+		context, err := instance.Get(c, c.FullPath()+"&&"+key)
 
 		if err != nil {
 			lm.logger.Panic(err.Error())
 		}
 
 		c.Set(constants.RateLimit, instance)
+
+		// Setting custom headers
 		c.Header("X-RateLimit-Limit", strconv.FormatInt(context.Limit, 10))
 		c.Header("X-RateLimit-Remaining", strconv.FormatInt(context.Remaining, 10))
 		c.Header("X-RateLimit-Reset", strconv.FormatInt(context.Reset, 10))
 
+		// Limit exceeded
 		if context.Reached {
 			c.JSON(http.StatusTooManyRequests, gin.H{
 				"message": "Rate Limit Exceed",
@@ -58,10 +68,4 @@ func (lm RateLimitMiddleware) Handle(period time.Duration, limit int64) gin.Hand
 
 		c.Next()
 	}
-}
-
-// DefaultKeyGetter is the default KeyGetter used by a new Middleware.
-// It returns the Client IP address.
-func DefaultKeyGetter(c *gin.Context) string {
-	return c.ClientIP()
 }
