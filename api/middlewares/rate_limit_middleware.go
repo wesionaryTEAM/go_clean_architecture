@@ -14,7 +14,7 @@ import (
 
 // Global store
 // using in-memory store with goroutine which clears expired keys.
-var store = memory.NewStoreWithOptions(limiter.StoreOptions{CleanUpInterval: 10 * time.Second})
+var store = memory.NewStore()
 
 type RateLimitMiddleware struct {
 	logger lib.Logger
@@ -44,6 +44,7 @@ func (lm RateLimitMiddleware) Handle(period time.Duration, limit int64) gin.Hand
 		instance := limiter.New(store, rate)
 
 		// Returns the rate limit details for given identifier.
+		// FullPath is appended with IP address. `/api/users&&127.0.0.1` as key
 		context, err := instance.Get(c, c.FullPath()+"&&"+key)
 
 		if err != nil {
