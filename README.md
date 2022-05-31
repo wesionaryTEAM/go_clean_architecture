@@ -29,6 +29,8 @@ cp .env.example .env
 ```
 
 -   Update your database credentials environment variables in `.env` file
+- Setup `serviceAccountKey.json`. To get one create a firebase project. Go to Settings > Service Accounts and then click **"Generate New Private Key"**. and then confirm by clicking **"Generate Key"**.
+Copy the key to `serviceAccountKey.json` file. You can see the example at `serviceAccountKey.json.example` file. 
 
 ### Locally
 
@@ -39,7 +41,7 @@ cp .env.example .env
 
 > Ensure Docker is already installed in the machine.
 
--   Start server using command `docker-compose up -d` or `sudo docker-compose up -d` if permission issues
+-   Start server using command `docker-compose up -d` or `sudo docker-compose up -d` if there are permission issues.
 
 ---
 
