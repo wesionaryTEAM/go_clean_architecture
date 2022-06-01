@@ -20,7 +20,7 @@ func (r *RandomCommand) Setup(cmd *cobra.Command) {
 	cmd.Flags().IntVarP(&r.num, "num", "n", 5, "length of random number to generate")
 }
 
-func (r *RandomCommand) Run() lib.CommandRunner {
+func (r *RandomCommand) Run(cmd *cobra.Command, args []string) lib.CommandRunner {
 	return func(l lib.Logger) {
 		l.Info("running random command")
 		rand.Seed(time.Now().Unix())

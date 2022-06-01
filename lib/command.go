@@ -30,5 +30,5 @@ type Command interface {
 	// 	 },
 	//  }
 	//
-	Run() CommandRunner
+	Run(cmd *cobra.Command, args []string) CommandRunner
 }
