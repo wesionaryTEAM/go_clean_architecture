@@ -6,6 +6,7 @@ import (
 	"clean-architecture/infrastructure"
 	"clean-architecture/lib"
 	"clean-architecture/seeds"
+	"time"
 
 	"github.com/getsentry/sentry-go"
 	"github.com/spf13/cobra"
@@ -34,6 +35,11 @@ func (s *ServeCommand) Run() lib.CommandRunner {
 		logger.Info(`+-----------------------+`)
 		logger.Info(`| GO CLEAN ARCHITECTURE |`)
 		logger.Info(`+-----------------------+`)
+
+		// Using time zone as specified in env file
+		loc, _ := time.LoadLocation(env.TimeZone)
+		time.Local = loc
+
 		middleware.Setup()
 		route.Setup()
 		seeds.Setup()
