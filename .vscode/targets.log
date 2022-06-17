@@ -1,0 +1,374 @@
+make all --print-data-base --no-builtin-variables --no-builtin-rules --question
+# GNU Make 3.81
+# Copyright (C) 2006  Free Software Foundation, Inc.
+# This is free software; see the source for copying conditions.
+# There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+# This program built for i386-apple-darwin11.3.0
+ 
+make: *** No rule to make target `all'.  Stop.
+
+
+# Make data base, printed on Fri Jun 17 12:02:02 2022
+
+# Variables
+
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# automatic
+?F = $(notdir $?)
+# makefile (from `.env', line 5)
+DB_HOST = database
+# environment
+ELECTRON_NO_ATTACH_CONSOLE = 1
+# makefile (from `.env', line 6)
+DB_PORT = 3306
+# environment
+LC_CTYPE = UTF-8
+# environment
+VSCODE_LOG_NATIVE = false
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# automatic
+@F = $(notdir $@)
+# makefile
+CURDIR := /Users/rasil.baidar/Wesionary Projects/go_clean_architecture
+# makefile
+SHELL = /bin/sh
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en-us","availableLanguages":{},"_languagePackSupport":true}
+# environment
+_ = /usr/bin/make
+# makefile (from `.env', line 1)
+MAKEFILE_LIST :=  Makefile .env
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+VSCODE_VERBOSE_LOGGING = true
+# environment
+__CFBundleIdentifier = com.microsoft.VSCode
+# environment
+INFOPATH = /opt/homebrew/share/info:
+# makefile (from `.env', line 23)
+ADMIN_EMAIL = newadmin@gmail.com
+# environment
+VSCODE_IPC_HOOK_EXTHOST = /var/folders/sp/s9_hlmbs6h38d0yjvynd9w9nnb_g2d/T/vscode-ipc-52fbe0e8-66ff-4e82-a31e-407ffc2fff2a.sock
+# environment
+VSCODE_CWD = /Users/rasil.baidar/Wesionary Projects/go_clean_architecture
+# environment
+GOPROXY = https://proxy.golang.org,direct
+# makefile (from `.env', line 14)
+SENTRY_DSN = 
+# environment
+PATH = /opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/usr/local/go/bin
+# makefile (from `.env', line 21)
+STORAGE_BUCKET_NAME = teamplace-development-bucket
+# environment
+GOPATH = /Users/rasil.baidar/go
+# makefile (from `.env', line 3)
+LOG_LEVEL = info
+# environment
+LaunchInstanceID = 3C311CE3-C3B8-4E9E-888A-D618727E8E8D
+# environment
+VSCODE_LOG_STACK = false
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# makefile (from `.env', line 38)
+TEST_DB_TYPE = 
+# default
+.FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
+# environment
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.SmrpRfRs10/Listeners
+# automatic
+%F = $(notdir $%)
+# makefile (from `.env', line 12)
+DB_TYPE = mysql
+# environment
+VSCODE_PIPE_LOGGING = true
+# environment
+PWD = /Users/rasil.baidar/Wesionary Projects/go_clean_architecture
+# environment
+HOMEBREW_CELLAR = /opt/homebrew/Cellar
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+# environment
+MANPATH = /opt/homebrew/share/man:
+# environment
+GOMODCACHE = /Users/rasil.baidar/go/pkg/mod
+# environment
+HOME = /Users/rasil.baidar
+# default
+MAKEFILEPATH = $(shell /usr/bin/xcode-select -print-path 2>/dev/null || echo /Developer)/Makefiles
+# environment
+VSCODE_CLI = 1
+# environment
+VSCODE_CODE_CACHE_PATH = /Users/rasil.baidar/Library/Application Support/Code/CachedData/4af164ea3a06f701fe3e89a2bcbb421d2026b68f
+# environment
+LOGNAME = rasil.baidar
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+XPC_FLAGS = 0x0
+# makefile (from `.env', line 16)
+MAX_MULTIPART_MEMORY = 10485760
+# default
+MAKE = $(MAKE_COMMAND)
+# default
+MAKECMDGOALS := all
+# environment
+SHLVL = 3
+# makefile (from `.env', line 26)
+MAIL_CLIENT_ID = 
+# default
+MAKE_VERSION := 3.81
+# environment
+USER = rasil.baidar
+# makefile
+.DEFAULT_GOAL := migrate-status
+# makefile (from `.env', line 28)
+MAIL_TOKEN_TYPE = 
+# environment
+TERM_SESSION_ID = BDF62116-8D31-44DF-97FD-32C4CF6445B3
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# default
+MAKE_COMMAND := /Library/Developer/CommandLineTools/usr/bin/make
+# environment
+TERM_PROGRAM = Apple_Terminal
+# default
+.VARIABLES := 
+# environment
+TMPDIR = /var/folders/sp/s9_hlmbs6h38d0yjvynd9w9nnb_g2d/T/
+# automatic
+*F = $(notdir $*)
+# makefile (from `.env', line 37)
+TEST_DB_PASS = 
+# environment
+VSCODE_IPC_HOOK = /Users/rasil.baidar/Library/Application Support/Code/1.68.0-main.sock
+# makefile (from `.env', line 1)
+SERVER_PORT = 9001
+# makefile
+MAKEFLAGS = Rrqp
+# environment
+MFLAGS = -Rrqp
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+TERM_PROGRAM_VERSION = 443
+# environment
+NVM_DIR = /Users/rasil.baidar/.nvm
+# environment
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.8446956.8446962.26F04228-58C1-4CF1-A906-F437D02EE9BA
+# environment
+HOMEBREW_PREFIX = /opt/homebrew
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# makefile (from `.env', line 9)
+DB_PASS = MyNoPassword
+# automatic
++F = $(notdir $+)
+# makefile (from `Makefile', line 4)
+MIGRATE = docker-compose exec web sql-migrate
+# environment
+HOMEBREW_REPOSITORY = /opt/homebrew
+# makefile (from `.env', line 27)
+MAIL_CLIENT_SECRET = 
+# makefile (from `.env', line 36)
+TEST_DB_USER = 
+# environment
+__CF_USER_TEXT_ENCODING = 0x6AB53C4D:0x0:0x0
+# environment
+COMMAND_MODE = unix2003
+# makefile (from `.env', line 19)
+SWAGGER_PORT = 8009
+# default
+MAKEFILES := 
+# automatic
+<F = $(notdir $<)
+# makefile (from `.env', line 35)
+TEST_DB_NAME = 
+# makefile (from `.env', line 8)
+DB_USER = root
+# makefile (from `.env', line 30)
+DEBUG_PORT = 5002
+# environment
+LC_ALL = C
+# makefile (from `.env', line 2)
+ENVIRONMENT = local
+# environment
+SECURITYSESSIONID = 186b3
+# automatic
+^F = $(notdir $^)
+# makefile (from `.env', line 7)
+DB_NAME = clean_db
+# default
+SUFFIXES := 
+# default
+.INCLUDE_DIRS = /usr/local/include
+# environment
+MAKELEVEL := 0
+# makefile (from `.env', line 24)
+ADMIN_PASSWORD = admin123
+# makefile (from `.env', line 33)
+TEST_DB_HOST = 
+# environment
+LANG = C
+# environment
+TERM = xterm-256color
+# makefile (from `.env', line 34)
+TEST_DB_PORT = 
+# environment
+VSCODE_PID = 597
+# makefile (from `.env', line 18)
+ADMINER_PORT = 5003
+# variable set hash-table stats:
+# Load=107/1024=10%, Rehash=0, Collisions=3/134=2%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# . (device 16777233, inode 839986): 39 files, no impossibilities.
+
+# 39 files, no impossibilities in 1 directories.
+
+# Implicit Rules
+
+# No implicit rules.
+
+# Files
+
+migrate-up:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 14):
+	$(MIGRATE) up
+	
+
+migrate-down:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 17):
+	$(MIGRATE) down 
+	
+
+lint-setup:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 31):
+	curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
+	sudo python2 get-pip.py
+	sudo pip install pre-commit
+	rm get-pip.py
+	pre-commit install
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOPATH)/bin v1.43.0
+	
+
+# Not a target:
+all:
+#  Command-line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has not been updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+.PHONY: migrate-status migrate-up migrate-down redo create lint-setup
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+redo:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 20):
+	@read -p  "Are you sure to reapply the last migration? [y/n]" -n 1 -r; \
+	if [[ $$REPLY =~ ^[Yy] ]]; \
+	then \
+	$(MIGRATE) redo; \
+	fi
+	
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-10 22:37:24
+#  File has been updated.
+#  Successfully updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+create:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+ 
+#  File does not exist.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 27):
+	@read -p  "What is the name of migration?" NAME; \
+	${MIGRATE} new $$NAME
+	
+
+# Not a target:
+.env:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-30 17:26:22
+#  File has been updated.
+#  Successfully updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+migrate-status:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 11):
+	$(MIGRATE) status
+	
+
+# files hash-table stats:
+# Load=12/1024=1%, Rehash=0, Collisions=0/31=0%
+# VPATH Search Paths
+
+# No `vpath' search paths.
+
+# No general (`VPATH' variable) search path.
+
+# # of strings in strcache: 2
+# # of strcache buffers: 1
+# strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
+# strcache free: total = 4082 / max = 4082 / min = 4082 / avg = 4082
+
+# Finished Make data base on Fri Jun 17 12:02:02 2022
+
+ 

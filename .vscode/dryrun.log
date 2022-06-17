@@ -1,0 +1,5 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory `/Users/rasil.baidar/Wesionary Projects/go_clean_architecture'
+docker-compose exec web sql-migrate status
+make: Leaving directory `/Users/rasil.baidar/Wesionary Projects/go_clean_architecture'
+ 

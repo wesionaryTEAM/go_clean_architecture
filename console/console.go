@@ -12,7 +12,6 @@ import (
 
 var cmds = map[string]lib.Command{
 	"cmd:random": commands.NewRandomCommand(),
-	"cmd:loadtest":commands.NewLoadTestingCommand(),
 	"app:serve":  NewServeCommand(),
 }
 
