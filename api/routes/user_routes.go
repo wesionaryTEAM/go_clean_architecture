@@ -6,7 +6,6 @@ import (
 	"clean-architecture/constants"
 	"clean-architecture/infrastructure"
 	"clean-architecture/lib"
-	"time"
 )
 
 // UserRoutes struct
@@ -44,7 +43,8 @@ func NewUserRoutes(
 func (s *UserRoutes) Setup() {
 	s.logger.Info("Setting up routes")
 
-	api := s.handler.Group("/api").Use(s.authMiddleware.HandleAuthWithRole(constants.RoleIsAdmin), s.rateLimitMiddleware.Handle(15*time.Minute, 200))
+	api := s.handler.Group("/api").Use(s.authMiddleware.HandleAuthWithRole(constants.RoleIsAdmin),
+		s.rateLimitMiddleware.Handle(nil))
 
 	api.GET("/user", s.PaginationMiddleware.Handle(), s.userController.GetUser)
 	api.GET("/user/:id", s.userController.GetOneUser)
