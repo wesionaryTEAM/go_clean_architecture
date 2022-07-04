@@ -114,61 +114,61 @@ jobs:
       #   if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/staging' || startsWith(github.ref, 'refs/tags/v')) }}
       #   run: gcloud app versions list --project ${{secrets.GCP_PROJECT_ID}} --service="default" --format="value(version.id)" --sort-by="~version.createTime" | tail -n +4 | xargs -r gcloud app versions delete --project ${{secrets.GCP_PROJECT_ID}} --service default --quiet
       
-      - name: Slack Notification on SUCCESS
-        if: success()
-        uses: tokorom/action-slack-incoming-webhook@main
-        env:
-          INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          text: A job for go_clean_architecture has succeeded :tada:.
-          attachments: |
-            [
-              {
-                "color": "good",
-                "author_name": "${{ github.actor }}",
-                "author_icon": "${{ github.event.sender.avatar_url }}",
-                "fields": [
-                  {
-                    "title": "Commit Message",
-                    "value": "${{ github.event.head_commit.message }}"
-                  },
-                  {
-                    "title": "GitHub Actions URL",
-                    "value": "${{ github.event.repository.url }}/actions/runs/${{ github.run_id }}"
-                  },
-                  {
-                    "title": "Compare URL",
-                    "value":  "${{ github.event.compare }}"
-                  }
-                ]
-              }
-            ] 
-      - name: Slack Notification on FAILURE
-        if: failure()
-        uses: tokorom/action-slack-incoming-webhook@main
-        env:
-          INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          text: A build and *deploy job for go_clean_architecture has failed :crying_cat_face:.
-          attachments: |
-            [
-              {
-                "color": "danger",
-                "author_name": "${{ github.actor }}",
-                "author_icon": "${{ github.event.sender.avatar_url }}",
-                "fields": [
-                  {
-                    "title": "Commit Message",
-                    "value": "${{ github.event.head_commit.message }}"
-                  },
-                  {
-                    "title": "GitHub Actions URL",
-                    "value": "${{ github.event.repository.url }}/actions/runs/${{ github.run_id }}"
-                  },
-                  {
-                    "title": "Compare URL",
-                    "value":  "${{ github.event.compare }}"
-                  }
-                ]
-              }
-            ] 
+      # - name: Slack Notification on SUCCESS
+      #   if: success()
+      #   uses: tokorom/action-slack-incoming-webhook@main
+      #   env:
+      #     INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      #   with:
+      #     text: A job for go_clean_architecture has succeeded :tada:.
+      #     attachments: |
+      #       [
+      #         {
+      #           "color": "good",
+      #           "author_name": "${{ github.actor }}",
+      #           "author_icon": "${{ github.event.sender.avatar_url }}",
+      #           "fields": [
+      #             {
+      #               "title": "Commit Message",
+      #               "value": "${{ github.event.head_commit.message }}"
+      #             },
+      #             {
+      #               "title": "GitHub Actions URL",
+      #               "value": "${{ github.event.repository.url }}/actions/runs/${{ github.run_id }}"
+      #             },
+      #             {
+      #               "title": "Compare URL",
+      #               "value":  "${{ github.event.compare }}"
+      #             }
+      #           ]
+      #         }
+      #       ] 
+      # - name: Slack Notification on FAILURE
+      #   if: failure()
+      #   uses: tokorom/action-slack-incoming-webhook@main
+      #   env:
+      #     INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      #   with:
+      #     text: A build and *deploy job for go_clean_architecture has failed :crying_cat_face:.
+      #     attachments: |
+      #       [
+      #         {
+      #           "color": "danger",
+      #           "author_name": "${{ github.actor }}",
+      #           "author_icon": "${{ github.event.sender.avatar_url }}",
+      #           "fields": [
+      #             {
+      #               "title": "Commit Message",
+      #               "value": "${{ github.event.head_commit.message }}"
+      #             },
+      #             {
+      #               "title": "GitHub Actions URL",
+      #               "value": "${{ github.event.repository.url }}/actions/runs/${{ github.run_id }}"
+      #             },
+      #             {
+      #               "title": "Compare URL",
+      #               "value":  "${{ github.event.compare }}"
+      #             }
+      #           ]
+      #         }
+      #       ] 
