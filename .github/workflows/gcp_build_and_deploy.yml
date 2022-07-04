@@ -6,6 +6,7 @@ on:
       - BAC-*
       - main
       - develop
+      - staging
     tags:
       - v*
 
@@ -22,6 +23,8 @@ jobs:
       run: |
         if grep -q "refs/tags/v" <<< $GITHUB_REF; then
           echo "::set-output name=env::PROD"
+        elif  grep -q "refs/heads/staging" <<< ${{github.ref}}; then
+          echo "::set-output name=env::STAGING"
         else
           echo "::set-output name=env::DEV"
         fi
@@ -94,17 +97,22 @@ jobs:
           " > .env
 
       - name: Setup Cloud SDK
-        if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v')) }}
+        if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/staging' || startsWith(github.ref, 'refs/tags/v')) }}
         uses: google-github-actions/setup-gcloud@v0.2.0
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GCLOUD_SERVICE_KEY }}
       
+      # If there is a separate app.yaml for staging separate this step
       - name: Deploy to App Engine
-        if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v')) }}
+        if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/staging' || startsWith(github.ref, 'refs/tags/v')) }}
         run: gcloud app deploy app.yaml --quiet --project ${{secrets.GCP_PROJECT_ID}}
 
-
+      # Update the service as per app.yaml
+      - name : Delete previous versions of development
+        if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/staging' || startsWith(github.ref, 'refs/tags/v')) }}
+        run: gcloud app versions list --project ${{secrets.GCP_PROJECT_ID}} --service="default" --format="value(version.id)" --sort-by="~version.createTime" | tail -n +4 | xargs -r gcloud app versions delete --project ${{secrets.GCP_PROJECT_ID}} --service default --quiet
+      
       - name: Slack Notification on SUCCESS
         if: success()
         uses: tokorom/action-slack-incoming-webhook@main
