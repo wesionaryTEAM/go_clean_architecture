@@ -1,0 +1,2 @@
+runtime: go116
+entrypoint: main app:serve
