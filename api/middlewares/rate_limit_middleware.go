@@ -25,6 +25,8 @@ type RateLimitOption struct {
 	limit  int64
 }
 
+type Option func(*RateLimitOption)
+
 type RateLimitMiddleware struct {
 	logger lib.Logger
 	option RateLimitOption
@@ -40,7 +42,7 @@ func NewRateLimitMiddleware(logger lib.Logger) RateLimitMiddleware {
 	}
 }
 
-func (lm RateLimitMiddleware) Handle(option *RateLimitOption) gin.HandlerFunc {
+func (lm RateLimitMiddleware) Handle(options ...Option) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		key := c.ClientIP() // Gets cient IP Address
 
@@ -50,14 +52,18 @@ func (lm RateLimitMiddleware) Handle(option *RateLimitOption) gin.HandlerFunc {
 		// Limit -> # of API Calls
 		// Period -> in a given time frame
 		// setting default value
-		rate := limiter.Rate{
-			Limit:  lm.option.limit,
-			Period: lm.option.period,
+		opt := RateLimitOption{
+			period: lm.option.period,
+			limit:  lm.option.limit,
 		}
 
-		if option != nil {
-			rate.Limit = option.limit
-			rate.Period = option.period
+		for _, o := range options {
+			o(&opt)
+		}
+
+		rate := limiter.Rate{
+			Limit:  opt.limit,
+			Period: opt.period,
 		}
 
 		// Limiter instance
@@ -88,5 +94,12 @@ func (lm RateLimitMiddleware) Handle(option *RateLimitOption) gin.HandlerFunc {
 		}
 
 		c.Next()
+	}
+}
+
+func WithOptions(period time.Duration, limit int64) Option {
+	return func(o *RateLimitOption) {
+		o.period = period
+		o.limit = limit
 	}
 }

@@ -44,7 +44,7 @@ func (s *UserRoutes) Setup() {
 	s.logger.Info("Setting up routes")
 
 	api := s.handler.Group("/api").Use(s.authMiddleware.HandleAuthWithRole(constants.RoleIsAdmin),
-		s.rateLimitMiddleware.Handle(nil))
+		s.rateLimitMiddleware.Handle())
 
 	api.GET("/user", s.PaginationMiddleware.Handle(), s.userController.GetUser)
 	api.GET("/user/:id", s.userController.GetOneUser)
