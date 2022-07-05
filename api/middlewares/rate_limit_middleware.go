@@ -16,10 +16,6 @@ import (
 // using in-memory store with goroutine which clears expired keys.
 var store = memory.NewStore()
 
-// Default values
-const RATE_LIMIT_PERIOD = 15 * time.Minute
-const RATE_LIMIT_RATE = int64(200)
-
 type RateLimitOption struct {
 	period time.Duration
 	limit  int64
@@ -36,8 +32,8 @@ func NewRateLimitMiddleware(logger lib.Logger) RateLimitMiddleware {
 	return RateLimitMiddleware{
 		logger: logger,
 		option: RateLimitOption{
-			period: RATE_LIMIT_PERIOD,
-			limit:  RATE_LIMIT_RATE,
+			period: constants.RateLimitPeriod,
+			limit:  constants.RateLimitRequests,
 		},
 	}
 }
@@ -51,7 +47,7 @@ func (lm RateLimitMiddleware) Handle(options ...Option) gin.HandlerFunc {
 		// Setting up rate limit
 		// Limit -> # of API Calls
 		// Period -> in a given time frame
-		// setting default value
+		// setting default values
 		opt := RateLimitOption{
 			period: lm.option.period,
 			limit:  lm.option.limit,
