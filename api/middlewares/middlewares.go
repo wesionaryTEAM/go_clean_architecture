@@ -8,6 +8,7 @@ var Module = fx.Options(
 	fx.Provide(NewFirebaseAuthMiddleware),
 	fx.Provide(NewPaginationMiddleware),
 	fx.Provide(NewUploadMiddleware),
+	fx.Provide(NewRateLimitMiddleware),
 	fx.Provide(NewMiddlewares),
 )
 
