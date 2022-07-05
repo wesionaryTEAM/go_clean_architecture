@@ -16,6 +16,7 @@ type UserRoutes struct {
 	authMiddleware   middlewares.FirebaseAuthMiddleware
 	uploadMiddleware middlewares.UploadMiddleware
 	middlewares.PaginationMiddleware
+	rateLimitMiddleware middlewares.RateLimitMiddleware
 }
 
 func NewUserRoutes(
@@ -25,6 +26,7 @@ func NewUserRoutes(
 	authMiddleware middlewares.FirebaseAuthMiddleware,
 	uploadMiddleware middlewares.UploadMiddleware,
 	pagination middlewares.PaginationMiddleware,
+	rateLimit middlewares.RateLimitMiddleware,
 ) *UserRoutes {
 	return &UserRoutes{
 		handler:              handler,
@@ -33,6 +35,7 @@ func NewUserRoutes(
 		authMiddleware:       authMiddleware,
 		uploadMiddleware:     uploadMiddleware,
 		PaginationMiddleware: pagination,
+		rateLimitMiddleware:  rateLimit,
 	}
 }
 
@@ -40,7 +43,8 @@ func NewUserRoutes(
 func (s *UserRoutes) Setup() {
 	s.logger.Info("Setting up routes")
 
-	api := s.handler.Group("/api").Use(s.authMiddleware.HandleAuthWithRole(constants.RoleIsAdmin))
+	api := s.handler.Group("/api").Use(s.authMiddleware.HandleAuthWithRole(constants.RoleIsAdmin),
+		s.rateLimitMiddleware.Handle())
 
 	api.GET("/user", s.PaginationMiddleware.Handle(), s.userController.GetUser)
 	api.GET("/user/:id", s.userController.GetOneUser)
