@@ -52,6 +52,7 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           skip-go-installation: true  
+          args: --timeout=10m
 
       - name: Set up MySQL
         run: |
