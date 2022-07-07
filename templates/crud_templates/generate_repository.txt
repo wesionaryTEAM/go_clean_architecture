@@ -3,6 +3,7 @@ package {{.PackageName}}
 import (
 	"{{.ModuleName}}/infrastructure"
 	"{{.ModuleName}}/lib"
+	"{{.ModuleName}}/models"
 
 	"gorm.io/gorm"
 )
@@ -19,10 +20,31 @@ func New{{.ModelName}}Repository(db infrastructure.Database, logger lib.Logger) 
 }
 
 // WithTrx delegate transaction from {{.ModelName}} repository
-func (r {{.ModelName}}Repository) WithTrx(trxHandle *gorm.DB) {{.ModelName}}Repository {
+func (r *{{.ModelName}}Repository) WithTrx(trxHandle *gorm.DB) {{.ModelName}}Repository {
 	if trxHandle != nil {
 		r.logger.Debug("using WithTrx as trxHandle is not nil")
 		r.Database.DB = trxHandle
 	}
-	return r
+	return *r
 }
+
+// RetrieveWithID gets one {{.ModelName}}
+func (r *{{.ModelName}}Repository) RetrieveWithID(id uint) (record models.{{.ModelName}}, err error) {
+	return record, r.DB.First(&record, "id = ?", id).Error
+}
+
+// Create add {{.ModelName}}
+func (r *{{.ModelName}}Repository) Create(record *models.{{.ModelName}}) error {
+	return r.DB.Create(&record).Error
+}
+
+// Update updates {{.ModelName}}
+func (r *{{.ModelName}}Repository) Update(record *models.{{.ModelName}}) error {
+	return r.DB.Save(&record).Error
+}
+
+// Delete deletes {{.ModelName}}
+func (r *{{.ModelName}}Repository) Delete(id uint) error {
+	return r.DB.Where("id = ?", id).Delete(&models.{{.ModelName}}{}).Error
+}
+
