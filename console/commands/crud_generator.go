@@ -46,7 +46,7 @@ func (cg *CrudGeneratorCommand) Run() lib.CommandRunner {
 
 		modelName := cg.generateModelName(crudFileName)
 
-		layers := []string{"repository", "service", "controller", "route"}
+		layers := []string{"model", "repository", "service", "controller", "route"}
 
 		for _, layer := range layers {
 			l.Infof("--- Generating %s ---", layer)
@@ -55,7 +55,7 @@ func (cg *CrudGeneratorCommand) Run() lib.CommandRunner {
 				l.Error(err)
 				return
 			}
-			l.Infof("--- %s Generated ---", strings.Title(layer))
+			l.Infof("--- %s Generated ---", strings.Title(layer)) //nolint
 		}
 	}
 }
@@ -66,15 +66,20 @@ func (cg *CrudGeneratorCommand) fileGenerator(packageName, crudFileName, modelNa
 		dir += "s"
 	}
 
-	fileName := fmt.Sprintf("%s_%s.go", crudFileName, packageName)
+	if packageName == "model" {
+		crudFileName += ".go"
+	} else {
+		crudFileName = fmt.Sprintf("%s_%s.go", crudFileName, packageName)
+	}
+
 	path := dir
 	if dir == "controllers" || dir == "routes" {
 		path = filepath.Join("api", dir)
 	}
-	file := filepath.Join(path, fileName)
+	file := filepath.Join(path, crudFileName)
 
 	if _, err := os.Stat(file); err == nil {
-		return fmt.Errorf("file already exists with name %s", fileName)
+		return fmt.Errorf("file already exists with name %s", crudFileName)
 	}
 
 	t, err := template.ParseFiles(fmt.Sprintf("templates/crud_templates/generate_%s.txt", packageName))
