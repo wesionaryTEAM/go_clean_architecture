@@ -1,0 +1,28 @@
+package {{.PackageName}}
+
+import (
+	"{{.ModuleName}}/infrastructure"
+	"{{.ModuleName}}/lib"
+
+	"gorm.io/gorm"
+)
+
+// {{.ModelName}}Repository database structure
+type {{.ModelName}}Repository struct {
+	infrastructure.Database
+	logger lib.Logger
+}
+
+// New{{.ModelName}}Repository creates a new {{.ModelName}} repository
+func New{{.ModelName}}Repository(db infrastructure.Database, logger lib.Logger) {{.ModelName}}Repository {
+	return {{.ModelName}}Repository{db, logger}
+}
+
+// WithTrx delegate transaction from {{.ModelName}} repository
+func (r {{.ModelName}}Repository) WithTrx(trxHandle *gorm.DB) {{.ModelName}}Repository {
+	if trxHandle != nil {
+		r.logger.Debug("using WithTrx as trxHandle is not nil")
+		r.Database.DB = trxHandle
+	}
+	return r
+}
