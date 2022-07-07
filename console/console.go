@@ -11,6 +11,7 @@ import (
 )
 
 var cmds = map[string]lib.Command{
+	"crud":       commands.NewCrudGenerator(),
 	"cmd:random": commands.NewRandomCommand(),
 	"app:serve":  NewServeCommand(),
 }
