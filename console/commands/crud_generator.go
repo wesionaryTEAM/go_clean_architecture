@@ -39,8 +39,8 @@ func (cg *CrudGeneratorCommand) Run() lib.CommandRunner {
 
 		crudFileName := strings.ToLower(cg.Name)
 
-		if !regexp.MustCompile(`^[a-z_]*$`).MatchString(crudFileName) {
-			l.Info("Provide name containing [a-z or _] to the crud!!!")
+		if !regexp.MustCompile(`^[a-z]+[a-z_]*[a-z]+$`).MatchString(crudFileName) {
+			l.Info("Provide name that contains only alphabets and can have underscore(_) in middle!!!")
 			return
 		}
 
