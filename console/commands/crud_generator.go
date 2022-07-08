@@ -49,13 +49,13 @@ func (cg *CrudGeneratorCommand) Run() lib.CommandRunner {
 		layers := []string{"model", "repository", "service", "controller", "route"}
 
 		for _, layer := range layers {
-			l.Infof("--- Generating %s ---", layer)
+			l.Infof("--- Generating %s", layer)
 			err := cg.fileGenerator(layer, crudFileName, modelName)
 			if err != nil {
 				l.Error(err)
 				return
 			}
-			l.Infof("--- %s Generated ---", strings.Title(layer)) //nolint
+			l.Infof("--- %s Generated", strings.Title(layer)) //nolint
 		}
 	}
 }
@@ -98,12 +98,36 @@ func (cg *CrudGeneratorCommand) fileGenerator(packageName, crudFileName, modelNa
 		ModelName string
 	}
 
-	packageName = dir
-	err = t.Execute(f, Fields{packageName, "clean-architecture", modelName})
+	err = t.Execute(f, Fields{dir, "clean-architecture", modelName})
 	if err != nil {
 		return err
 	}
 	f.Close()
+
+	if packageName != "model" {
+		moduleFilepath := filepath.Join(path, fmt.Sprintf("%s.go", dir))
+		moduleFileData, err := os.ReadFile(moduleFilepath)
+		if err != nil {
+			return err
+		}
+
+		if packageName == "route" {
+			packageName = dir
+		}
+		finalData := strings.ReplaceAll(string(moduleFileData), ",\n)", fmt.Sprintf(",\n    fx.Provide(New%s%s),\n)", modelName, strings.Title(packageName))) //nolint
+
+		moduleFileRW, err := os.OpenFile(moduleFilepath, os.O_RDWR, 0o755)
+		if err != nil {
+			return err
+		}
+
+		_, err = moduleFileRW.WriteString(finalData)
+		if err != nil {
+			return err
+		}
+		_ = moduleFileRW.Close()
+	}
+
 	return nil
 }
 
