@@ -30,13 +30,13 @@ func NewUserController(userService *services.UserService, logger lib.Logger) *Us
 func (u *UserController) GetOneUser(c *gin.Context) {
 	paramID := c.Param("id")
 
-	userId, err := lib.ShouldParseUUID(paramID)
+	userID, err := lib.ShouldParseUUID(paramID)
 	if err != nil {
 		utils.HandleValidationError(u.logger, c, api_errors.ErrInvalidUUID)
 		return
 	}
 
-	user, err := u.service.GetOneUser(userId)
+	user, err := u.service.GetOneUser(userID)
 	if err != nil {
 		utils.HandleError(u.logger, c, err)
 		return
@@ -78,13 +78,13 @@ func (u *UserController) SaveUser(c *gin.Context) {
 func (u *UserController) UpdateUser(c *gin.Context) {
 	paramID := c.Param("id")
 
-	userId, err := lib.ShouldParseUUID(paramID)
+	userID, err := lib.ShouldParseUUID(paramID)
 	if err != nil {
 		utils.HandleValidationError(u.logger, c, api_errors.ErrInvalidUUID)
 		return
 	}
 
-	user, err := u.service.GetOneUser(userId)
+	user, err := u.service.GetOneUser(userID)
 	if err != nil {
 		utils.HandleError(u.logger, c, err)
 		return
@@ -110,13 +110,13 @@ func (u *UserController) UpdateUser(c *gin.Context) {
 func (u *UserController) DeleteUser(c *gin.Context) {
 	paramID := c.Param("id")
 
-	userId, err := lib.ShouldParseUUID(paramID)
+	userID, err := lib.ShouldParseUUID(paramID)
 	if err != nil {
 		utils.HandleValidationError(u.logger, c, api_errors.ErrInvalidUUID)
 		return
 	}
 
-	if err := u.service.DeleteUser(userId); err != nil {
+	if err := u.service.DeleteUser(userID); err != nil {
 		utils.HandleError(u.logger, c, err)
 		return
 	}

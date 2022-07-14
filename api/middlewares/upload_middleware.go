@@ -149,7 +149,7 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 						c.Abort()
 						return
 					}
-					defer file.Close()
+					defer file.Close() //nolint
 
 					err = u.uploadFile(ctx, errGroup, conf, file, fileHeader, &uploadedFiles)
 					if err != nil {

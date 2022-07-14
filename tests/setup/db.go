@@ -18,7 +18,7 @@ func TeardownDB() {
 	var env *lib.Env
 	var l lib.Logger
 
-	_, cancel, err := SetupDI(&t,
+	_, cancel, err := DI(&t,
 		fx.Options(
 			fx.Populate(&db),
 			fx.Populate(&env),
@@ -27,12 +27,13 @@ func TeardownDB() {
 	)
 	defer cancel()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return
 	}
 
 	err = db.Exec("DROP DATABASE IF EXISTS " + env.DBName).Error
 	if err != nil {
 		l.Fatalf("couldn't teardown database: %s", err)
 	}
-	l.Info("test database teardown successfull")
+	l.Info("test database teardown successful")
 }

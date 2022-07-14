@@ -27,7 +27,7 @@ func (r *RandomCommand) Run() lib.CommandRunner {
 		var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 		b := make([]rune, r.num)
 		for i := range b {
-			b[i] = letters[rand.Intn(len(letters))] //nolint:gosec
+			b[i] = letters[rand.Intn(len(letters))] //nolint:gosec // for better performance
 		}
 		l.Info(string(b))
 	}

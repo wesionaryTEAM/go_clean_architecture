@@ -19,11 +19,11 @@ func ParseUUID(id string) BinaryUUID {
 
 // ShouldParseUUID -> parses string uuid to binary uuid with error
 func ShouldParseUUID(id string) (BinaryUUID, error) {
-	uuid, err := uuid.Parse(id)
+	UUID, err := uuid.Parse(id)
 	if err != nil {
 		return BinaryUUID{}, api_errors.ErrInvalidUUID
 	}
-	return BinaryUUID(uuid), err
+	return BinaryUUID(UUID), err
 }
 
 func (b BinaryUUID) String() string {
