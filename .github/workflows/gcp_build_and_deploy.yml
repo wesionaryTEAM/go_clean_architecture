@@ -71,6 +71,7 @@ jobs:
           DB_PASS=root
           DEBUG_PORT=5002     
           DB_TYPE=mysql
+          STORAGE_BUCKET_NAME=${{secrets.STORAGE_BUCKET_NAME}}
           " > .env
 
       - name: Initialize service account key file
@@ -100,6 +101,7 @@ jobs:
           DB_USER=${{secrets.DB_USER}}
           DB_PASS=${{secrets.DB_PASS}}
           DB_TYPE=${{secrets.DB_TYPE}}
+          STORAGE_BUCKET_NAME=${{secrets.STORAGE_BUCKET_NAME}}
           DEBUG_PORT=5002     
           " > .env
 

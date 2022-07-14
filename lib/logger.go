@@ -58,7 +58,7 @@ func newLogger() *Logger {
 		config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
 	}
 
-	level := zap.PanicLevel
+	var level zapcore.Level
 	switch logLevel {
 	case "debug":
 		level = zapcore.DebugLevel

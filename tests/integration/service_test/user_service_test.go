@@ -14,10 +14,11 @@ import (
 func TestUserService(t *testing.T) {
 	var s *services.UserService
 
-	_, cancel, err := setup.SetupDI(t, fx.Options(fx.Populate(&s)))
+	_, cancel, err := setup.DI(t, fx.Options(fx.Populate(&s)))
 	defer cancel()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return
 	}
 
 	t.Run("User can be created", func(t *testing.T) {

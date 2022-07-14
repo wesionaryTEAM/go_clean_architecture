@@ -37,8 +37,8 @@ func TestEnvReplacer(l lib.Logger, env *lib.Env) *lib.Env {
 	}
 
 	caller := GetCaller()
-	fmt.Println(caller)
-	env.DBName = strings.Replace(fmt.Sprintf("TEST_%s_%s", caller, env.DBName), ".", "_", -1)
+
+	env.DBName = strings.ReplaceAll(fmt.Sprintf("TEST_%s_%s", caller, env.DBName), ".", "_")
 
 	dbType := viper.GetString("TEST_DB_TYPE")
 	if dbType != "" {

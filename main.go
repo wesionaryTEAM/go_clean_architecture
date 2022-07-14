@@ -8,5 +8,5 @@ import (
 
 func main() {
 	_ = godotenv.Load()
-	bootstrap.RootApp.Execute()
+	_ = bootstrap.RootApp.Execute()
 }

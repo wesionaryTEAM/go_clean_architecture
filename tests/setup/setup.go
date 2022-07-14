@@ -23,7 +23,7 @@ func GetCaller() string {
 	return _caller
 }
 
-func SetupDI(t fxtest.TB, option fx.Option) (context.Context, context.CancelFunc, error) {
+func DI(t fxtest.TB, option fx.Option) (context.Context, context.CancelFunc, error) {
 	var middleware middlewares.Middlewares
 	var route routes.Routes
 	app := fxtest.New(t,
@@ -36,6 +36,7 @@ func SetupDI(t fxtest.TB, option fx.Option) (context.Context, context.CancelFunc
 			fx.Populate(&middleware),
 			fx.Populate(&route),
 		),
+		fx.NopLogger,
 	)
 	ctx, cancel := context.WithCancel(context.Background())
 	err := app.Start(ctx)
