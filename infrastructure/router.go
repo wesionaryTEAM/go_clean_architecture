@@ -24,7 +24,7 @@ func NewRouter(
 	if env.Environment != "local" && env.SentryDSN != "" {
 		if err := sentry.Init(sentry.ClientOptions{
 			Dsn:         env.SentryDSN,
-			Environment: `coaching-cloud-api` + env.Environment,
+			Environment: `clean-backend-` + env.Environment,
 		}); err != nil {
 			logger.Infof("Sentry initialization failed: %v\n", err)
 		}
