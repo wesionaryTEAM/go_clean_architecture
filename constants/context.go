@@ -21,4 +21,7 @@ const (
 
 	// Rate Limit
 	RateLimit = "RateLimit"
+
+	// Token -> bearer token
+	Token = "Token"
 )

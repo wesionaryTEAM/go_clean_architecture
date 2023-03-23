@@ -13,7 +13,7 @@ type UserRoutes struct {
 	logger           lib.Logger
 	handler          infrastructure.Router
 	userController   *controllers.UserController
-	authMiddleware   middlewares.FirebaseAuthMiddleware
+	authMiddleware   middlewares.AuthMiddleware
 	uploadMiddleware middlewares.UploadMiddleware
 	middlewares.PaginationMiddleware
 	rateLimitMiddleware middlewares.RateLimitMiddleware
@@ -43,7 +43,9 @@ func NewUserRoutes(
 func (s *UserRoutes) Setup() {
 	s.logger.Info("Setting up routes")
 
-	api := s.handler.Group("/api").Use(s.authMiddleware.HandleAuthWithRole(constants.RoleIsAdmin),
+	// VerifyToken() middleware can be used to create protected route and HandleAuthWithRole() can be used in whole route
+	// or in individual route to allow authorized acces
+	api := s.handler.Group("/api").Use(s.authMiddleware.VerifyToken()).Use(s.authMiddleware.HandleAuthWithRole(constants.RoleIsAdmin),
 		s.rateLimitMiddleware.Handle())
 
 	api.GET("/user", s.PaginationMiddleware.Handle(), s.userController.GetUser)
