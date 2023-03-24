@@ -1,3 +1,4 @@
+include .env
 export
 
 MIGRATE=docker-compose exec web sql-migrate
