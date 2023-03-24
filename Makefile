@@ -1,4 +1,3 @@
-include .env
 export
 
 MIGRATE=docker-compose exec web sql-migrate
@@ -28,11 +27,9 @@ create:
 	${MIGRATE} new $$NAME
 
 lint-setup:
-	curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
-	sudo python2 get-pip.py
-	sudo pip install pre-commit
-	rm get-pip.py
+	python3 -m ensurepip --upgrade
+	sudo pip3 install pre-commit
 	pre-commit install
-	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOPATH)/bin v1.43.0
+	pre-commit autoupdate
 
 .PHONY: migrate-status migrate-up migrate-down redo create lint-setup

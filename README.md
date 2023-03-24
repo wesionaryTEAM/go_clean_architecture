@@ -12,7 +12,7 @@ Clean Architecture with [Gin Web Framework](https://github.com/gin-gonic/gin)
 
 ## Linter setup
 
-To add linter in git pre-commit hook, and install all the required packages for setting up linter.
+Python3 is required to add linter in git pre-commit hook.
 
 ```zsh
 make lint-setup
