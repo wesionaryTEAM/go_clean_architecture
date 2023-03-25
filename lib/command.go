@@ -4,7 +4,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type CommandRunner interface{}
+type CommandRunner any
 
 // Command interface is used to implement sub-commands in the system.
 type Command interface {
