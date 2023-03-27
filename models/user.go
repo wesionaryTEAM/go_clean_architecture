@@ -23,7 +23,7 @@ type User struct {
 }
 
 // BeforeCreate run this before creating user
-func (t *User) BeforeCreate(tx *gorm.DB) error {
+func (t *User) BeforeCreate(_ *gorm.DB) error {
 	id, err := uuid.NewRandom()
 	t.ID = lib.BinaryUUID(id)
 	return err
