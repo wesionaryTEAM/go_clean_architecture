@@ -200,14 +200,14 @@ func (l *GormLogger) LogMode(level gormlogger.LogLevel) gormlogger.Interface {
 }
 
 // Info prints info
-func (l GormLogger) Info(ctx context.Context, str string, args ...interface{}) {
+func (l GormLogger) Info(_ context.Context, str string, args ...any) {
 	if l.LogLevel >= gormlogger.Info {
 		l.Debugf(str, args...)
 	}
 }
 
 // Warn prints warn messages
-func (l GormLogger) Warn(ctx context.Context, str string, args ...interface{}) {
+func (l GormLogger) Warn(_ context.Context, str string, args ...any) {
 	if l.LogLevel >= gormlogger.Warn {
 		l.Warnf(str, args...)
 	}
@@ -215,14 +215,14 @@ func (l GormLogger) Warn(ctx context.Context, str string, args ...interface{}) {
 }
 
 // Error prints error messages
-func (l GormLogger) Error(ctx context.Context, str string, args ...interface{}) {
+func (l GormLogger) Error(_ context.Context, str string, args ...any) {
 	if l.LogLevel >= gormlogger.Error {
 		l.Errorf(str, args...)
 	}
 }
 
 // Trace prints trace messages
-func (l GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (string, int64), err error) {
+func (l GormLogger) Trace(_ context.Context, begin time.Time, fc func() (string, int64), _ error) {
 	if l.LogLevel <= 0 {
 		return
 	}
@@ -247,7 +247,7 @@ func (l GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (strin
 }
 
 // Printf prints go-fx logs
-func (l FxLogger) Printf(str string, args ...interface{}) {
+func (l FxLogger) Printf(str string, args ...any) {
 	if len(args) > 0 {
 		l.Debugf(str, args)
 	}

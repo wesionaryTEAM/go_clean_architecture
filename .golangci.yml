@@ -20,7 +20,7 @@ linters:
   disable-all: true
   enable:
     - bodyclose
-    - deadcode
+    - unused
     - depguard
     - errcheck
     - exportloopref
@@ -29,7 +29,6 @@ linters:
     - gofmt
     - goimports
     - gocyclo
-    - gosec
     - gosimple
     - govet
     - ineffassign
@@ -39,11 +38,11 @@ linters:
     - predeclared
     - revive
     - staticcheck
-    - structcheck
+    - unused
     - typecheck
     - unconvert
     - unparam
-    - varcheck
+    - unused
 
 run:
   issues-exit-code: 1
