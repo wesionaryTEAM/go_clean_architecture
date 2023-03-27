@@ -2,7 +2,6 @@ package infrastructure
 
 import (
 	"clean-architecture/lib"
-	"clean-architecture/utils"
 	"net/http"
 
 	"github.com/getsentry/sentry-go"
@@ -56,7 +55,6 @@ func NewRouter(
 	}))
 
 	httpRouter.GET("/health-check", func(c *gin.Context) {
-		utils.SendSentryMsg(c, "Error")
 		c.JSON(http.StatusOK, gin.H{"data": "clean architecture 📺 API Up and Running"})
 	})
 
