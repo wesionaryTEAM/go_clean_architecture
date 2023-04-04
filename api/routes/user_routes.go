@@ -43,9 +43,9 @@ func NewUserRoutes(
 func (s *UserRoutes) Setup() {
 	s.logger.Info("Setting up routes")
 
-	// VerifyToken() middleware can be used to create protected route and HandleAuthWithRole() can be used in whole route
-	// or in individual route to allow authorized acces
-	api := s.handler.Group("/api").Use(s.authMiddleware.VerifyToken()).Use(s.authMiddleware.HandleAuthWithRole(constants.RoleIsAdmin),
+	// in HandleAuthWithRole() pass empty for authentication
+	// or pass user role for authentication along with authorization
+	api := s.handler.Group("/api").Use(s.authMiddleware.HandleAuthWithRole(constants.RoleIsAdmin),
 		s.rateLimitMiddleware.Handle())
 
 	api.GET("/user", s.PaginationMiddleware.Handle(), s.userController.GetUser)

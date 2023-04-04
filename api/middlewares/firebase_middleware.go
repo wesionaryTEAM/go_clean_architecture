@@ -3,10 +3,7 @@ package middlewares
 import (
 	"clean-architecture/api/responses"
 	"clean-architecture/constants"
-	"clean-architecture/lib"
 	"clean-architecture/services"
-	"clean-architecture/utils"
-	"errors"
 	"net/http"
 	"strings"
 
@@ -30,20 +27,25 @@ func NewFirebaseAuthMiddleware(service services.FirebaseService) FirebaseAuthMid
 
 // HandleAuthWithRole handles multiple roles
 func (m FirebaseAuthMiddleware) HandleAuthWithRole(role string) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		token, ok := c.MustGet(constants.Token).(*auth.Token)
-		if !ok {
-			utils.HandleError(lib.GetLogger(), c, errors.New("token not set properly in context"))
+	return func(ctx *gin.Context) {
+		token, err := m.getTokenFromHeader(ctx)
+		if err != nil {
+			responses.ErrorJSON(ctx, http.StatusUnauthorized, err.Error())
+			ctx.Abort()
 			return
 		}
 
+		// verify user role
 		if role != "" && (token.Claims[role] == nil || token.Claims[role] != true) {
-			responses.ErrorJSON(c, http.StatusForbidden, "auth-not-authorized-user")
-			c.Abort()
+			responses.ErrorJSON(ctx, http.StatusForbidden, "auth-not-authorized-user")
+			ctx.Abort()
 			return
 		}
 
-		c.Next()
+		ctx.Set(constants.Claims, token.Claims)
+		ctx.Set(constants.UID, token.UID)
+
+		ctx.Next()
 	}
 }
 
@@ -65,22 +67,4 @@ func (m FirebaseAuthMiddleware) getTokenFromHeader(c *gin.Context) (*auth.Token,
 	}
 
 	return token, nil
-}
-
-// verify and authenticate user
-func (m FirebaseAuthMiddleware) VerifyToken() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		token, err := m.getTokenFromHeader(ctx)
-		if err != nil {
-			responses.ErrorJSON(ctx, http.StatusUnauthorized, err.Error())
-			ctx.Abort()
-			return
-		}
-
-		ctx.Set(constants.Claims, token.Claims)
-		ctx.Set(constants.Token, token)
-		ctx.Set(constants.UID, token.UID)
-
-		ctx.Next()
-	}
 }

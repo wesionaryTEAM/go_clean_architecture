@@ -8,5 +8,4 @@ import (
 // Can be updated as per project requirements
 type AuthMiddleware interface {
 	HandleAuthWithRole(role string) gin.HandlerFunc
-	VerifyToken() gin.HandlerFunc
 }
