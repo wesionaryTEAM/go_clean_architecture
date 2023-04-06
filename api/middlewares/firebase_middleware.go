@@ -26,7 +26,7 @@ func NewFirebaseAuthMiddleware(service services.FirebaseService) FirebaseAuthMid
 }
 
 // HandleAuthWithRole handles multiple roles
-func (m FirebaseAuthMiddleware) HandleAuthWithRole(role string) gin.HandlerFunc {
+func (m FirebaseAuthMiddleware) HandleAuthWithRole(roles ...string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token, err := m.getTokenFromHeader(ctx)
 		if err != nil {
@@ -36,10 +36,12 @@ func (m FirebaseAuthMiddleware) HandleAuthWithRole(role string) gin.HandlerFunc 
 		}
 
 		// verify user role
-		if role != "" && (token.Claims[role] == nil || token.Claims[role] != true) {
-			responses.ErrorJSON(ctx, http.StatusForbidden, "auth-not-authorized-user")
-			ctx.Abort()
-			return
+		if len(roles) > 0 {
+			if ok := m.checkIsRoleSatisfied(roles, token); !ok {
+				responses.ErrorJSON(ctx, http.StatusForbidden, "auth-not-authorized-user")
+				ctx.Abort()
+				return
+			}
 		}
 
 		ctx.Set(constants.Claims, token.Claims)
@@ -67,4 +69,13 @@ func (m FirebaseAuthMiddleware) getTokenFromHeader(c *gin.Context) (*auth.Token,
 	}
 
 	return token, nil
+}
+
+func (m FirebaseAuthMiddleware) checkIsRoleSatisfied(roles []string, token *auth.Token) bool {
+	for _, val := range roles {
+		if token.Claims[val] == true {
+			return true
+		}
+	}
+	return false
 }
