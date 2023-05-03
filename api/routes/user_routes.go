@@ -13,7 +13,7 @@ type UserRoutes struct {
 	logger           lib.Logger
 	handler          infrastructure.Router
 	userController   *controllers.UserController
-	authMiddleware   middlewares.FirebaseAuthMiddleware
+	authMiddleware   middlewares.AuthMiddleware
 	uploadMiddleware middlewares.UploadMiddleware
 	middlewares.PaginationMiddleware
 	rateLimitMiddleware middlewares.RateLimitMiddleware
@@ -43,6 +43,8 @@ func NewUserRoutes(
 func (s *UserRoutes) Setup() {
 	s.logger.Info("Setting up routes")
 
+	// in HandleAuthWithRole() pass empty for authentication
+	// or pass user role for authentication along with authorization
 	api := s.handler.Group("/api").Use(s.authMiddleware.HandleAuthWithRole(constants.RoleIsAdmin),
 		s.rateLimitMiddleware.Handle())
 
