@@ -1,4 +1,4 @@
-name: Deploy to development environment.
+name: Deploy  API.
 on:
   push:
     branches:
@@ -6,10 +6,10 @@ on:
       - main
     tags:
       - v*
+  pull_request:
+    types: [review_requested, edited, synchronize]
   #For manual trigger of workflow.
   workflow_dispatch:
-
-
 
 jobs:
   setup_environment:
@@ -17,20 +17,18 @@ jobs:
     outputs:
       env_name: ${{ steps.get_env.outputs.env }}
     env:
-     GITHUB_REF: ${{ github.ref }}
+      GITHUB_REF: ${{ github.ref }}
     steps:
-
-    - id: get_env
-      run: |
-        if grep -q "refs/tags/v" <<< $GITHUB_REF; then
-          echo "::set-output name=env::PROD"
-        else
-          echo "::set-output name=env::DEV"
-        fi
-    - id: print_env
-      name: Print environment
-      run: echo  "Environment :- ${{ steps.get_env.outputs.env }}"
-
+      - id: get_env
+        run: |
+          if grep -q "refs/tags/v" <<< ${{github.ref}} ||  grep -q "refs/heads/main" <<< ${{github.ref}}; then
+            echo "env=PROD" >> $GITHUB_OUTPUT
+          else
+            echo "env=DEV" >> $GITHUB_OUTPUT
+          fi
+      - id: print_env
+        name: Print environment
+        run: echo  "Environment :- ${{ steps.get_env.outputs.env }}"
 
   deploy:
     name: Build and Deploy Go
@@ -39,13 +37,78 @@ jobs:
     environment: ${{needs.setup_environment.outputs.env_name}}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+
+      - name: Use golang ${{matrix.go-version}}
+        uses: actions/setup-go@v4
+        with:
+          go-version: "^1.20"
+
+      - run: go version
+
+      - name: Set up MySQL
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql -e 'CREATE DATABASE root;' -uroot -proot
+          mysql -e "show databases;" -uroot -proot
+
+      - name: Initialize the environment variables
+        run: |
+          echo 'ENVIRONMENT=workflow
+          SERVER_PORT=8080
+          DB_HOST=localhost
+          DB_NAME=root
+          DB_PASS=root
+          DB_PORT=3306
+          DB_TYPE=local
+          DB_USER=root
+          LOG_LEVEL=info' > .env
+
+      - name: Build the repository
+        run: go build  main.go
+
+      - name: Start the service
+        run: |
+          ./main app:serve &
+
+      - name: Validate if the service is working or not via health check api
+        run: |
+          sleep 5
+          curl http://localhost:8080/health-check
+
+      - name: Recreate env file for deployment.
+        if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/develop'  || startsWith(github.ref, 'refs/tags/v')) }}
+        run: |
+          rm -rf .env
+          rm -rf main
+          mv main.go application.go
+          echo 'ENVIRONMENT=${{secrets.ENVIRONMENT}}
+          SERVER_PORT=${{secrets.SERVER_PORT}}
+          DB_HOST=${{secrets.DB_HOST}}
+          DB_NAME=${{secrets.DB_NAME}}
+          DB_PASS="${{secrets.DB_PASS}}"
+          DB_PORT=${{secrets.DB_PORT}}
+          DB_TYPE=${{secrets.DB_TYPE}}
+          DB_USER=${{secrets.DB_USER}}
+          LOG_LEVEL=${{secrets.LOG_LEVEL}}
+          SENTRY_DSN=${{secrets.SENTRY_DSN}}
+          MAX_MULTIPART_MEMORY=${{secrets.MAX_MULTIPART_MEMORY}}
+          COGNITO_USER_POOL_ID=${{secrets.COGNITO_USER_POOL_ID}}
+          COGNITO_CLIENT_ID=${{secrets.COGNITO_CLIENT_ID}}
+          AWS_REGION=${{secrets.AWS_REGION}}
+          ADMIN_EMAIL=${{secrets.ADMIN_EMAIL}}
+          ADMIN_PASSWORD=${{secrets.ADMIN_PASSWORD}}
+          AWS_S3_BUCKET_NAME=${{secrets.AWS_S3_BUCKET_NAME}}
+          AWS_SECRET_ACCESS_KEY=${{secrets.AWS_SECRET_ACCESS_KEY}}
+          AWS_ACCESS_KEY_ID=${{secrets.AWS_ACCESS_KEY_ID}}' > .env
 
       - name: Get timestamp
+        if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/develop'  || startsWith(github.ref, 'refs/tags/v')) }}
         uses: gerred/actions/current-time@master
         id: current-time
 
       - name: Run string replace
+        if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/develop'  || startsWith(github.ref, 'refs/tags/v')) }}
         uses: frabert/replace-string-action@master
         id: format-time
         with:
@@ -54,21 +117,12 @@ jobs:
           replace-with: "-"
           flags: "g"
 
-      - name: Create .env file
-        run: |
-          echo "creating .env file"
-          echo ${{ secrets.API_ENV }} | base64 --decode > .env
-          printf "\nAPI_VERSION=${{ steps.format-time.outputs.replaced }}" >> .env
-      
-      - name: Create Service Account Key 
-        run: |
-          echo ${{secrets.SERVICE_ACCOUNT_KEY_BASE64}} | base64 --decode > serviceAccountKey.json
-      
       - name: Generate deployment package
+        if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/develop'  || startsWith(github.ref, 'refs/tags/v')) }}
         run: zip -r deploy.zip . -x '*.git*'
 
       - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v16
+        uses: einaregilsson/beanstalk-deploy@v21
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -77,6 +131,7 @@ jobs:
           version_label: "${{ secrets.AWS_APPLICATION_NAME }}-${{ steps.format-time.outputs.replaced }}"
           region: ${{ secrets.AWS_REGION }}
           deployment_package: deploy.zip
+
       - name: Slack Notification on SUCCESS
         if: success()
         uses: tokorom/action-slack-incoming-webhook@main
@@ -102,10 +157,15 @@ jobs:
                   {
                     "title": "Compare URL",
                     "value": "${{ github.event.compare }}"
+                  },
+                  {
+                    "title": "ENV",
+                    "value": "${{needs.setup_environment.outputs.env_name}}"
                   }
                 ]
               }
             ]
+
       - name: Slack Notification on FAILURE
         if: failure()
         uses: tokorom/action-slack-incoming-webhook@main
@@ -131,6 +191,10 @@ jobs:
                   {
                     "title": "Compare URL",
                     "value": "${{ github.event.compare }}"
+                  },
+                  {
+                    "title": "ENV",
+                    "value": "${{needs.setup_environment.outputs.env_name}}"
                   }
                 ]
               }
