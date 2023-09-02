@@ -1,0 +1,32 @@
+package {{.PackageName}}
+
+import (
+	"{{.ModuleName}}/api/controllers"
+	"{{.ModuleName}}/infrastructure"
+	"{{.ModuleName}}/lib"
+)
+
+// {{.ModelName}}Routes struct
+type {{.ModelName}}Routes struct {
+	logger     lib.Logger
+	handler    infrastructure.Router
+	controller *controllers.{{.ModelName}}Controller
+}
+
+func New{{.ModelName}}Routes(
+	logger lib.Logger,
+	handler infrastructure.Router,
+	controller *controllers.{{.ModelName}}Controller,
+) *{{.ModelName}}Routes {
+	return &{{.ModelName}}Routes{
+		handler:    handler,
+		logger:     logger,
+		controller: controller,
+	}
+}
+
+// Setup {{.ModelName}} routes
+func (s *{{.ModelName}}Routes) Setup() {
+	s.logger.Info("Setting up routes")
+
+}

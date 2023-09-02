@@ -1,0 +1,23 @@
+package {{.PackageName}}
+
+import (
+	"{{.ModuleName}}/lib"
+	"{{.ModuleName}}/repository"
+)
+
+// {{.ModelName}}Service service layer
+type {{.ModelName}}Service struct {
+	logger     lib.Logger
+	repository repository.{{.ModelName}}Repository
+}
+
+// New{{.ModelName}}Service creates a new {{.ModelName}}Service
+func New{{.ModelName}}Service(
+	logger lib.Logger,
+	repository repository.{{.ModelName}}Repository,
+) *{{.ModelName}}Service {
+	return &{{.ModelName}}Service{
+		logger:     logger,
+		repository: repository,
+	}
+}

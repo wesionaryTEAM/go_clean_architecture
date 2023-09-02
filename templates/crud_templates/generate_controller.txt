@@ -1,0 +1,20 @@
+package {{.PackageName}}
+
+import (
+	"{{.ModuleName}}/lib"
+	"{{.ModuleName}}/services"
+)
+
+// {{.ModelName}}Controller data type
+type {{.ModelName}}Controller struct {
+	service *services.{{.ModelName}}Service
+	logger  lib.Logger
+}
+
+// New{{.ModelName}}Controller creates new {{.ModelName}} controller
+func New{{.ModelName}}Controller(service *services.{{.ModelName}}Service, logger lib.Logger) *{{.ModelName}}Controller {
+	return &{{.ModelName}}Controller{
+		service: service,
+		logger:  logger,
+	}
+}
