@@ -1,10 +1,9 @@
 package console
 
 import (
-	"clean-architecture/api/middlewares"
-	"clean-architecture/api/routes"
-	"clean-architecture/infrastructure"
-	"clean-architecture/lib"
+	"clean-architecture/pkg/framework"
+	"clean-architecture/pkg/infrastructure"
+	"clean-architecture/pkg/middlewares"
 	"clean-architecture/seeds"
 	"time"
 
@@ -21,13 +20,12 @@ func (s *ServeCommand) Short() string {
 
 func (s *ServeCommand) Setup(cmd *cobra.Command) {}
 
-func (s *ServeCommand) Run() lib.CommandRunner {
+func (s *ServeCommand) Run() framework.CommandRunner {
 	return func(
 		middleware middlewares.Middlewares,
-		env *lib.Env,
+		env *framework.Env,
 		router infrastructure.Router,
-		route routes.Routes,
-		logger lib.Logger,
+		logger framework.Logger,
 		database infrastructure.Database,
 		seeds seeds.Seeds,
 
@@ -41,7 +39,6 @@ func (s *ServeCommand) Run() lib.CommandRunner {
 		time.Local = loc
 
 		middleware.Setup()
-		route.Setup()
 		seeds.Setup()
 
 		if env.Environment != "local" && env.SentryDSN != "" {

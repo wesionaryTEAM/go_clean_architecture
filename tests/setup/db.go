@@ -1,8 +1,8 @@
 package setup
 
 import (
-	"clean-architecture/infrastructure"
-	"clean-architecture/lib"
+	"clean-architecture/pkg/framework"
+	"clean-architecture/pkg/infrastructure"
 	"log"
 	"testing"
 
@@ -15,8 +15,8 @@ func TeardownDB() {
 	t := testing.T{}
 
 	var db infrastructure.Database
-	var env *lib.Env
-	var l lib.Logger
+	var env *framework.Env
+	var l framework.Logger
 
 	_, cancel, err := DI(&t,
 		fx.Options(

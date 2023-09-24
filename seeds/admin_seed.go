@@ -1,25 +1,25 @@
 package seeds
 
 import (
-	"clean-architecture/constants"
-	"clean-architecture/lib"
-	"clean-architecture/services"
+	"clean-architecture/domain/constants"
+	"clean-architecture/pkg/framework"
+	"clean-architecture/pkg/services"
 
 	"github.com/gin-gonic/gin"
 )
 
 // AdminSeed Admin seeding
 type AdminSeed struct {
-	logger          lib.Logger
+	logger          framework.Logger
 	firebaseService services.FirebaseService
-	env             *lib.Env
+	env             *framework.Env
 }
 
 // NewAdminSeed Admin seeding
 func NewAdminSeed(
-	logger lib.Logger,
+	logger framework.Logger,
 	firebaseService services.FirebaseService,
-	env *lib.Env,
+	env *framework.Env,
 ) AdminSeed {
 	return AdminSeed{
 		logger:          logger,

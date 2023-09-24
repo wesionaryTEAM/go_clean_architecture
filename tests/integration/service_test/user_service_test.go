@@ -1,8 +1,8 @@
 package service_test
 
 import (
-	"clean-architecture/models"
-	"clean-architecture/services"
+	"clean-architecture/domain/models"
+	"clean-architecture/domain/user"
 	"clean-architecture/tests/setup"
 	"log"
 	"testing"
@@ -12,7 +12,7 @@ import (
 )
 
 func TestUserService(t *testing.T) {
-	var s *services.UserService
+	var s *user.Service
 
 	_, cancel, err := setup.DI(t, fx.Options(fx.Populate(&s)))
 	defer cancel()

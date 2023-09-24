@@ -1,7 +1,7 @@
 package setup
 
 import (
-	"clean-architecture/lib"
+	"clean-architecture/pkg/framework"
 	"fmt"
 	"os"
 	"strings"
@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func TestEnvReplacer(l lib.Logger, env *lib.Env) *lib.Env {
+func TestEnvReplacer(l framework.Logger, env *framework.Env) *framework.Env {
 	dbUsername := viper.GetString("TEST_DB_USER")
 	if dbUsername != "" {
 		env.DBUsername = dbUsername
