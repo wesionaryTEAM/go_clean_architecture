@@ -2,14 +2,14 @@ package console
 
 import (
 	"clean-architecture/console/commands"
-	"clean-architecture/lib"
+	"clean-architecture/pkg/framework"
 	"context"
 
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
 )
 
-var cmds = map[string]lib.Command{
+var cmds = map[string]framework.Command{
 	"cmd:random": commands.NewRandomCommand(),
 	"app:serve":  NewServeCommand(),
 }
@@ -23,12 +23,12 @@ func GetSubCommands(opt fx.Option) []*cobra.Command {
 	return subCommands
 }
 
-func WrapSubCommand(name string, cmd lib.Command, opt fx.Option) *cobra.Command {
+func WrapSubCommand(name string, cmd framework.Command, opt fx.Option) *cobra.Command {
 	wrappedCmd := &cobra.Command{
 		Use:   name,
 		Short: cmd.Short(),
 		Run: func(c *cobra.Command, args []string) {
-			logger := lib.GetLogger()
+			logger := framework.GetLogger()
 
 			opts := fx.Options(
 				fx.WithLogger(logger.GetFxLogger),

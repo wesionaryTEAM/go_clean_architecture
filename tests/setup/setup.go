@@ -1,9 +1,8 @@
 package setup
 
 import (
-	"clean-architecture/api/middlewares"
-	"clean-architecture/api/routes"
-	"clean-architecture/lib"
+	"clean-architecture/pkg/framework"
+	"clean-architecture/pkg/middlewares"
 	"context"
 	"log"
 	"os"
@@ -25,16 +24,15 @@ func GetCaller() string {
 
 func DI(t fxtest.TB, option fx.Option) (context.Context, context.CancelFunc, error) {
 	var middleware middlewares.Middlewares
-	var route routes.Routes
+
 	app := fxtest.New(t,
 		fx.Options(
 			TestModule,
-			fx.WithLogger(func(l lib.Logger) fxevent.Logger {
+			fx.WithLogger(func(l framework.Logger) fxevent.Logger {
 				return l.GetFxLogger()
 			}),
 			option,
 			fx.Populate(&middleware),
-			fx.Populate(&route),
 		),
 		fx.NopLogger,
 	)
@@ -42,7 +40,6 @@ func DI(t fxtest.TB, option fx.Option) (context.Context, context.CancelFunc, err
 	err := app.Start(ctx)
 
 	middleware.Setup()
-	route.Setup()
 	return ctx, cancel, err
 }
 

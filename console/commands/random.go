@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"clean-architecture/lib"
+	"clean-architecture/pkg/framework"
 	"math/rand"
 	"time"
 
@@ -20,8 +20,8 @@ func (r *RandomCommand) Setup(cmd *cobra.Command) {
 	cmd.Flags().IntVarP(&r.num, "num", "n", 5, "length of random number to generate")
 }
 
-func (r *RandomCommand) Run() lib.CommandRunner {
-	return func(l lib.Logger) {
+func (r *RandomCommand) Run() framework.CommandRunner {
+	return func(l framework.Logger) {
 		l.Info("running random command")
 		rand.New(rand.NewSource(time.Now().Unix()))
 		var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")

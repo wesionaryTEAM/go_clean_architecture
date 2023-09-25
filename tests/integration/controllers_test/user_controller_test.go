@@ -1,8 +1,8 @@
 package controllers_test
 
 import (
-	"clean-architecture/api/controllers"
-	"clean-architecture/lib"
+	"clean-architecture/domain/user"
+	"clean-architecture/pkg/types"
 	"clean-architecture/tests/setup"
 	"log"
 	"net/http"
@@ -16,7 +16,7 @@ import (
 )
 
 func TestUserController(t *testing.T) {
-	var uc *controllers.UserController
+	var uc *user.Controller
 
 	_, cancel, err := setup.DI(t, fx.Options(fx.Populate(&uc)))
 	defer cancel()
@@ -51,7 +51,7 @@ func TestUserController(t *testing.T) {
 		c.Params = []gin.Param{
 			{
 				Key:   "id",
-				Value: lib.BinaryUUID(id).String(),
+				Value: types.BinaryUUID(id).String(),
 			},
 		}
 
