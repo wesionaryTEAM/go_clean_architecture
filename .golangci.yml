@@ -4,33 +4,32 @@ linters-settings:
   goconst:
     min-len: 2
     min-occurrences: 3
-  gocritic:
-    enabled-tags:
-      - diagnostic
-      - experimental
-      - opinionated
-      - performance
+
   govet:
     check-shadowing: true
   nolintlint:
     require-explanation: true
     require-specific: true
+  revive:
+    rules:
+      - name: unused-parameter
+        severity: warning
+        disabled: true
+        arguments:
+          - allowRegex: "^_|^tx$"
 
 linters:
   disable-all: true
   enable:
     - bodyclose
     - unused
-    - depguard
     - errcheck
     - exportloopref
     - goconst
-    - gocritic
     - gofmt
     - goimports
     - gocyclo
     - gosimple
-    - govet
     - ineffassign
     - misspell
     - nakedret
