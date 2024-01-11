@@ -1,8 +1,8 @@
 package service_test
 
 import (
+	"clean-architecture/domain/features/user"
 	"clean-architecture/domain/models"
-	"clean-architecture/domain/user"
 	"clean-architecture/tests/setup"
 	"log"
 	"testing"
@@ -34,5 +34,4 @@ func TestUserService(t *testing.T) {
 		assert.NoError(t, err, "user get fails")
 		assert.Equal(t, user.Email, gotUser.Email, "same user returned from db")
 	})
-
 }

@@ -56,5 +56,4 @@ func (r *Routes) Setup() {
 		r.controller.UpdateUser,
 	)
 	api.DELETE("/user/:id", r.controller.DeleteUser)
-
 }

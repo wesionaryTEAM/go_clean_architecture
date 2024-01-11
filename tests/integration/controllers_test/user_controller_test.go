@@ -1,7 +1,7 @@
 package controllers_test
 
 import (
-	"clean-architecture/domain/user"
+	"clean-architecture/domain/features/user"
 	"clean-architecture/pkg/types"
 	"clean-architecture/tests/setup"
 	"log"
@@ -39,7 +39,6 @@ func TestUserController(t *testing.T) {
 		uc.GetOneUser(c)
 
 		assert.Equal(t, http.StatusBadRequest, response.Code, "status code match")
-
 	})
 
 	t.Run("user get error if uuid not in database is provided", func(t *testing.T) {
