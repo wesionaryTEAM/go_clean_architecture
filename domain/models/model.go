@@ -1,4 +1,4 @@
-package user
+package models
 
 import (
 	"clean-architecture/pkg/types"

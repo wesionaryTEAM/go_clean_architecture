@@ -1,6 +1,7 @@
 package user
 
 import (
+	"clean-architecture/domain/models"
 	"clean-architecture/pkg/framework"
 	"clean-architecture/pkg/types"
 
@@ -39,13 +40,13 @@ func (s Service) SetPaginationScope(scope func(*gorm.DB) *gorm.DB) Service {
 }
 
 // GetOneUser gets one user
-func (s Service) GetOneUser(userID types.BinaryUUID) (user User, err error) {
+func (s Service) GetOneUser(userID types.BinaryUUID) (user models.User, err error) {
 	return user, s.repository.First(&user, "id = ?", userID).Error
 }
 
 // GetAllUser get all the user
 func (s Service) GetAllUser() (response map[string]interface{}, err error) {
-	var users []User
+	var users []models.User
 	var count int64
 
 	err = s.repository.WithTrx(s.paginationScope).Find(&users).Offset(-1).Limit(-1).Count(&count).Error
@@ -57,16 +58,16 @@ func (s Service) GetAllUser() (response map[string]interface{}, err error) {
 }
 
 // UpdateUser updates the user
-func (s Service) UpdateUser(user *User) error {
+func (s Service) UpdateUser(user *models.User) error {
 	return s.repository.Save(&user).Error
 }
 
 // DeleteUser deletes the user
 func (s Service) DeleteUser(uuid types.BinaryUUID) error {
-	return s.repository.Where("id = ?", uuid).Delete(&User{}).Error
+	return s.repository.Where("id = ?", uuid).Delete(&models.User{}).Error
 }
 
 // DeleteUser deletes the user
-func (s Service) Create(user *User) error {
+func (s Service) Create(user *models.User) error {
 	return s.repository.Create(&user).Error
 }

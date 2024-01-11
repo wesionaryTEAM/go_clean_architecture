@@ -2,6 +2,7 @@ package service_test
 
 import (
 	"clean-architecture/domain/features/user"
+	"clean-architecture/domain/models"
 	"clean-architecture/tests/setup"
 	"log"
 	"testing"
@@ -21,7 +22,7 @@ func TestUserService(t *testing.T) {
 	}
 
 	t.Run("User can be created", func(t *testing.T) {
-		_user := user.User{
+		_user := models.User{
 			Name:  "dipesh",
 			Age:   2,
 			Email: "dipesh.dulal@wesionary.team",
