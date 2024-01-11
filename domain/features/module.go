@@ -1,4 +1,4 @@
-package domain
+package features
 
 import (
 	"clean-architecture/domain/features/user"
@@ -6,7 +6,7 @@ import (
 	"go.uber.org/fx"
 )
 
-var Module = fx.Module("domain",
+var Module = fx.Module("features",
 	fx.Options(
 		user.Module,
 	),

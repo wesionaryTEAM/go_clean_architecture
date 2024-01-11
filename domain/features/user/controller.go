@@ -1,7 +1,6 @@
 package user
 
 import (
-	"clean-architecture/domain/models"
 	"clean-architecture/pkg/api_errors"
 	"clean-architecture/pkg/framework"
 	"clean-architecture/pkg/responses"
@@ -44,7 +43,6 @@ func (u *Controller) GetOneUser(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"data": user,
 	})
-
 }
 
 // GetUser gets the user
@@ -59,7 +57,7 @@ func (u *Controller) GetUser(c *gin.Context) {
 
 // SaveUser saves the user
 func (u *Controller) SaveUser(c *gin.Context) {
-	user := models.User{}
+	user := User{}
 	if err := c.Bind(&user); err != nil {
 		utils.HandleError(u.logger, c, err)
 		return
