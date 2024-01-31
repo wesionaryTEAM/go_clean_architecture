@@ -8,7 +8,7 @@ import (
 )
 
 // UserRoutes struct
-type Routes struct {
+type Route struct {
 	logger           framework.Logger
 	handler          infrastructure.Router
 	controller       *Controller
@@ -18,7 +18,7 @@ type Routes struct {
 	rateLimitMiddleware middlewares.RateLimitMiddleware
 }
 
-func NewRoutes(
+func NewRoute(
 	logger framework.Logger,
 	handler infrastructure.Router,
 	controller *Controller,
@@ -26,8 +26,8 @@ func NewRoutes(
 	uploadMiddleware middlewares.UploadMiddleware,
 	pagination middlewares.PaginationMiddleware,
 	rateLimit middlewares.RateLimitMiddleware,
-) {
-	r := &Routes{
+) *Route {
+	return &Route{
 		handler:              handler,
 		logger:               logger,
 		controller:           controller,
@@ -36,11 +36,11 @@ func NewRoutes(
 		PaginationMiddleware: pagination,
 		rateLimitMiddleware:  rateLimit,
 	}
-	r.Setup()
+
 }
 
 // Setup user routes
-func (r *Routes) Setup() {
+func RegisterRoute(r *Route) {
 	r.logger.Info("Setting up routes")
 
 	// in HandleAuthWithRole() pass empty for authentication

@@ -8,6 +8,7 @@ var Module = fx.Module("user",
 			NewRepository,
 			NewService,
 			NewController,
+			NewRoute,
 		),
-		fx.Invoke(NewRoutes),
+		fx.Invoke(RegisterRoute),
 	))
