@@ -5,7 +5,4 @@ import (
 )
 
 // Module exports services present
-var Module = fx.Options(
-	fx.Provide(NewFirebaseService),
-	fx.Provide(NewBucketService),
-)
+var Module = fx.Options()
