@@ -1,6 +1,7 @@
 package user
 
 import (
+	"clean-architecture/domain/domainif"
 	"clean-architecture/domain/models"
 	"clean-architecture/pkg/api_errors"
 	"clean-architecture/pkg/framework"
@@ -13,12 +14,12 @@ import (
 
 // UserController data type
 type Controller struct {
-	service *Service
+	service domainif.UserService
 	logger  framework.Logger
 }
 
 // NewUserController creates new user controller
-func NewController(userService *Service, logger framework.Logger) *Controller {
+func NewController(userService domainif.UserService, logger framework.Logger) *Controller {
 	return &Controller{
 		service: userService,
 		logger:  logger,

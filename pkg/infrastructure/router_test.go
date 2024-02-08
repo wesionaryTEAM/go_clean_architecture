@@ -1,6 +1,8 @@
 package infrastructure_test
 
 import (
+	"net/http"
+
 	. "github.com/onsi/ginkgo/v2"
 	"github.com/steinfletcher/apitest"
 
@@ -26,7 +28,7 @@ var _ = Describe("Router", func() {
 	Describe("HealthCheck", func() {
 		Context("when health-check endpoint is called", func() {
 			It("should return 200", func() {
-				apitest.New().Handler(router.Engine).Get("/health-check").Expect(t).Status(200).End()
+				apitest.New().Handler(router.Engine).Get("/health-check").Expect(t).Status(http.StatusOK).End()
 			})
 		})
 	})
