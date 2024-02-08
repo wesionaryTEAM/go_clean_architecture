@@ -3,7 +3,6 @@ module clean-architecture
 go 1.20
 
 require (
-	cloud.google.com/go/firestore v1.12.0
 	cloud.google.com/go/storage v1.31.0
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/chai2010/webp v1.1.1
@@ -14,15 +13,18 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.5.1
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
+	github.com/onsi/ginkgo/v2 v2.15.0
+	github.com/onsi/gomega v1.31.1
 	github.com/rubenv/sql-migrate v1.5.2
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
+	github.com/steinfletcher/apitest v1.5.15
 	github.com/stretchr/testify v1.8.4
 	github.com/ulule/limiter/v3 v3.11.2
 	go.uber.org/fx v1.20.0
 	go.uber.org/zap v1.25.0
 	golang.org/x/oauth2 v0.11.0
-	golang.org/x/sync v0.3.0
+	golang.org/x/sync v0.5.0
 	google.golang.org/api v0.136.0
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/gorm v1.25.3
@@ -33,7 +35,6 @@ require (
 	cloud.google.com/go/compute v1.23.0 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	cloud.google.com/go/iam v1.1.2 // indirect
-	cloud.google.com/go/longrunning v0.5.1 // indirect
 	github.com/bytedance/sonic v1.10.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.0 // indirect
@@ -42,13 +43,16 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-gorp/gorp/v3 v3.1.0 // indirect
+	github.com/go-logr/logr v1.3.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.15.0 // indirect
+	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/google/go-cmp v0.5.9 // indirect
+	github.com/google/go-cmp v0.6.0 // indirect
+	github.com/google/pprof v0.0.0-20210407192527-94a9f03dee38 // indirect
 	github.com/google/s2a-go v0.1.5 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.5 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
@@ -79,11 +83,11 @@ require (
 	go.uber.org/dig v1.17.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.4.0 // indirect
-	golang.org/x/crypto v0.12.0 // indirect
-	golang.org/x/net v0.14.0 // indirect
-	golang.org/x/sys v0.11.0 // indirect
-	golang.org/x/text v0.12.0 // indirect
-	golang.org/x/time v0.3.0 // indirect
+	golang.org/x/crypto v0.16.0 // indirect
+	golang.org/x/net v0.19.0 // indirect
+	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/tools v0.16.1 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20230807174057-1744710a1577 // indirect
