@@ -182,7 +182,7 @@ func (l *FxLogger) LogEvent(event fxevent.Event) {
 
 // GetGinLogger gets logger for gin framework debugging
 func (l *Logger) GetGinLogger() io.Writer {
-	logger := zapLogger.WithOptions(
+	logger := l.Desugar().WithOptions(
 		zap.WithCaller(false),
 	)
 	return GinLogger{

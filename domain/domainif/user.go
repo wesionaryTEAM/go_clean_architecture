@@ -3,8 +3,6 @@ package domainif
 import (
 	"clean-architecture/domain/models"
 	"clean-architecture/pkg/types"
-
-	"gorm.io/gorm"
 )
 
 type UserService interface {
@@ -13,5 +11,4 @@ type UserService interface {
 	DeleteUser(uuid types.BinaryUUID) error
 	Create(user *models.User) error
 	GetAllUser() (response map[string]interface{}, err error)
-	SetPaginationScope(scope func(*gorm.DB) *gorm.DB) UserService
 }

@@ -1,6 +1,6 @@
 with-expecter: True
 outpkg: "mock{{.PackageName}}"
 packages:
-  avalon/domain/domainif:
+  clean-architecture/domain/domainif:
     config:
       all: true

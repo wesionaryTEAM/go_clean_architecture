@@ -50,7 +50,7 @@ func (u *Controller) GetOneUser(c *gin.Context) {
 
 // GetUser gets the user
 func (u *Controller) GetUser(c *gin.Context) {
-	users, err := u.service.SetPaginationScope(utils.Paginate(c)).GetAllUser()
+	users, err := u.service.GetAllUser()
 	if err != nil {
 		u.logger.Error(err)
 	}
