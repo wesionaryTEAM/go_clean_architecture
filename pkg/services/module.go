@@ -10,5 +10,6 @@ var Module = fx.Options(
 		NewFirebaseService,
 		NewBucketService,
 		NewS3Service,
+		NewCognitoAuthService,
 	),
 )

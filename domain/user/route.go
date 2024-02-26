@@ -11,7 +11,7 @@ type Route struct {
 	logger           framework.Logger
 	handler          infrastructure.Router
 	controller       *Controller
-	authMiddleware   middlewares.AuthMiddleware
+	authMiddleware   middlewares.CognitoMiddleWare
 	uploadMiddleware middlewares.UploadMiddleware
 	middlewares.PaginationMiddleware
 	rateLimitMiddleware middlewares.RateLimitMiddleware
@@ -21,7 +21,7 @@ func NewRoute(
 	logger framework.Logger,
 	handler infrastructure.Router,
 	controller *Controller,
-	authMiddleware middlewares.FirebaseAuthMiddleware,
+	authMiddleware middlewares.CognitoAuthMiddleware,
 	uploadMiddleware middlewares.UploadMiddleware,
 	pagination middlewares.PaginationMiddleware,
 	rateLimit middlewares.RateLimitMiddleware,
@@ -42,9 +42,8 @@ func NewRoute(
 func RegisterRoute(r *Route) {
 	r.logger.Info("Setting up routes")
 
-	// in HandleAuthWithRole() pass empty for authentication
-	// or pass user role for authentication along with authorization
-	api := r.handler.Group("/api").Use(r.rateLimitMiddleware.Handle())
+	// remove r.authMiddleware.Handle() if you don't have the access token
+	api := r.handler.Group("/api").Use(r.authMiddleware.Handle(), r.rateLimitMiddleware.Handle())
 
 	api.GET("/user", r.PaginationMiddleware.Handle(), r.controller.GetUser)
 	api.GET("/user/:id", r.controller.GetOneUser)

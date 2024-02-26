@@ -17,5 +17,6 @@ var Module = fx.Options(
 		NewAWSConfig,
 		NewPresignClient,
 		NewS3Uploader,
+		NewCognitoClient,
 	),
 )
