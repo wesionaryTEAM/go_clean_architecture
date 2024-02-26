@@ -2,60 +2,63 @@ package seeds
 
 import (
 	"clean-architecture/domain/constants"
+	"clean-architecture/domain/models"
+	"clean-architecture/domain/user"
 	"clean-architecture/pkg/framework"
 	"clean-architecture/pkg/services"
 
-	"github.com/gin-gonic/gin"
+	"github.com/aws/aws-sdk-go-v2/aws"
 )
 
-// AdminSeed Admin seeding
 type AdminSeed struct {
-	logger          framework.Logger
-	firebaseService services.FirebaseService
-	env             *framework.Env
+	logger         framework.Logger
+	cognitoService services.CognitoAuthService
+	userService    *user.Service
+	env            *framework.Env
 }
 
-// NewAdminSeed Admin seeding
+// NewAdminSeed creates admin seed
 func NewAdminSeed(
 	logger framework.Logger,
-	firebaseService services.FirebaseService,
+	cognitoService services.CognitoAuthService,
+	userService *user.Service,
 	env *framework.Env,
 ) AdminSeed {
 	return AdminSeed{
-		logger:          logger,
-		firebaseService: firebaseService,
-		env:             env,
+		logger:         logger,
+		cognitoService: cognitoService,
+		userService:    userService,
+		env:            env,
 	}
 }
 
-// Run admin seeder
-func (as AdminSeed) Setup() {
-	// Create email manually in firebase
-	email := as.env.AdminEmail
-	password := as.env.AdminPassword
+// Run the admin seed
+func (s AdminSeed) Setup() {
+	email := s.env.AdminEmail
+	password := s.env.AdminPassword
 
-	as.logger.Info("🌱 seeding  admin data...")
+	s.logger.Info("🌱 seeding admin data...")
 
-	if email == "" || password == "" {
-		as.logger.Error("Got empty admin email and password from environment variables. Admin seed not executed.")
-		return
-	}
-
-	_, err := as.firebaseService.RetrieveUserByEmail(email)
-
-	if err != nil {
-		adminClaim := gin.H{
-			constants.RoleIsAdmin: true,
-		}
-		_, err := as.firebaseService.CreateUserWithClaims(email, password, adminClaim)
+	if _, err := s.cognitoService.GetUserByUsername(email); err != nil {
+		cognitoUUID, err := s.cognitoService.CreateAdminUser(email, password, true)
 		if err != nil {
-			as.logger.Error("Firebase Admin user can't be created: ", err.Error())
+			s.logger.Error("failed to create the admin user in cognito", err.Error())
 			return
 		}
+		s.logger.Info("Successfully created admin user in cognito")
 
-		as.logger.Info("Firebase Admin User Created, email: ", email, " password: ", password)
-		return
+		adminUser := models.User{
+			Email:           email,
+			CognitoUID:      aws.String(cognitoUUID),
+			Role:            constants.RoleIsAdmin,
+			IsAdmin:         true,
+			IsEmailVerified: true,
+			IsActive:        true,
+		}
+		if err := s.userService.Create(&adminUser); err != nil {
+			s.logger.Error(err.Error())
+			return
+		}
 	}
-
-	as.logger.Info("Admin already exist")
+	s.logger.Info("Admin user already exists")
 }

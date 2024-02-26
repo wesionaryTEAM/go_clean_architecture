@@ -69,5 +69,5 @@ func (s Service) DeleteUser(uuid types.BinaryUUID) error {
 
 // DeleteUser deletes the user
 func (s Service) Create(user *models.User) error {
-	return s.repository.Create(&user).Error
+	return s.repository.Create(user)
 }

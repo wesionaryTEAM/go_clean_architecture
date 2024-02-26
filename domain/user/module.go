@@ -10,5 +10,5 @@ var Module = fx.Module("user",
 			NewController,
 			NewRoute,
 		),
-		fx.Invoke(RegisterRoute),
+		fx.Invoke(Migrate, RegisterRoute),
 	))
