@@ -12,5 +12,4 @@ var Module = fx.Options(
 	fx.Provide(NewBucketStorage),
 	fx.Provide(NewFCMClient),
 	fx.Provide(NewMigrations),
-	fx.Provide(NewGmailService),
 )
