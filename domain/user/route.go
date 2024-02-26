@@ -1,7 +1,6 @@
 package user
 
 import (
-	"clean-architecture/domain/constants"
 	"clean-architecture/pkg/framework"
 	"clean-architecture/pkg/infrastructure"
 	"clean-architecture/pkg/middlewares"
@@ -45,8 +44,7 @@ func RegisterRoute(r *Route) {
 
 	// in HandleAuthWithRole() pass empty for authentication
 	// or pass user role for authentication along with authorization
-	api := r.handler.Group("/api").Use(r.authMiddleware.HandleAuthWithRole(constants.RoleIsAdmin),
-		r.rateLimitMiddleware.Handle())
+	api := r.handler.Group("/api").Use(r.rateLimitMiddleware.Handle())
 
 	api.GET("/user", r.PaginationMiddleware.Handle(), r.controller.GetUser)
 	api.GET("/user/:id", r.controller.GetOneUser)
@@ -56,5 +54,5 @@ func RegisterRoute(r *Route) {
 		r.controller.UpdateUser,
 	)
 	api.DELETE("/user/:id", r.controller.DeleteUser)
-
+	api.POST("/upload-test", r.uploadMiddleware.Push(r.uploadMiddleware.Config().ThumbEnable(true).WebpEnable(true)).Handle(), r.controller.UploadImage)
 }
