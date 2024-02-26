@@ -11,5 +11,6 @@ var Module = fx.Options(
 		NewBucketService,
 		NewS3Service,
 		NewCognitoAuthService,
+		NewSESService,
 	),
 )

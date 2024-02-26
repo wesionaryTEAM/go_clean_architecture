@@ -54,4 +54,5 @@ func RegisterRoute(r *Route) {
 	)
 	api.DELETE("/user/:id", r.controller.DeleteUser)
 	api.POST("/upload-test", r.uploadMiddleware.Push(r.uploadMiddleware.Config().ThumbEnable(true).WebpEnable(true)).Handle(), r.controller.UploadImage)
+	api.POST("/send-test-email", r.controller.SendEmail)
 }

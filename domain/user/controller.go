@@ -8,6 +8,7 @@ import (
 	"clean-architecture/pkg/services"
 	"clean-architecture/pkg/types"
 	"clean-architecture/pkg/utils"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,6 +19,8 @@ type Controller struct {
 	service         *Service
 	logger          framework.Logger
 	s3BucketService services.S3Service
+	sesService      services.SESService
+	env             *framework.Env
 }
 
 type URLObject struct {
@@ -26,11 +29,19 @@ type URLObject struct {
 }
 
 // NewUserController creates new user controller
-func NewController(userService *Service, logger framework.Logger, s3BucketService services.S3Service) *Controller {
+func NewController(
+	userService *Service,
+	logger framework.Logger,
+	s3BucketService services.S3Service,
+	sesService services.SESService,
+	env *framework.Env,
+) *Controller {
 	return &Controller{
 		service:         userService,
 		logger:          logger,
 		s3BucketService: s3BucketService,
+		sesService:      sesService,
+		env:             env,
 	}
 }
 
@@ -149,5 +160,39 @@ func (c *Controller) UploadImage(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Success",
 		"urls":    urls,
+	})
+}
+
+func (c *Controller) SendEmail(ctx *gin.Context) {
+	var emailData services.EmailParams
+
+	if err := ctx.ShouldBindJSON(&emailData); err != nil {
+		c.logger.Fatalf("Cannot send email due to error: %v", err)
+
+		responses.ErrorJSON(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+	if len(emailData.To) == 0 {
+		responses.ErrorJSON(ctx, http.StatusBadRequest, "Email to cannot be empty")
+		return
+	}
+
+	err := c.sesService.SendEmail(&services.EmailParams{
+		From:    c.env.AdminEmail,
+		To:      emailData.To,
+		Subject: emailData.Subject,
+		Body:    emailData.Body,
+	})
+
+	if err != nil {
+		c.logger.Fatalf("Cannot send email due to error: %v", err)
+
+		responses.ErrorJSON(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Success",
+		"data":    fmt.Sprintf("Email sent to %s successfully", emailData.To),
 	})
 }

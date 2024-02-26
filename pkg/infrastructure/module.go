@@ -18,5 +18,6 @@ var Module = fx.Options(
 		NewPresignClient,
 		NewS3Uploader,
 		NewCognitoClient,
+		NewSESClient,
 	),
 )
