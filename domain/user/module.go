@@ -10,5 +10,8 @@ var Module = fx.Module("user",
 			NewController,
 			NewRoute,
 		),
-		fx.Invoke(Migrate, RegisterRoute),
+		//If you want to enable auto-migrate add Migrate as shown below
+		// fx.Invoke(Migrate, RegisterRoute),
+
+		fx.Invoke(RegisterRoute),
 	))

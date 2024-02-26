@@ -19,6 +19,7 @@ func NewRepository(db infrastructure.Database, logger framework.Logger) Reposito
 	return Repository{db, logger}
 }
 
+// For AutoMigrating (used in fx.Invoke)
 func Migrate(r Repository) error {
 	r.logger.Info("[Migrating...User]")
 	if err := r.DB.AutoMigrate(&models.User{}); err != nil {
