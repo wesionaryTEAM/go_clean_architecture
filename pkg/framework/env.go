@@ -23,6 +23,12 @@ type Env struct {
 	TimeZone      string `mapstructure:"TIMEZONE"`
 	AdminEmail    string `mapstructure:"ADMIN_EMAIL"`
 	AdminPassword string `mapstructure:"ADMIN_PASSWORD"`
+
+	AWSRegion          string `mapstructure:"AWS_REGION"`
+	AWSAccessKey       string `mapstructure:"AWS_ACCESS_KEY_ID"`
+	ClientID           string `mapstructure:"COGNITO_CLIENT_ID"`
+	UserPoolID         string `mapstructure:"COGNITO_USER_POOL_ID"`
+	AWSSecretAccessKey string `mapstructure:"AWS_SECRET_ACCESS_KEY"`
 }
 
 var globalEnv = Env{

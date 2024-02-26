@@ -37,9 +37,6 @@ type UploadConfig struct {
 	// FieldName where to pull multipart files from
 	FieldName string
 
-	// BucketFolder where to put the uploaded files to
-	BucketFolder string
-
 	// Extensions array of extensions
 	Extensions []Extension
 
@@ -58,13 +55,13 @@ type UploadConfig struct {
 
 type UploadMiddleware struct {
 	logger framework.Logger
-	bucket services.BucketService
+	bucket services.S3Service
 	config []UploadConfig
 }
 
 func NewUploadMiddleware(
 	logger framework.Logger,
-	bucket services.BucketService,
+	bucket services.S3Service,
 ) UploadMiddleware {
 	m := UploadMiddleware{
 		bucket: bucket,
@@ -76,7 +73,6 @@ func NewUploadMiddleware(
 func (u UploadMiddleware) Config() UploadConfig {
 	return UploadConfig{
 		FieldName:        "file",
-		BucketFolder:     "",
 		Extensions:       []Extension{JPEGFile, PNGFile, JPGFile},
 		ThumbnailEnabled: false,
 		ThumbnailWidth:   100,
@@ -87,12 +83,6 @@ func (u UploadMiddleware) Config() UploadConfig {
 // Field modify field of upload
 func (cfg UploadConfig) Field(name string) UploadConfig {
 	cfg.FieldName = name
-	return cfg
-}
-
-// Folder modify folder of upload
-func (cfg UploadConfig) Folder(folder string) UploadConfig {
-	cfg.BucketFolder = folder
 	return cfg
 }
 
@@ -133,7 +123,6 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 		if len(u.config) == 0 {
 			u.logger.Info("no file upload configuration has been attached")
 		}
-
 		errGroup, ctx := errgroup.WithContext(c.Request.Context())
 
 		var uploadedFiles []types.UploadMetadata
@@ -212,10 +201,10 @@ func (u UploadMiddleware) uploadFile(
 		return api_errors.ErrFileRead
 	}
 
-	uploadFileName, fileUID := u.randomFileName(conf, ext)
+	uploadFileName, fileUID := u.randomFileName(ext)
 	fileReader := bytes.NewReader(fileByte)
 	errGroup.Go(func() error {
-		urlResponse, err := u.bucket.UploadFile(ctx, fileReader, uploadFileName, fileHeader.Filename)
+		urlResponse, err := u.bucket.UploadFile(ctx, fileReader, uploadFileName)
 		*uploadedFiles = append(*uploadedFiles, types.UploadMetadata{
 			FieldName: conf.FieldName,
 			FileName:  fileHeader.Filename,
@@ -241,9 +230,9 @@ func (u UploadMiddleware) uploadFile(
 			}
 
 			webpReader := bytes.NewReader(webpBuf.Bytes())
-			resizeFileName := u.bucketPath(conf, fmt.Sprintf("%s_webp%s", fileUID, ext))
+			resizeFileName := fmt.Sprintf("%s_webp%s", fileUID, ext)
 
-			if _, err := u.bucket.UploadFile(ctx, webpReader, resizeFileName, strings.ReplaceAll(fileHeader.Filename, ext, "")+".webp"); err != nil {
+			if _, err := u.bucket.UploadFile(ctx, webpReader, resizeFileName); err != nil {
 				return err
 			}
 
@@ -263,8 +252,8 @@ func (u UploadMiddleware) uploadFile(
 				return err
 			}
 
-			resizeFileName := u.bucketPath(conf, fmt.Sprintf("%s_thumb%s", fileUID, ext))
-			_, err = u.bucket.UploadFile(ctx, img, resizeFileName, fileHeader.Filename)
+			resizeFileName := fmt.Sprintf("%s_thumb%s", fileUID, ext)
+			_, err = u.bucket.UploadFile(ctx, img, resizeFileName)
 			if err != nil {
 				return err
 			}
@@ -287,9 +276,9 @@ func (u UploadMiddleware) uploadFile(
 				}
 
 				webpReader := bytes.NewReader(webpBuf.Bytes())
-				resizeFileName := u.bucketPath(conf, fmt.Sprintf("%s_thumb%s", fileUID, ".webp"))
+				resizeFileName := fmt.Sprintf("%s_thumb%s", fileUID, ".webp")
 
-				_, err = u.bucket.UploadFile(ctx, webpReader, resizeFileName, fileHeader.Filename)
+				_, err = u.bucket.UploadFile(ctx, webpReader, resizeFileName)
 				if err != nil {
 					return err
 				}
@@ -315,17 +304,10 @@ func (u *UploadMiddleware) matchesExtension(c UploadConfig, ext string) bool {
 	return false
 }
 
-func (u *UploadMiddleware) randomFileName(c UploadConfig, ext string) (randomName, uid string) {
+func (u *UploadMiddleware) randomFileName(ext string) (randomName, uid string) {
 	randUUID, _ := uuid.NewRandom()
 	fileName := randUUID.String() + ext
-	return u.bucketPath(c, fileName), randUUID.String()
-}
-
-func (u *UploadMiddleware) bucketPath(c UploadConfig, fileName string) string {
-	if c.BucketFolder != "" {
-		return fmt.Sprintf("%s/%s", c.BucketFolder, fileName)
-	}
-	return fileName
+	return fileName, randUUID.String()
 }
 
 func (u *UploadMiddleware) getImage(file io.Reader, ext string) (image.Image, error) {

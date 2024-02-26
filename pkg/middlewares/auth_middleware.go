@@ -9,3 +9,7 @@ import (
 type AuthMiddleware interface {
 	HandleAuthWithRole(roles ...string) gin.HandlerFunc
 }
+
+type CognitoMiddleWare interface {
+	Handle() gin.HandlerFunc
+}

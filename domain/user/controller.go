@@ -5,23 +5,43 @@ import (
 	"clean-architecture/pkg/api_errors"
 	"clean-architecture/pkg/framework"
 	"clean-architecture/pkg/responses"
+	"clean-architecture/pkg/services"
 	"clean-architecture/pkg/types"
 	"clean-architecture/pkg/utils"
+	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 // UserController data type
 type Controller struct {
-	service *Service
-	logger  framework.Logger
+	service         *Service
+	logger          framework.Logger
+	s3BucketService services.S3Service
+	sesService      services.SESService
+	env             *framework.Env
+}
+
+type URLObject struct {
+	Name string `json:"name"`
+	URL  string `json:"url"`
 }
 
 // NewUserController creates new user controller
-func NewController(userService *Service, logger framework.Logger) *Controller {
+func NewController(
+	userService *Service,
+	logger framework.Logger,
+	s3BucketService services.S3Service,
+	sesService services.SESService,
+	env *framework.Env,
+) *Controller {
 	return &Controller{
-		service: userService,
-		logger:  logger,
+		service:         userService,
+		logger:          logger,
+		s3BucketService: s3BucketService,
+		sesService:      sesService,
+		env:             env,
 	}
 }
 
@@ -121,4 +141,58 @@ func (u *Controller) DeleteUser(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{"data": "user deleted"})
+}
+
+func (c *Controller) UploadImage(ctx *gin.Context) {
+	metadata, _ := ctx.MustGet(framework.File).(types.UploadedFiles)
+
+	urls := make([]URLObject, 0, 1)
+
+	for _, file := range metadata.GetMultipleFiles("file") {
+		signedUrl, err := c.s3BucketService.GetSignedURL(file.URL)
+		if err != nil {
+			c.logger.Info("Failed to get the presigned url: ", err.Error())
+			return
+		}
+		urls = append(urls, URLObject{Name: file.FileName, URL: signedUrl})
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Success",
+		"urls":    urls,
+	})
+}
+
+func (c *Controller) SendEmail(ctx *gin.Context) {
+	var emailData services.EmailParams
+
+	if err := ctx.ShouldBindJSON(&emailData); err != nil {
+		c.logger.Fatalf("Cannot send email due to error: %v", err)
+
+		responses.ErrorJSON(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+	if len(emailData.To) == 0 {
+		responses.ErrorJSON(ctx, http.StatusBadRequest, "Email to cannot be empty")
+		return
+	}
+
+	err := c.sesService.SendEmail(&services.EmailParams{
+		From:    c.env.AdminEmail,
+		To:      emailData.To,
+		Subject: emailData.Subject,
+		Body:    emailData.Body,
+	})
+
+	if err != nil {
+		c.logger.Fatalf("Cannot send email due to error: %v", err)
+
+		responses.ErrorJSON(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Success",
+		"data":    fmt.Sprintf("Email sent to %s successfully", emailData.To),
+	})
 }
