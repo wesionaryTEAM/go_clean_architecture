@@ -12,6 +12,7 @@ import (
 var cmds = map[string]framework.Command{
 	"cmd:random": commands.NewRandomCommand(),
 	"app:serve":  NewServeCommand(),
+	"seed:run":   commands.NewSeedCommand(),
 }
 
 // GetSubCommands gives a list of sub commands
