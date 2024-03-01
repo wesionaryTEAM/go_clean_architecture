@@ -1,0 +1,57 @@
+name: "API Security Scan"
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+jobs:
+  go-sec-tests:
+    runs-on: ubuntu-latest
+    env:
+      GO111MODULE: on
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v3
+      - name: Run Gosec Security Scanner
+        uses: securego/gosec@master
+        with:
+          args: "-no-fail -fmt html -out index.html ./..."
+
+      - name: Generate Report
+        run: |
+          echo "Generating Report"
+          mkdir ./public
+          mv index.html ./public/
+
+      - name: Deploy to Github Pages.
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          publish_dir: ./public
+          user_name: "go-sec-tester"
+          user_email: "github-report@users.noreply.github.com"
+
+      - name: Slack Notification
+        if: success()
+        uses: tokorom/action-slack-incoming-webhook@main
+        env:
+          INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          REPOSITORY_NAME: ${{ github.event.repository.name }}
+        with:
+          text: Go Sec report has been Generated :tada:.
+          attachments: |
+            [
+              {
+                "color": "good",
+                "author_name": "Go Sec Report",
+                "author_icon": "https://cdn-icons-png.flaticon.com/512/3082/3082421.png",
+                "fields": [
+                  {
+                    "title": "Report URL",
+                    "value": "http://wesionaryteam.github.io/${{env.REPOSITORY_NAME}}"
+                  }
+                ]
+              }
+            ]

@@ -1,6 +1,6 @@
 while true; do
     echo "[run.sh] Starting debugging..."
-    dlv debug --headless --log --listen=:2345 --api-version=2 --accept-multiclient --continue -- app:serve &
+    dlv debug --headless --log --listen=:2345 --api-version=2 --output ./__debug_bin --accept-multiclient --continue -- app:serve &
 
     PID=$!
 
