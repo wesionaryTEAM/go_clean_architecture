@@ -7,11 +7,13 @@ import (
 	mockdomainif "clean-architecture/mocks/clean-architecture/domain/domainif"
 	"clean-architecture/pkg/types"
 	"clean-architecture/pkg/utils"
-	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"github.com/stretchr/testify/mock"
+	"gorm.io/gorm"
 )
 
 var _ = Describe("User Service Tests", func() {
@@ -36,21 +38,90 @@ var _ = Describe("User Service Tests", func() {
 		mockUID, _ = uuid.NewRandom()
 	})
 
-	It("should return user if user exists", func() {
-		user := models.User{
-			Name:  "John Doe",
-			Email: "john_doe@example.com",
-			Age:   25,
-		}
-		binaryuuid := types.BinaryUUID(mockUID)
-		user.ID = binaryuuid
-		fmt.Println("binary uuid ", binaryuuid)
-		mockUserService.EXPECT().GetOneUser(binaryuuid).Return(user, nil)
-		fmt.Println("user ", user)
+	Describe("Getting a user", func() {
+		It("should return user if user exists", func() {
+			user := models.User{}
+			mockUserService.EXPECT().GetOneUser(types.BinaryUUID(mockUID)).Return(user, nil)
 
-		setupDI()
+			setupDI()
 
-		Expect(user).ToNot(BeNil())
+			res, err := mockUserService.GetOneUser(types.BinaryUUID(mockUID))
+
+			Expect(res).To(Equal(user))
+			Expect(err).To(BeNil())
+		})
+
+		It("should return error if user does not exist", func() {
+			user := models.User{}
+			mockUserService.EXPECT().GetOneUser(mock.Anything).Return(user, gorm.ErrRecordNotFound)
+			setupDI()
+
+			res, err := mockUserService.GetOneUser(types.BinaryUUID(mockUID))
+
+			Expect(err).To(Equal(gorm.ErrRecordNotFound))
+			Expect(res.ID).To(Equal(types.BinaryUUID(uuid.Nil)))
+
+		})
+	})
+
+	Describe("Getting all users", func() {
+		It("should return all users", func() {
+			users := []models.User{}
+			mockUserService.EXPECT().GetAllUser().Return(map[string]interface{}{"data": users, "count": int64(0)}, nil)
+
+			setupDI()
+
+			res, err := mockUserService.GetAllUser()
+
+			Expect(res["data"]).To(Equal(users))
+			Expect(res["count"]).To(Equal(int64(0)))
+			Expect(err).To(BeNil())
+		})
+	})
+
+	Describe("Updating a user", func() {
+		It("should update the user", func() {
+			user := models.User{}
+			mockUserService.EXPECT().UpdateUser(&user).Return(nil)
+
+			setupDI()
+
+			err := mockUserService.UpdateUser(&user)
+
+			Expect(err).To(BeNil())
+		})
+	})
+
+	Describe("Creating a user", func() {
+		It("should create the user", func() {
+			user := models.User{
+				Name:       "Jhon Doe",
+				Email:      "jhon.doe@test.com",
+				Age:        25,
+				ProfilePic: "https://www.profilepic.url.com",
+				CreatedAt:  time.Now(),
+				UpdatedAt:  time.Now(),
+			}
+			mockUserService.EXPECT().Create(&user).Return(nil)
+
+			setupDI()
+
+			err := mockUserService.Create(&user)
+
+			Expect(err).To(BeNil())
+		})
+	})
+
+	Describe("Deleting a user", func() {
+		It("should delete the user", func() {
+			mockUserService.EXPECT().DeleteUser(types.BinaryUUID(mockUID)).Return(nil)
+
+			setupDI()
+
+			err := mockUserService.DeleteUser(types.BinaryUUID(mockUID))
+
+			Expect(err).To(BeNil())
+		})
 	})
 
 })
