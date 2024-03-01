@@ -24,4 +24,8 @@ const (
 
 	// Token -> bearer token
 	Token = "Token"
+
+	// Cognito constants
+	Role        = "Role"
+	CognitoPass = "CognitoPass"
 )
