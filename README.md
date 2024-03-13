@@ -7,7 +7,6 @@ Clean Architecture with [Gin Web Framework](https://github.com/gin-gonic/gin)
 -   Clean Architecture written in Go
 -   Application backbone with [Gin Web Framework](https://github.com/gin-gonic/gin)
 -   Dependency injection using [uber-go/fx](https://pkg.go.dev/go.uber.org/fx)
--   API endpoints documentation with [Swagger-UI](https://swagger.io/tools/swagger-ui/download/)
 -   Uses fully featured [GORM](https://gorm.io/index.html)
 
 ## Linter setup
@@ -53,7 +52,6 @@ Copy the key to `serviceAccountKey.json` file. You can see the example at `servi
 | `/bootstrap`                     | contains modules required to start the application                                                     |
 | `/console`                       | server commands, run `go run main.go -help` for all the available server commands                      |
 | `/docker`                        | `docker` files required for `docker compose`                                                           |
-| `/docs`                          | API endpoints documentation using `swagger`                                                            |
 | `/domain`                        | contains models, constants and folder for each domain with controller, repository, routes and services |
 |   `/domain/constants`            | global application constants                                                                           |
 |   `/domain/models`               | ORM models                                                                                             |
@@ -141,17 +139,6 @@ go test ./... -v
 go test ./... -v -coverprofile cover.txt -coverpkg=./...
 go tool cover -html=cover.txt -o index.html
 ```
-
----
-
-## Checking API documents with swagger UI
-
-Browse to `http://localhost:${SWAGGER_PORT}`
-
--   You can see all the documented endpoints in Swagger-UI from the API specification
--   You can execute/test endpoint. [Read article](https://medium.com/wesionary-team/swagger-ui-on-docker-for-testing-rest-apis-5b3d5fcdee7)
-
----
 
 ## Update Dependencies
 
