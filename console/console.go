@@ -32,7 +32,7 @@ func WrapSubCommand(name string, cmd framework.Command, opt fx.Option) *cobra.Co
 
 			opts := fx.Options(
 				fx.WithLogger(logger.GetFxLogger),
-				fx.Invoke(cmd.Run()),
+				fx.Invoke(cmd.Run),
 			)
 			ctx := context.Background()
 			app := fx.New(opt, opts)
