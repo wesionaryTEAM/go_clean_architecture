@@ -28,6 +28,10 @@ func NewAdminSeed(
 	}
 }
 
+func (as AdminSeed) Name() string {
+	return "AdminSeed"
+}
+
 // Run admin seeder
 func (as AdminSeed) Setup() {
 	// Create email manually in firebase
