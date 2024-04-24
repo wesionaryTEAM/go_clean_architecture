@@ -1,6 +1,8 @@
 package utils
 
-import "go.uber.org/fx"
+import (
+	"go.uber.org/fx"
+)
 
 func FxReplaceAs(impl, iface interface{}) fx.Option {
 	return fx.Replace(

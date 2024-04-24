@@ -7,4 +7,6 @@ var Module = fx.Options(
 	fx.Provide(NewRouter),
 	fx.Provide(NewDatabase),
 	fx.Provide(NewMigrations),
+	fx.Provide(NewAWSConfig),
+	fx.Provide(NewCognitoClient),
 )

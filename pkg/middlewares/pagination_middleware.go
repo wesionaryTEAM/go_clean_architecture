@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"clean-architecture/pkg/framework"
+	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -28,6 +29,8 @@ func (p PaginationMiddleware) Handle() gin.HandlerFunc {
 		if err != nil {
 			page = 0
 		}
+
+		fmt.Println("perPage", perPage, "page", page)
 
 		c.Set(framework.Limit, perPage)
 		c.Set(framework.Page, page)

@@ -5,7 +5,6 @@ import (
 	"clean-architecture/pkg/framework"
 	"clean-architecture/pkg/types"
 
-	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -33,16 +32,13 @@ func (s *Service) GetOneUser(userID types.BinaryUUID) (user models.User, err err
 }
 
 // GetAllUser get all the user
-func (s *Service) GetAllUser() (response map[string]interface{}, err error) {
-	var users []models.User
-	var count int64
-
+func (s *Service) GetAllUser() (users *[]models.User, count int64, err error) {
 	err = s.repository.WithTrx(s.paginationScope).Find(&users).Offset(-1).Limit(-1).Count(&count).Error
 	if err != nil {
-		return nil, err
+		return users, count, err
 	}
 
-	return gin.H{"data": users, "count": count}, nil
+	return users, count, nil
 }
 
 // UpdateUser updates the user

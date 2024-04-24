@@ -50,12 +50,15 @@ func (u *Controller) GetOneUser(c *gin.Context) {
 
 // GetUser gets the user
 func (u *Controller) GetUser(c *gin.Context) {
-	users, err := u.service.GetAllUser()
+	users, count, err := u.service.GetAllUser()
 	if err != nil {
 		u.logger.Error(err)
 	}
 
-	responses.JSONWithPagination(c, 200, users)
+	responses.JSONWithPagination(c, 200, gin.H{
+		"data":  users,
+		"count": count,
+	})
 }
 
 // SaveUser saves the user

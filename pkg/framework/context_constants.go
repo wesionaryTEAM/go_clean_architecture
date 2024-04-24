@@ -24,4 +24,6 @@ const (
 
 	// Token -> bearer token
 	Token = "Token"
+
+	Role = "Role"
 )

@@ -4,3 +4,6 @@ packages:
   clean-architecture/domain/domainif:
     config:
       all: true
+  clean-architecture/pkg/interfaces:
+    config:
+      all: true

@@ -3,13 +3,9 @@
 package mockdomainif
 
 import (
-	domainif "clean-architecture/domain/domainif"
-
-	gorm "gorm.io/gorm"
+	models "clean-architecture/domain/models"
 
 	mock "github.com/stretchr/testify/mock"
-
-	models "clean-architecture/domain/models"
 
 	types "clean-architecture/pkg/types"
 )
@@ -120,33 +116,40 @@ func (_c *MockUserService_DeleteUser_Call) RunAndReturn(run func(types.BinaryUUI
 }
 
 // GetAllUser provides a mock function with given fields:
-func (_m *MockUserService) GetAllUser() (map[string]interface{}, error) {
+func (_m *MockUserService) GetAllUser() (*[]models.User, int64, error) {
 	ret := _m.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAllUser")
 	}
 
-	var r0 map[string]interface{}
-	var r1 error
-	if rf, ok := ret.Get(0).(func() (map[string]interface{}, error)); ok {
+	var r0 *[]models.User
+	var r1 int64
+	var r2 error
+	if rf, ok := ret.Get(0).(func() (*[]models.User, int64, error)); ok {
 		return rf()
 	}
-	if rf, ok := ret.Get(0).(func() map[string]interface{}); ok {
+	if rf, ok := ret.Get(0).(func() *[]models.User); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(map[string]interface{})
+			r0 = ret.Get(0).(*[]models.User)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func() error); ok {
+	if rf, ok := ret.Get(1).(func() int64); ok {
 		r1 = rf()
 	} else {
-		r1 = ret.Error(1)
+		r1 = ret.Get(1).(int64)
 	}
 
-	return r0, r1
+	if rf, ok := ret.Get(2).(func() error); ok {
+		r2 = rf()
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
 }
 
 // MockUserService_GetAllUser_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAllUser'
@@ -166,12 +169,12 @@ func (_c *MockUserService_GetAllUser_Call) Run(run func()) *MockUserService_GetA
 	return _c
 }
 
-func (_c *MockUserService_GetAllUser_Call) Return(response map[string]interface{}, err error) *MockUserService_GetAllUser_Call {
-	_c.Call.Return(response, err)
+func (_c *MockUserService_GetAllUser_Call) Return(users *[]models.User, count int64, err error) *MockUserService_GetAllUser_Call {
+	_c.Call.Return(users, count, err)
 	return _c
 }
 
-func (_c *MockUserService_GetAllUser_Call) RunAndReturn(run func() (map[string]interface{}, error)) *MockUserService_GetAllUser_Call {
+func (_c *MockUserService_GetAllUser_Call) RunAndReturn(run func() (*[]models.User, int64, error)) *MockUserService_GetAllUser_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -228,54 +231,6 @@ func (_c *MockUserService_GetOneUser_Call) Return(user models.User, err error) *
 }
 
 func (_c *MockUserService_GetOneUser_Call) RunAndReturn(run func(types.BinaryUUID) (models.User, error)) *MockUserService_GetOneUser_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// SetPaginationScope provides a mock function with given fields: scope
-func (_m *MockUserService) SetPaginationScope(scope func(*gorm.DB) *gorm.DB) domainif.UserService {
-	ret := _m.Called(scope)
-
-	if len(ret) == 0 {
-		panic("no return value specified for SetPaginationScope")
-	}
-
-	var r0 domainif.UserService
-	if rf, ok := ret.Get(0).(func(func(*gorm.DB) *gorm.DB) domainif.UserService); ok {
-		r0 = rf(scope)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(domainif.UserService)
-		}
-	}
-
-	return r0
-}
-
-// MockUserService_SetPaginationScope_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SetPaginationScope'
-type MockUserService_SetPaginationScope_Call struct {
-	*mock.Call
-}
-
-// SetPaginationScope is a helper method to define mock.On call
-//   - scope func(*gorm.DB) *gorm.DB
-func (_e *MockUserService_Expecter) SetPaginationScope(scope interface{}) *MockUserService_SetPaginationScope_Call {
-	return &MockUserService_SetPaginationScope_Call{Call: _e.mock.On("SetPaginationScope", scope)}
-}
-
-func (_c *MockUserService_SetPaginationScope_Call) Run(run func(scope func(*gorm.DB) *gorm.DB)) *MockUserService_SetPaginationScope_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(func(*gorm.DB) *gorm.DB))
-	})
-	return _c
-}
-
-func (_c *MockUserService_SetPaginationScope_Call) Return(_a0 domainif.UserService) *MockUserService_SetPaginationScope_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *MockUserService_SetPaginationScope_Call) RunAndReturn(run func(func(*gorm.DB) *gorm.DB) domainif.UserService) *MockUserService_SetPaginationScope_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -5,4 +5,6 @@ import (
 )
 
 // Module exports services present
-var Module = fx.Options()
+var Module = fx.Options(
+	fx.Provide(NewCognitoAuthService),
+)

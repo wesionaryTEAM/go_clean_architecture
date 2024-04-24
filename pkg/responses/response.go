@@ -2,6 +2,7 @@ package responses
 
 import (
 	"clean-architecture/pkg/framework"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,6 +26,8 @@ func SuccessJSON(c *gin.Context, statusCode int, data any) {
 func JSONWithPagination(c *gin.Context, statusCode int, response map[string]any) {
 	limit, _ := c.MustGet(framework.Limit).(int64)
 	size, _ := c.MustGet(framework.Page).(int64)
+
+	fmt.Println("calc ", limit, size, response["count"].(int64))
 
 	c.JSON(
 		statusCode,

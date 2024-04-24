@@ -10,5 +10,5 @@ type UserService interface {
 	UpdateUser(user *models.User) error
 	DeleteUser(uuid types.BinaryUUID) error
 	Create(user *models.User) error
-	GetAllUser() (response map[string]interface{}, err error)
+	GetAllUser() (users *[]models.User, count int64, err error)
 }

@@ -1,6 +1,7 @@
 package user
 
 import (
+	"clean-architecture/domain/constants"
 	"clean-architecture/pkg/framework"
 	"clean-architecture/pkg/infrastructure"
 	"clean-architecture/pkg/middlewares"
@@ -13,6 +14,7 @@ type Route struct {
 	controller *Controller
 	middlewares.PaginationMiddleware
 	rateLimitMiddleware middlewares.RateLimitMiddleware
+	authMiddleware      middlewares.AuthMiddleware
 }
 
 func NewRoute(
@@ -21,6 +23,7 @@ func NewRoute(
 	controller *Controller,
 	pagination middlewares.PaginationMiddleware,
 	rateLimit middlewares.RateLimitMiddleware,
+	authMiddleware middlewares.CognitoAuthMiddleware,
 ) *Route {
 	return &Route{
 		handler:              handler,
@@ -28,6 +31,7 @@ func NewRoute(
 		controller:           controller,
 		PaginationMiddleware: pagination,
 		rateLimitMiddleware:  rateLimit,
+		authMiddleware:       authMiddleware,
 	}
 
 }
@@ -38,11 +42,12 @@ func RegisterRoute(r *Route) {
 
 	// in HandleAuthWithRole() pass empty for authentication
 	// or pass user role for authentication along with authorization
-	api := r.handler.Group("/api")
-	// .Use(r.authMiddleware.HandleAuthWithRole(constants.RoleIsAdmin),
+	api := r.handler.Group("/api").Use(r.authMiddleware.HandleAuthWithRole(constants.RoleIsAdmin))
 	// 	r.rateLimitMiddleware.Handle())
 
-	api.GET("/user", r.PaginationMiddleware.Handle(), r.controller.GetUser)
+	api.GET("/user",
+		r.PaginationMiddleware.Handle(),
+		r.controller.GetUser)
 	api.GET("/user/:id", r.controller.GetOneUser)
 	api.POST("/user", r.controller.SaveUser)
 	// api.PUT("/user/:id",

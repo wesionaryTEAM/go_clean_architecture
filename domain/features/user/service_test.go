@@ -67,14 +67,14 @@ var _ = Describe("User Service Tests", func() {
 	Describe("Getting all users", func() {
 		It("should return all users", func() {
 			users := []models.User{}
-			mockUserService.EXPECT().GetAllUser().Return(map[string]interface{}{"data": users, "count": int64(0)}, nil)
+			mockUserService.EXPECT().GetAllUser().Return(&users, int64(0), nil)
 
 			setupDI()
 
-			res, err := mockUserService.GetAllUser()
+			usersRes, count, err := mockUserService.GetAllUser()
 
-			Expect(res["data"]).To(Equal(users))
-			Expect(res["count"]).To(Equal(int64(0)))
+			Expect(usersRes).To(Equal(&users))
+			Expect(count).To(Equal(int64(0)))
 			Expect(err).To(BeNil())
 		})
 	})

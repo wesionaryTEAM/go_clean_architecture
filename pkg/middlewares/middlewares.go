@@ -9,6 +9,7 @@ var Module = fx.Options(
 	fx.Provide(NewUploadMiddleware),
 	fx.Provide(NewRateLimitMiddleware),
 	fx.Provide(NewMiddlewares),
+	fx.Provide(NewCognitoAuthMiddleware),
 )
 
 // IMiddleware middleware interface
