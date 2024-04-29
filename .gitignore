@@ -9,3 +9,4 @@ __debug_bin
 
 serviceAccountKey.json
 .test.env
+main

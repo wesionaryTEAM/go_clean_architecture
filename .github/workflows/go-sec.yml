@@ -1,4 +1,4 @@
-name: "API Security Scan"
+name: Generate go-sec rGo Llean Architecture application to Google Cloud
 
 on:
   push:
