@@ -140,6 +140,12 @@ go test ./... -v -coverprofile cover.txt -coverpkg=./...
 go tool cover -html=cover.txt -o index.html
 ```
 
+## Static Code Analysis using go-sec
+This tool is designed to analyze static Go code to identify vulnerabilities early in the development lifecycle. By detecting potential issues before deployment, it helps prevent bugs from reaching production.
+This report is triggered automatically when we deploy changes to `develop` branch. <br>
+[Go Sec Report](https://wesionaryteam.github.io/go_clean_architecture/)
+
+
 ## Update Dependencies
 
 <details>
