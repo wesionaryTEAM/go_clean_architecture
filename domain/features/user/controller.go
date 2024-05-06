@@ -52,7 +52,8 @@ func (u *Controller) GetOneUser(c *gin.Context) {
 func (u *Controller) GetUser(c *gin.Context) {
 	users, count, err := u.service.GetAllUser()
 	if err != nil {
-		u.logger.Error(err)
+		utils.HandleError(u.logger, c, err)
+		return
 	}
 
 	responses.JSONWithPagination(c, 200, gin.H{

@@ -4,6 +4,7 @@ import (
 	"clean-architecture/domain/constants"
 	"clean-architecture/pkg/framework"
 	"clean-architecture/pkg/infrastructure"
+	"clean-architecture/pkg/interfaces"
 	"clean-architecture/pkg/middlewares"
 )
 
@@ -12,18 +13,18 @@ type Route struct {
 	logger     framework.Logger
 	handler    infrastructure.Router
 	controller *Controller
-	middlewares.PaginationMiddleware
+	interfaces.PaginationMiddleware
 	rateLimitMiddleware middlewares.RateLimitMiddleware
-	authMiddleware      middlewares.AuthMiddleware
+	authMiddleware      interfaces.AuthMiddleware
 }
 
 func NewRoute(
 	logger framework.Logger,
 	handler infrastructure.Router,
 	controller *Controller,
-	pagination middlewares.PaginationMiddleware,
+	pagination interfaces.PaginationMiddleware,
 	rateLimit middlewares.RateLimitMiddleware,
-	authMiddleware middlewares.CognitoAuthMiddleware,
+	authMiddleware interfaces.AuthMiddleware,
 ) *Route {
 	return &Route{
 		handler:              handler,

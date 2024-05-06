@@ -1,15 +1,31 @@
 package middlewares
 
-import "go.uber.org/fx"
+import (
+	"clean-architecture/pkg/interfaces"
+
+	"go.uber.org/fx"
+)
 
 // Module Middleware exported
 var Module = fx.Options(
 	fx.Provide(NewDBTransactionMiddleware),
-	fx.Provide(NewPaginationMiddleware),
+
 	fx.Provide(NewUploadMiddleware),
 	fx.Provide(NewRateLimitMiddleware),
 	fx.Provide(NewMiddlewares),
-	fx.Provide(NewCognitoAuthMiddleware),
+
+	fx.Provide(
+		fx.Annotate(
+			NewPaginationMiddleware,
+			fx.As(new(interfaces.PaginationMiddleware)),
+		),
+	),
+	fx.Provide(
+		fx.Annotate(
+			NewCognitoAuthMiddleware,
+			fx.As(new(interfaces.AuthMiddleware)),
+		),
+	),
 )
 
 // IMiddleware middleware interface
