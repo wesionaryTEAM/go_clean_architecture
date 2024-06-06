@@ -59,8 +59,8 @@ func (u *Controller) GetUser(c *gin.Context) {
 // SaveUser saves the user
 func (u *Controller) SaveUser(c *gin.Context) {
 	user := models.User{}
-	if err := c.Bind(&user); err != nil {
-		utils.HandleError(u.logger, c, err)
+	if err := c.ShouldBind(&user); err != nil {
+		responses.HandleValidationError(u.logger, c, err)
 		return
 	}
 
