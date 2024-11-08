@@ -21,17 +21,17 @@ func NewRouter(
 	logger framework.Logger,
 ) Router {
 
-	if env.Environment != "local" && env.SentryDSN != "" {
+	if env.Server.Environment != "local" && env.Sentry.DSN != "" {
 		if err := sentry.Init(sentry.ClientOptions{
-			Dsn:         env.SentryDSN,
-			Environment: `clean-backend-` + env.Environment,
+			Dsn:         env.Sentry.DSN,
+			Environment: `clean-backend-` + env.Server.Environment,
 		}); err != nil {
 			logger.Infof("Sentry initialization failed: %v\n", err)
 		}
 	}
 
 	gin.DefaultWriter = logger.GetGinLogger()
-	appEnv := env.Environment
+	appEnv := env.Server.Environment
 	if appEnv == "production" {
 		gin.SetMode(gin.ReleaseMode)
 	} else {

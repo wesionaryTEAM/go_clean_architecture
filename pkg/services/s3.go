@@ -34,7 +34,7 @@ func (s *S3Service) UploadFile(
 	fileName string,
 ) (string, error) {
 
-	bucketName := s.env.StorageBucketName
+	bucketName := s.env.AWS.StorageBucketName
 
 	if bucketName == "" {
 		s.logger.Fatal("Bucket name missing.")
@@ -63,7 +63,7 @@ func (s *S3Service) UploadFile(
 }
 
 func (s *S3Service) GetSignedURL(key string) (string, error) {
-	bucketName := s.env.StorageBucketName
+	bucketName := s.env.AWS.StorageBucketName
 
 	if bucketName == "" {
 		s.logger.Fatal("Bucket name missing.")
