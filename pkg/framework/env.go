@@ -14,8 +14,8 @@ type AWSConfig struct {
 	AccessKey         string `mapstructure:"AWS_ACCESS_KEY_ID"`
 	SecretAccessKey   string `mapstructure:"AWS_SECRET_ACCESS_KEY"`
 	StorageBucketName string `mapstructure:"STORAGE_BUCKET_NAME"`
-	ClientID          string `mapstructure:"COGNITO_CLIENT_ID"`
-	UserPoolID        string `mapstructure:"COGNITO_USER_POOL_ID"`
+	CognitoClientID   string `mapstructure:"COGNITO_CLIENT_ID"`
+	CognitoUserPoolID string `mapstructure:"COGNITO_USER_POOL_ID"`
 }
 
 type SentryConfig struct {
