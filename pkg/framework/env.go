@@ -23,14 +23,14 @@ type SentryConfig struct {
 }
 
 type ServerConfig struct {
-	ServerPort  string `mapstructure:"SERVER_PORT"`
+	Port        string `mapstructure:"SERVER_PORT"`
 	Environment string `mapstructure:"ENVIRONMENT"`
 	LogLevel    string `mapstructure:"LOG_LEVEL"`
 	TimeZone    string `mapstructure:"TIMEZONE"`
 }
 
 type DatabaseConfig struct {
-	DBUsername  string `mapstructure:"DB_USER"`
+	Username    string `mapstructure:"DB_USER"`
 	Password    string `mapstructure:"DB_PASS"`
 	Host        string `mapstructure:"DB_HOST"`
 	Port        string `mapstructure:"DB_PORT"`

@@ -51,13 +51,13 @@ func (s *ServeCommand) Run() framework.CommandRunner {
 			}
 		}
 		logger.Info("Running server")
-		if env.Server.ServerPort == "" {
+		if env.Server.Port == "" {
 			if err := router.Run(); err != nil {
 				logger.Fatal(err)
 				return
 			}
 		} else {
-			if err := router.Run(":" + env.Server.ServerPort); err != nil {
+			if err := router.Run(":" + env.Server.Port); err != nil {
 				logger.Fatal(err)
 				return
 			}
