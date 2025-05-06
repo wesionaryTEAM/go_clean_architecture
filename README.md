@@ -78,50 +78,50 @@ Copy the key to `serviceAccountKey.json` file. You can see the example at `servi
 
 ---
 
-## Migration Commands
+## 🚀 Running Migrations
 
-⚓️ &nbsp; If you want to run the migration runner from the host environment instead of the docker environment; ensure that `sql-migrate` is installed on your local machine.
-
-### Install `sql-migrate`
-
-> You can skip this step if `sql-migrate` has already been installed on your local machine.
-
-**Note:** Starting in Go 1.17, installing executables with `go get` is deprecated. `go install` may be used instead. [Read more](https://go.dev/doc/go-get-install-deprecation)
-
-```zsh
-go install github.com/rubenv/sql-migrate/...@latest
-```
-
-If you're using Go version below `1.18`
-
-```zsh
-go get -v github.com/rubenv/sql-migrate/...
-```
-
-### Running migration
-
-Add argument `p=host` after `make` command to run migration commands on local environment
-
-<b>Example:</b>
-
-```zsh
-make p=host migrate-up
-```
-
-<details>
-    <summary>Available migration commands</summary>
-
-| Command               | Desc                                                       |
-| --------------------- | ---------------------------------------------------------- |
-| `make migrate-status` | Show migration status                                      |
-| `make migrate-up`     | Migrates the database to the most recent version available |
-| `make migrate-down`   | Undo a database migration                                  |
-| `make redo`           | Reapply the last migration                                 |
-| `make create`         | Create new migration file                                  |
-
-</details>
+This project uses [Atlas](https://atlasgo.io/) for database schema migrations. Atlas enables declarative, versioned, and diff-based schema changes.
 
 ---
+
+### 🧰 Prerequisites
+
+Make sure you have the following set up:
+
+- **Atlas CLI**: Install Atlas by running:
+
+  ```sh
+  curl -sSf https://atlasgo.sh | sh
+  ```
+
+  > For other installation methods or details, visit the [official installation guide](https://atlasgo.io/getting-started/installation).
+
+- **`.env` file** at the project root with the following environment variables:
+
+  ```env
+  DB_USER=root
+  DB_PASS=secret
+  DB_NAME=exampledb
+  DB_FORWARD_PORT=3306
+  ```
+
+---
+
+### 📦 Available Migration Commands
+
+Below are the supported `make` commands for managing database migrations:
+
+| Make Command          | Description                                                                 |
+| --------------------- | --------------------------------------------------------------------------- |
+| `make migrate-status` | Show the current migration status                                           |
+| `make migrate-diff`   | Generate a new migration by comparing models to the current DB (`gorm` env) |
+| `make migrate-apply`  | Apply all pending migrations                                                |
+| `make migrate-down`   | Roll back the most recent migration (`gorm` env)                            |
+| `make migrate-hash`   | Hash migration files for integrity checking                                 |
+
+---
+
+📚 For more on schema management and best practices, refer to the [Atlas documentation](https://atlasgo.io).
 
 ## Testing
 
