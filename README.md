@@ -70,7 +70,6 @@ Copy the key to `serviceAccountKey.json` file. You can see the example at `servi
 | `/seeds`                         | seeds for already migrated tables                                                                      |
 | `/tests`                         | includes application tests                                                                             |
 | `.env.example`                   | sample environment variables                                                                           |
-| `dbconfig.yml`                   | database configuration file for `sql-migrate` command                                                  |
 | `docker-compose.yml`             | `docker compose` file for service application via `Docker`                                             |
 | `main.go`                        | entry-point of the server                                                                              |
 | `Makefile`                       | stores frequently used commands; can be invoked using `make` command                                   |
