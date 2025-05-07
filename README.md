@@ -49,26 +49,27 @@ Copy the key to `serviceAccountKey.json` file. You can see the example at `servi
 
 | Folder Path                      | Description                                                                                            |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `/bootstrap`                     | contains modules required to start the application                                                     |
-| `/console`                       | server commands, run `go run main.go -help` for all the available server commands                      |
-| `/docker`                        | `docker` files required for `docker compose`                                                           |
-| `/domain`                        | contains models, constants and folder for each domain with controller, repository, routes and services |
-| `/domain/constants`              | global application constants                                                                           |
-| `/domain/models`                 | ORM models                                                                                             |
-| `/domain/<name>`                 | controller, repository, routes and service for a `domain`. In this template `user` is a domain         |
-| `/hooks`                         | `git` hooks                                                                                            |
-| `/migration`                     | database migration files                                                                               |
-| `/pkg`                           | contains setup for api_errors, infrastructure, middlewares, external services, utils                   |
-| `/pkg/api-errors`                | server error handlers                                                                                  |
-| `/pkg/framework`                 | contains env parser, logger...                                                                         |
-| `/pkg/infrastructure`            | third-party services connections like `gmail`, `firebase`, `s3-bucket`, ...                            |
-| `/pkg/middlewares`               | all middlewares used in the app                                                                        |
-| `/pkg/responses`                 | different types of http responses are defined here                                                     |
-| `/pkg/services`                  | service layers, contains the functionality that compounds the core of the application                  |
-| `/pkg/types`                     | data types used throught the application                                                               |
-| `/pkg/utils`                     | global utility/helper functions                                                                        |
-| `/seeds`                         | seeds for already migrated tables                                                                      |
-| `/tests`                         | includes application tests                                                                             |
+| `/bootstrap`                     | Contains modules required to start the application.                                                    |
+| `/console`                       | Server commands; run `go run main.go -help` for all available commands.                                |
+| `/docker`                        | Docker files required for `docker-compose`.                                                            |
+| `/docs`                          | Contains project documentation.                                                                        |
+| `/domain`                        | Contains models, constants, and a folder for each domain with controller, repository, routes, and services. |
+| `/domain/constants`              | Global application constants.                                                                          |
+| `/domain/models`                 | ORM models.                                                                                            |
+| `/domain/<name>`                 | Controller, repository, routes, and service for a domain (e.g., `user` is a domain in this template).  |
+| `/hooks`                         | Git hooks.                                                                                             |
+| `/migrations`                    | Database migration files managed by Atlas.                                                             |
+| `/pkg`                           | Contains shared packages for errors, framework utilities, infrastructure, middlewares, responses, services, types, and utils. |
+| `/pkg/errorz`                    | Defines custom error types and handlers for the application.                                           |
+| `/pkg/framework`                 | Core framework components like environment variable parsing, logger setup, etc.                        |
+| `/pkg/infrastructure`            | Setup for third-party service connections (e.g., AWS, database, router).                               |
+| `/pkg/middlewares`               | HTTP request middlewares used in the application.                                                        |
+| `/pkg/responses`                 | Defines standardized HTTP response structures and error handling.                                        |
+| `/pkg/services`                  | Shared application services or clients for external services (e.g., Cognito, S3, SES).                 |
+| `/pkg/types`                     | Custom data types used throughout the application.                                                       |
+| `/pkg/utils`                     | Global utility and helper functions.                                                                   |
+| `/seeds`                         | Seed data for database tables.                                                                         |
+| `/tests`                         | Application tests (unit, integration, etc.).                                                           |
 | `.env.example`                   | sample environment variables                                                                           |
 | `docker-compose.yml`             | `docker compose` file for service application via `Docker`                                             |
 | `main.go`                        | entry-point of the server                                                                              |
