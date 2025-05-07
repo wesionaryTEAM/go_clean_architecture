@@ -28,9 +28,7 @@ cp .env.example .env
 ```
 
 -   Update your database credentials environment variables in `.env` file
-- Setup `serviceAccountKey.json`. To get one create a firebase project. Go to Settings > Service Accounts and then click **"Generate New Private Key"**. and then confirm by clicking **"Generate Key"**.
-Copy the key to `serviceAccountKey.json` file. You can see the example at `serviceAccountKey.json.example` file. 
-- Setup `STORAGE_BUCKET_NAME` in `.env`. In firebase Go to All products > Storage and then create new storage. `STORAGE_BUCKET_NAME` is visible at top in files tab as `gs://my-app.appspot.com`.Here `my-app.appspot.com` is your bucket name that needs to be in `.env` file.
+-   Update `STORAGE_BUCKET_NAME` in `.env` with your AWS S3 bucket name.
 
 ### Locally
 
@@ -74,7 +72,6 @@ Copy the key to `serviceAccountKey.json` file. You can see the example at `servi
 | `docker-compose.yml`             | `docker compose` file for service application via `Docker`                                             |
 | `main.go`                        | entry-point of the server                                                                              |
 | `Makefile`                       | stores frequently used commands; can be invoked using `make` command                                   |
-| `serviceAccountKey.json.example` | sample credentials file for accessing Google Cloud                                                     |
 
 ---
 
