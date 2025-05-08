@@ -69,6 +69,87 @@ func (r *Repository) ExampleMethod() error {
 }
 ```
 
+### Defining Routes for a Feature
+
+To define routes for a feature, you need to create a `route.go` file inside the respective feature's directory (e.g., `domain/<feature_name>/route.go`). Below is an example of how routes are defined for the `user` domain:
+
+```go
+package user
+
+import (
+	"clean-architecture/pkg/framework"
+	"clean-architecture/pkg/infrastructure"
+)
+
+// Route struct
+type Route struct {
+	logger     framework.Logger
+	handler    infrastructure.Router
+	controller *Controller
+}
+
+// NewRoute initializes a new Route instance
+func NewRoute(
+	logger framework.Logger,
+	handler infrastructure.Router,
+	controller *Controller,
+) *Route {
+	return &Route{
+		handler:    handler,
+		logger:     logger,
+		controller: controller,
+	}
+}
+
+// RegisterRoute sets up the routes for the feature
+func RegisterRoute(r *Route) {
+	r.logger.Info("Setting up routes")
+
+	api := r.handler.Group("/api")
+
+	api.POST("/user", r.controller.CreateUser)
+	api.GET("/user/:id", r.controller.GetUserByID)
+}
+```
+
+#### Key Points:
+- The `Route` struct holds dependencies like the logger, router, and controller.
+- The `NewRoute` function initializes the `Route` struct.
+- The `RegisterRoute` function defines the actual routes and associates them with controller methods.
+- Use the `Group` method of the router to group routes under a common prefix (e.g., `/api`).
+
+This structure ensures that routes are modular and easy to manage for each feature.
+
+### Using `fx.Invoke` for Route Registration
+
+After defining the routes for a feature, you need to register them in the module file using `fx.Invoke`. This ensures that the route registration function is automatically executed when the application starts. Below is an example of how this is done for the `user` domain:
+
+```go
+package user
+
+import (
+	"go.uber.org/fx"
+)
+
+// Module provides the dependencies for the user domain
+var Module = fx.Module("user",
+	fx.Provide(
+		NewRepository,
+		NewService,
+		NewController,
+		NewRoute,
+	),
+	fx.Invoke(RegisterRoute),
+)
+```
+
+#### Key Points:
+- The `fx.Provide` function is used to declare the dependencies (e.g., repository, service, controller, and route) for the feature.
+- The `fx.Invoke` function is used to call the `RegisterRoute` function, which sets up the routes for the feature.
+- This setup ensures that the routes are registered as part of the application's dependency injection lifecycle.
+
+By following this pattern, you can maintain a clean and modular structure for route registration in your application.
+
 ## Adding new models for a feature
 
 - For adding new db models for a feature, models are added to `domain/models` folder. 
