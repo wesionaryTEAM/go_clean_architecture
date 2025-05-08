@@ -32,6 +32,56 @@
 
 - The `domain/<feature_name>/module.go` module should be linked with `domain/module.go` so that it is added to the dependency injection tree.
 
+### Defining Routes in the Framework
+
+To define routes in the framework, you need to create a route file inside the `domain/<feature_name>/` folder. The route file should include the necessary imports, route definitions, and a function to register the routes. Below is an updated example of how to define routes for a feature:
+
+```go
+package <feature_name>
+
+import (
+    "clean-architecture/pkg/framework"
+    "clean-architecture/pkg/infrastructure"
+)
+
+// Route struct
+type Route struct {
+    logger     framework.Logger
+    handler    infrastructure.Router
+    controller *Controller
+}
+
+// NewRoute creates a new Route instance
+func NewRoute(
+    logger framework.Logger,
+    handler infrastructure.Router,
+    controller *Controller,
+) *Route {
+    return &Route{
+        handler:    handler,
+        logger:     logger,
+        controller: controller,
+    }
+}
+
+// RegisterRoute sets up the routes for the feature
+func RegisterRoute(r *Route) {
+    r.logger.Info("Setting up routes")
+
+    api := r.handler.Group("/api")
+
+    api.POST("/<feature_name>", r.controller.Create)
+    api.GET("/<feature_name>/:id", r.controller.GetByID)
+}
+```
+
+### Explanation
+
+1. **Route Struct**: The `Route` struct encapsulates the logger, router, and controller dependencies required for setting up routes.
+2. **Route Initialization**: The `NewRoute` function initializes a new `Route` instance with the required dependencies.
+3. **Route Registration**: The `RegisterRoute` function defines the HTTP methods and their corresponding handler functions for the feature.
+4. **Dynamic Parameters**: Use `:id` in the route path to define dynamic parameters.
+
 ## Adding New Models for a Feature
 
 - For adding new database models for a feature, models are added to the `domain/models` folder.
