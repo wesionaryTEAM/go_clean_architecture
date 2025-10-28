@@ -63,7 +63,6 @@ func PostgresConnect(logger framework.Logger, env *framework.Env) (*gorm.DB, err
 	logger.Info("Connection to database (postgres)")
 	db, err := gorm.Open(postgres.Open(url), &gorm.Config{Logger: logger.GetGormLogger()})
 	if err != nil {
-		logger.Info("Url: ", url)
 		return nil, err
 	}
 	logger.Info("checking if the target database exists (postgres)")
