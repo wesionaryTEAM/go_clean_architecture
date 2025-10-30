@@ -13,7 +13,7 @@ type DBProvider interface {
 
 // providerDBFactory chooses correct provider based on env.DBType.
 func providerDBFactory(env *framework.Env) DBProvider {
-	dbType := strings.ToLower(strings.TrimSpace(env.DBType))
+	dbType := strings.ToLower(strings.TrimSpace(env.Database.Type))
 	if dbType == "" {
 		return &MySQLProvider{}
 	}
