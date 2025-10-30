@@ -6,6 +6,7 @@ import "go.uber.org/fx"
 var Module = fx.Options(
 	fx.Provide(
 		NewRouter,
+		NewDBProvider,
 		NewDatabase,
 		//NewS3Client,
 		//NewAWSConfig,
