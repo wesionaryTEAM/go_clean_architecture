@@ -28,9 +28,7 @@ cp .env.example .env
 ```
 
 -   Update your database credentials environment variables in `.env` file
-- Setup `serviceAccountKey.json`. To get one create a firebase project. Go to Settings > Service Accounts and then click **"Generate New Private Key"**. and then confirm by clicking **"Generate Key"**.
-Copy the key to `serviceAccountKey.json` file. You can see the example at `serviceAccountKey.json.example` file. 
-- Setup `STORAGE_BUCKET_NAME` in `.env`. In firebase Go to All products > Storage and then create new storage. `STORAGE_BUCKET_NAME` is visible at top in files tab as `gs://my-app.appspot.com`.Here `my-app.appspot.com` is your bucket name that needs to be in `.env` file.
+-   Update `STORAGE_BUCKET_NAME` in `.env` with your AWS S3 bucket name.
 
 ### Locally
 
@@ -49,79 +47,78 @@ Copy the key to `serviceAccountKey.json` file. You can see the example at `servi
 
 | Folder Path                      | Description                                                                                            |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `/bootstrap`                     | contains modules required to start the application                                                     |
-| `/console`                       | server commands, run `go run main.go -help` for all the available server commands                      |
-| `/docker`                        | `docker` files required for `docker compose`                                                           |
-| `/domain`                        | contains models, constants and folder for each domain with controller, repository, routes and services |
-| `/domain/constants`              | global application constants                                                                           |
-| `/domain/models`                 | ORM models                                                                                             |
-| `/domain/<name>`                 | controller, repository, routes and service for a `domain`. In this template `user` is a domain         |
-| `/hooks`                         | `git` hooks                                                                                            |
-| `/migration`                     | database migration files                                                                               |
-| `/pkg`                           | contains setup for api_errors, infrastructure, middlewares, external services, utils                   |
-| `/pkg/api-errors`                | server error handlers                                                                                  |
-| `/pkg/framework`                 | contains env parser, logger...                                                                         |
-| `/pkg/infrastructure`            | third-party services connections like `gmail`, `firebase`, `s3-bucket`, ...                            |
-| `/pkg/middlewares`               | all middlewares used in the app                                                                        |
-| `/pkg/responses`                 | different types of http responses are defined here                                                     |
-| `/pkg/services`                  | service layers, contains the functionality that compounds the core of the application                  |
-| `/pkg/types`                     | data types used throught the application                                                               |
-| `/pkg/utils`                     | global utility/helper functions                                                                        |
-| `/seeds`                         | seeds for already migrated tables                                                                      |
-| `/tests`                         | includes application tests                                                                             |
+| `/bootstrap`                     | Contains modules required to start the application.                                                    |
+| `/console`                       | Server commands; run `go run main.go -help` for all available commands.                                |
+| `/docker`                        | Docker files required for `docker-compose`.                                                            |
+| `/docs`                          | Contains project documentation.                                                                        |
+| `/domain`                        | Contains models, constants, and a folder for each domain with controller, repository, routes, and services. |
+| `/domain/constants`              | Global application constants.                                                                          |
+| `/domain/models`                 | ORM models.                                                                                            |
+| `/domain/<name>`                 | Controller, repository, routes, and service for a domain (e.g., `user` is a domain in this template).  |
+| `/hooks`                         | Git hooks.                                                                                             |
+| `/migrations`                    | Database migration files managed by Atlas.                                                             |
+| `/pkg`                           | Contains shared packages for errors, framework utilities, infrastructure, middlewares, responses, services, types, and utils. |
+| `/pkg/errorz`                    | Defines custom error types and handlers for the application.                                           |
+| `/pkg/framework`                 | Core framework components like environment variable parsing, logger setup, etc.                        |
+| `/pkg/infrastructure`            | Setup for third-party service connections (e.g., AWS, database, router).                               |
+| `/pkg/middlewares`               | HTTP request middlewares used in the application.                                                        |
+| `/pkg/responses`                 | Defines standardized HTTP response structures and error handling.                                        |
+| `/pkg/services`                  | Shared application services or clients for external services (e.g., Cognito, S3, SES).                 |
+| `/pkg/types`                     | Custom data types used throughout the application.                                                       |
+| `/pkg/utils`                     | Global utility and helper functions.                                                                   |
+| `/seeds`                         | Seed data for database tables.                                                                         |
+| `/tests`                         | Application tests (unit, integration, etc.).                                                           |
 | `.env.example`                   | sample environment variables                                                                           |
-| `dbconfig.yml`                   | database configuration file for `sql-migrate` command                                                  |
 | `docker-compose.yml`             | `docker compose` file for service application via `Docker`                                             |
 | `main.go`                        | entry-point of the server                                                                              |
 | `Makefile`                       | stores frequently used commands; can be invoked using `make` command                                   |
-| `serviceAccountKey.json.example` | sample credentials file for accessing Google Cloud                                                     |
 
 ---
 
-## Migration Commands
+## 🚀 Running Migrations
 
-⚓️ &nbsp; If you want to run the migration runner from the host environment instead of the docker environment; ensure that `sql-migrate` is installed on your local machine.
-
-### Install `sql-migrate`
-
-> You can skip this step if `sql-migrate` has already been installed on your local machine.
-
-**Note:** Starting in Go 1.17, installing executables with `go get` is deprecated. `go install` may be used instead. [Read more](https://go.dev/doc/go-get-install-deprecation)
-
-```zsh
-go install github.com/rubenv/sql-migrate/...@latest
-```
-
-If you're using Go version below `1.18`
-
-```zsh
-go get -v github.com/rubenv/sql-migrate/...
-```
-
-### Running migration
-
-Add argument `p=host` after `make` command to run migration commands on local environment
-
-<b>Example:</b>
-
-```zsh
-make p=host migrate-up
-```
-
-<details>
-    <summary>Available migration commands</summary>
-
-| Command               | Desc                                                       |
-| --------------------- | ---------------------------------------------------------- |
-| `make migrate-status` | Show migration status                                      |
-| `make migrate-up`     | Migrates the database to the most recent version available |
-| `make migrate-down`   | Undo a database migration                                  |
-| `make redo`           | Reapply the last migration                                 |
-| `make create`         | Create new migration file                                  |
-
-</details>
+This project uses [Atlas](https://atlasgo.io/) for database schema migrations. Atlas enables declarative, versioned, and diff-based schema changes.
 
 ---
+
+### 🧰 Prerequisites
+
+Make sure you have the following set up:
+
+- **Atlas CLI**: Install Atlas by running:
+
+  ```sh
+  curl -sSf https://atlasgo.sh | sh
+  ```
+
+  > For other installation methods or details, visit the [official installation guide](https://atlasgo.io/getting-started/installation).
+
+- **`.env` file** at the project root with the following environment variables:
+
+  ```env
+  DB_USER=root
+  DB_PASS=secret
+  DB_NAME=exampledb
+  DB_FORWARD_PORT=3306
+  ```
+
+---
+
+### 📦 Available Migration Commands
+
+Below are the supported `make` commands for managing database migrations:
+
+| Make Command          | Description                                                                 |
+| --------------------- | --------------------------------------------------------------------------- |
+| `make migrate-status` | Show the current migration status                                           |
+| `make migrate-diff`   | Generate a new migration by comparing models to the current DB (`gorm` env) |
+| `make migrate-apply`  | Apply all pending migrations                                                |
+| `make migrate-down`   | Roll back the most recent migration (`gorm` env)                            |
+| `make migrate-hash`   | Hash migration files for integrity checking                                 |
+
+---
+
+📚 For more on schema management and best practices, refer to the [Atlas documentation](https://atlasgo.io).
 
 ## Testing
 
@@ -140,63 +137,11 @@ go test ./... -v -coverprofile cover.txt -coverpkg=./...
 go tool cover -html=cover.txt -o index.html
 ```
 
-## Update Dependencies
+### Update Dependencies
+See [UPDATING_DEPENDENCIES.md](./UPDATING_DEPENDENCIES.md) file for more information on how to update project dependencies.
 
-<details>
-    <summary><b>Steps to Update Dependencies</b></summary>
-    
-1. `go get -u`
-2. Remove all the dependencies packages that has `// indirect` from the modules
-3. `go mod tidy`
-</details>
 
-<details>
-    <summary><b>Discovering available updates</b></summary>
-    
-List all of the modules that are dependencies of your current module, along with the latest version available for each:
-```zsh 
-go list -m -u all
-```
 
-Display the latest version available for a specific module:
-
-```zsh
-go list -m -u example.com/theirmodule
-```
-
-<b>Example:</b>
-
-```zsh
-go list -m -u cloud.google.com/go/firestore
-cloud.google.com/go/firestore v1.2.0 [v1.6.1]
-```
-
-</details>
-
-<details>
-    <summary><b>Getting a specific dependency version</b></summary>
-    
-To get a specific numbered version, append the module path with an `@` sign followed by the `version` you want:
-
-```zsh
-go get example.com/theirmodule@v1.3.4
-```
-
-To get the latest version, append the module path with @latest:
-
-```zsh
-go get example.com/theirmodule@latest
-```
-
-</details>
-
-<details>
-    <summary><b>Synchronizing your code’s dependencies</b></summary>
- 
-```zsh
-go mod tidy
-```
-</details>
 
 ### Contribute 👩‍💻🧑‍💻
 

@@ -1,4 +1,6 @@
-package api_errors
+package errorz
+
+import "fmt"
 
 type APIError struct {
 	StatusCode int
@@ -6,7 +8,7 @@ type APIError struct {
 }
 
 func (e *APIError) Error() string {
-	return e.Message
+	return ""
 }
 
 func NewAPIError(statusCode int, message string) *APIError {
@@ -14,4 +16,11 @@ func NewAPIError(statusCode int, message string) *APIError {
 		StatusCode: statusCode,
 		Message:    message,
 	}
+}
+
+func (a *APIError) JoinError(message string) error {
+	if a == nil {
+		return nil
+	}
+	return fmt.Errorf("%v%w", message, a)
 }

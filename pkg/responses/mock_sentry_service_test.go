@@ -1,4 +1,4 @@
-package utils_test
+package responses_test
 
 type MockSentryService struct {
 	CapturedErrors []error

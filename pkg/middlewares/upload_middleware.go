@@ -2,12 +2,13 @@ package middlewares
 
 import (
 	"bytes"
-	"clean-architecture/pkg/api_errors"
+	"clean-architecture/pkg/errorz"
 	"clean-architecture/pkg/framework"
 	"clean-architecture/pkg/responses"
 	"clean-architecture/pkg/services"
 	"clean-architecture/pkg/types"
 	"context"
+	"errors"
 	"fmt"
 	"image"
 	"image/jpeg"
@@ -162,7 +163,7 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 		}
 		if err := errGroup.Wait(); err != nil {
 			u.logger.Error("file-upload-error: ", err.Error())
-			if err == api_errors.ErrThumbExtensionMismatch {
+			if errors.Is(err, errorz.ErrThumbExtensionMismatch) {
 				responses.ErrorJSON(c, http.StatusBadRequest, err)
 			} else {
 				responses.ErrorJSON(c, http.StatusInternalServerError, err)
@@ -193,12 +194,12 @@ func (u UploadMiddleware) uploadFile(
 
 	ext := strings.ToLower(filepath.Ext(fileHeader.Filename))
 	if !u.matchesExtension(conf, ext) {
-		return api_errors.ErrExtensionMismatch
+		return errorz.ErrExtensionMismatch
 	}
 
 	fileByte, err := io.ReadAll(file)
 	if err != nil {
-		return api_errors.ErrFileRead
+		return errorz.ErrFileRead
 	}
 
 	uploadFileName, fileUID := u.randomFileName(ext)
@@ -244,7 +245,7 @@ func (u UploadMiddleware) uploadFile(
 		thumbReader := bytes.NewReader(fileByte)
 		errGroup.Go(func() error {
 			if !u.properExtension(ext) {
-				return api_errors.ErrExtensionMismatch
+				return errorz.ErrExtensionMismatch
 			}
 			// Genrate non-webp thumbnail
 			img, err := u.createThumbnail(conf, thumbReader, ext)
@@ -317,7 +318,7 @@ func (u *UploadMiddleware) getImage(file io.Reader, ext string) (image.Image, er
 	if Extension(ext) == PNGFile {
 		return png.Decode(file)
 	}
-	return nil, api_errors.ErrExtensionMismatch
+	return nil, errorz.ErrExtensionMismatch
 }
 
 // createThumbnail creates thumbnail from multipart file

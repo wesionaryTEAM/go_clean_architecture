@@ -1,10 +1,10 @@
 package user
 
 import (
-	"clean-architecture/pkg/api_errors"
+	"clean-architecture/pkg/errorz"
 	"net/http"
 )
 
 var (
-	ErrInvalidUserID = api_errors.NewAPIError(http.StatusBadRequest, "Invalid user ID")
+	ErrInvalidUserID = errorz.NewAPIError(http.StatusBadRequest, "Invalid user ID")
 )

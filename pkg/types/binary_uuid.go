@@ -1,7 +1,7 @@
 package types
 
 import (
-	"clean-architecture/pkg/api_errors"
+	"clean-architecture/pkg/errorz"
 	"database/sql/driver"
 	"errors"
 	"fmt"
@@ -21,7 +21,7 @@ func ParseUUID(id string) BinaryUUID {
 func ShouldParseUUID(id string) (BinaryUUID, error) {
 	UUID, err := uuid.Parse(id)
 	if err != nil {
-		return BinaryUUID{}, api_errors.ErrInvalidUUID
+		return BinaryUUID{}, errorz.ErrInvalidUUID
 	}
 	return BinaryUUID(UUID), err
 }

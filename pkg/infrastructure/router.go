@@ -4,7 +4,6 @@ import (
 	"clean-architecture/pkg/framework"
 	"net/http"
 
-	"github.com/getsentry/sentry-go"
 	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"

@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"clean-architecture/pkg/api_errors"
+	"clean-architecture/pkg/errorz"
 	"clean-architecture/pkg/framework"
 	"clean-architecture/pkg/responses"
 	"clean-architecture/pkg/services"
@@ -47,7 +47,7 @@ func (am CognitoAuthMiddleware) getTokenFromHeader(ctx *gin.Context) (jwt.Token,
 func (am CognitoAuthMiddleware) addClaimsToContext(ctx *gin.Context) error {
 	token, err := am.getTokenFromHeader(ctx)
 	if err != nil {
-		return api_errors.ErrUnauthorizedAccess
+		return errorz.ErrUnauthorizedAccess
 	}
 
 	claims := token.PrivateClaims()
@@ -57,7 +57,7 @@ func (am CognitoAuthMiddleware) addClaimsToContext(ctx *gin.Context) error {
 		return err
 	}
 	if !authCogUser.Enabled {
-		return api_errors.ErrUnauthorizedAccess
+		return errorz.ErrUnauthorizedAccess
 	}
 
 	ctx.Set(framework.Claims, claims)

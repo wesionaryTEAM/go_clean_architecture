@@ -1,4 +1,4 @@
-package api_errors //nolint:revive // underscore in package name is okay
+package errorz //nolint:revive // underscore in package name is okay
 
 import (
 	"fmt"

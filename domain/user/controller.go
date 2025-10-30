@@ -3,8 +3,8 @@ package user
 import (
 	"clean-architecture/domain/models"
 	"clean-architecture/pkg/framework"
+	"clean-architecture/pkg/responses"
 	"clean-architecture/pkg/types"
-	"clean-architecture/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -39,14 +39,14 @@ func (u *Controller) CreateUser(c *gin.Context) {
 	var user models.User
 
 	if err := c.Bind(&user); err != nil {
-		utils.HandleError(u.logger, c, err)
+		responses.HandleError(u.logger, c, err)
 		return
 	}
 
 	// check if the user already exists
 
 	if err := u.service.Create(&user); err != nil {
-		utils.HandleError(u.logger, c, err)
+		responses.HandleError(u.logger, c, err)
 		return
 	}
 
@@ -59,13 +59,13 @@ func (u *Controller) GetUserByID(c *gin.Context) {
 
 	userID, err := types.ShouldParseUUID(paramID)
 	if err != nil {
-		utils.HandleValidationError(u.logger, c, ErrInvalidUserID)
+		responses.HandleValidationError(u.logger, c, ErrInvalidUserID)
 		return
 	}
 
 	user, err := u.service.GetUserByID(userID)
 	if err != nil {
-		utils.HandleError(u.logger, c, err)
+		responses.HandleError(u.logger, c, err)
 		return
 	}
 
