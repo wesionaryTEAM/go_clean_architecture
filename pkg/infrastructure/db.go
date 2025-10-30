@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"clean-architecture/pkg/framework"
 	"fmt"
+	"regexp"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -15,8 +16,27 @@ type Database struct {
 	*gorm.DB
 }
 
+// validDBIdentifierRegex matches valid database identifiers (alphanumeric and underscores)
+var validDBIdentifierRegex = regexp.MustCompile(`^[a-zA-Z0-9_]+$`)
+
+// validateDBName validates that a database name contains only valid identifier characters
+// to prevent SQL injection in DDL statements where parameterization is not supported.
+func validateDBName(dbName string) error {
+	if dbName == "" {
+		return fmt.Errorf("database name cannot be empty")
+	}
+	if !validDBIdentifierRegex.MatchString(dbName) {
+		return fmt.Errorf("database name contains invalid characters: must contain only alphanumeric characters and underscores")
+	}
+	return nil
+}
+
 // MySQLConnect implements provided MySQL logic.
 func MySQLConnect(logger framework.Logger, env *framework.Env) (*gorm.DB, error) {
+	// Validate database name to prevent SQL injection
+	if err := validateDBName(env.DBName); err != nil {
+		return nil, fmt.Errorf("invalid database name: %w", err)
+	}
 	url := fmt.Sprintf("%s:%s@tcp(%s:%s)/?charset=utf8mb4&parseTime=True&loc=Local", env.DBUsername, env.DBPassword, env.DBHost, env.DBPort)
 	logger.Info("opening db connection (mysql)")
 	db, err := gorm.Open(mysql.Open(url), &gorm.Config{Logger: logger.GetGormLogger(), TranslateError: true})
@@ -54,6 +74,10 @@ func MySQLConnect(logger framework.Logger, env *framework.Env) (*gorm.DB, error)
 
 // PostgresConnect implements provided PostgreSQL logic.
 func PostgresConnect(logger framework.Logger, env *framework.Env) (*gorm.DB, error) {
+	// Validate database name to prevent SQL injection
+	if err := validateDBName(env.DBName); err != nil {
+		return nil, fmt.Errorf("invalid database name: %w", err)
+	}
 	// Determine SSL mode based on the environment
 	sslMode := "require"
 	if env.Environment == "local" || env.Environment == "workflow" {
