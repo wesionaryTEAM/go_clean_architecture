@@ -23,8 +23,6 @@ var validDBIdentifierRegex = regexp.MustCompile(`^[a-zA-Z_][a-zA-Z0-9_]*$`)
 // maxDBNameLength defines the maximum allowed database name length (PostgreSQL has the strictest limit at 63)
 const maxDBNameLength = 63
 
-// validateDBName validates that a database name contains only valid identifier characters
-// to prevent SQL injection in DDL statements where parameterization is not supported.
 func validateDBName(dbName string) error {
 	if dbName == "" {
 		return fmt.Errorf("database name cannot be empty")
@@ -40,7 +38,6 @@ func validateDBName(dbName string) error {
 
 // MySQLConnect implements provided MySQL logic.
 func MySQLConnect(logger framework.Logger, env *framework.Env) (*gorm.DB, error) {
-	// Validate database name to prevent SQL injection
 	if err := validateDBName(env.DBName); err != nil {
 		return nil, fmt.Errorf("invalid database name: %w", err)
 	}
@@ -81,7 +78,6 @@ func MySQLConnect(logger framework.Logger, env *framework.Env) (*gorm.DB, error)
 
 // PostgresConnect implements provided PostgreSQL logic.
 func PostgresConnect(logger framework.Logger, env *framework.Env) (*gorm.DB, error) {
-	// Validate database name to prevent SQL injection
 	if err := validateDBName(env.DBName); err != nil {
 		return nil, fmt.Errorf("invalid database name: %w", err)
 	}
