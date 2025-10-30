@@ -16,8 +16,12 @@ type Database struct {
 	*gorm.DB
 }
 
-// validDBIdentifierRegex matches valid database identifiers (alphanumeric and underscores)
-var validDBIdentifierRegex = regexp.MustCompile(`^[a-zA-Z0-9_]+$`)
+// validDBIdentifierRegex matches valid database identifiers (must start with letter or underscore,
+// followed by alphanumeric characters or underscores)
+var validDBIdentifierRegex = regexp.MustCompile(`^[a-zA-Z_][a-zA-Z0-9_]*$`)
+
+// maxDBNameLength defines the maximum allowed database name length (PostgreSQL has the strictest limit at 63)
+const maxDBNameLength = 63
 
 // validateDBName validates that a database name contains only valid identifier characters
 // to prevent SQL injection in DDL statements where parameterization is not supported.
@@ -25,8 +29,11 @@ func validateDBName(dbName string) error {
 	if dbName == "" {
 		return fmt.Errorf("database name cannot be empty")
 	}
+	if len(dbName) > maxDBNameLength {
+		return fmt.Errorf("database name exceeds maximum length of %d characters", maxDBNameLength)
+	}
 	if !validDBIdentifierRegex.MatchString(dbName) {
-		return fmt.Errorf("database name contains invalid characters: must contain only alphanumeric characters and underscores")
+		return fmt.Errorf("database name contains invalid characters: must start with a letter or underscore, followed by alphanumeric characters or underscores")
 	}
 	return nil
 }
