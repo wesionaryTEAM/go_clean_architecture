@@ -76,8 +76,15 @@ func PostgresConnect(logger framework.Logger, env *framework.Env) (*gorm.DB, err
 			return nil, fmt.Errorf("couldn't create database: %w", err)
 		}
 	}
-	sqlDB, _ := db.DB()
-	_ = sqlDB.Close()
+	sqlDB, err := db.DB()
+	if err != nil {
+		logger.Info("couldn't get db connection (postgres)")
+		return nil, fmt.Errorf("failed to get db connection for closing: %w", err)
+	}
+	if dbErr := sqlDB.Close(); dbErr != nil {
+		logger.Info("couldn't close db connection (postgres)")
+		return nil, fmt.Errorf("failed to close db connection: %w", dbErr)
+	}
 
 	// connect to the target database
 	url = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", env.DBHost, env.DBPort, env.DBUsername, env.DBPassword, env.DBName, sslMode)
