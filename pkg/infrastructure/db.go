@@ -60,7 +60,7 @@ func PostgresConnect(logger framework.Logger, env *framework.Env) (*gorm.DB, err
 		sslMode = "disable"
 	}
 	url := fmt.Sprintf("host=%s port=%s user=%s password=%s database=postgres sslmode=%s", env.DBHost, env.DBPort, env.DBUsername, env.DBPassword, sslMode)
-	logger.Info("Connection to database (postgres)")
+	logger.Info("connecting to database (postgres)")
 	db, err := gorm.Open(postgres.Open(url), &gorm.Config{Logger: logger.GetGormLogger()})
 	if err != nil {
 		return nil, err
