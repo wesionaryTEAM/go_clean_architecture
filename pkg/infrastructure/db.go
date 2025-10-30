@@ -19,7 +19,7 @@ type Database struct {
 func MySQLConnect(logger framework.Logger, env *framework.Env) (*gorm.DB, error) {
 	url := fmt.Sprintf("%s:%s@tcp(%s:%s)/?charset=utf8mb4&parseTime=True&loc=Local", env.DBUsername, env.DBPassword, env.DBHost, env.DBPort)
 	logger.Info("opening db connection (mysql)")
-	db, err := gorm.Open(mysql.Open(url), &gorm.Config{Logger: logger.GetGormLogger()})
+	db, err := gorm.Open(mysql.Open(url), &gorm.Config{Logger: logger.GetGormLogger(), TranslateError: true})
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +37,7 @@ func MySQLConnect(logger framework.Logger, env *framework.Env) (*gorm.DB, error)
 	}
 	logger.Info("using given database (mysql)")
 	urlWithDB := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", env.DBUsername, env.DBPassword, env.DBHost, env.DBPort, env.DBName)
-	db, err = gorm.Open(mysql.Open(urlWithDB), &gorm.Config{Logger: logger.GetGormLogger()})
+	db, err = gorm.Open(mysql.Open(urlWithDB), &gorm.Config{Logger: logger.GetGormLogger(), TranslateError: true})
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ func PostgresConnect(logger framework.Logger, env *framework.Env) (*gorm.DB, err
 	}
 	url := fmt.Sprintf("host=%s port=%s user=%s password=%s database=postgres sslmode=%s", env.DBHost, env.DBPort, env.DBUsername, env.DBPassword, sslMode)
 	logger.Info("connecting to database (postgres)")
-	db, err := gorm.Open(postgres.Open(url), &gorm.Config{Logger: logger.GetGormLogger()})
+	db, err := gorm.Open(postgres.Open(url), &gorm.Config{Logger: logger.GetGormLogger(), TranslateError: true})
 	if err != nil {
 		return nil, err
 	}
