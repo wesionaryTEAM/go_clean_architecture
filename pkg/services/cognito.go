@@ -31,7 +31,7 @@ func NewCognitoAuthService(
 	logger framework.Logger,
 ) CognitoAuthService {
 
-	issuer = "https://cognito-idp." + env.AWSRegion + ".amazonaws.com/" + env.UserPoolID
+	issuer = "https://cognito-idp." + env.AWS.Region + ".amazonaws.com/" + env.AWS.CognitoUserPoolID
 	jwkURL = issuer + "/.well-known/jwks.json"
 
 	keySet, _ = jwk.Fetch(context.Background(), jwkURL)
@@ -59,7 +59,7 @@ func (cg *CognitoAuthService) VerifyToken(tokenString string) (jwt.Token, error)
 
 func (cg *CognitoAuthService) CreateUser(email, password, role string) (string, error) {
 	_, err := cg.client.AdminCreateUser(context.Background(), &cognitoidentityprovider.AdminCreateUserInput{
-		UserPoolId:    &cg.env.UserPoolID,
+		UserPoolId:    &cg.env.AWS.CognitoUserPoolID,
 		Username:      &email,
 		MessageAction: types.MessageActionTypeSuppress,
 		UserAttributes: []types.AttributeType{
@@ -86,10 +86,10 @@ func (cg *CognitoAuthService) CreateUser(email, password, role string) (string, 
 		Username:   &email,
 		Password:   &password,
 		Permanent:  true,
-		UserPoolId: &cg.env.UserPoolID,
+		UserPoolId: &cg.env.AWS.CognitoUserPoolID,
 	})
 	if err != nil {
-		_, delErr := cg.client.AdminDeleteUser(context.Background(), &cognitoidentityprovider.AdminDeleteUserInput{Username: &email, UserPoolId: &cg.env.UserPoolID})
+		_, delErr := cg.client.AdminDeleteUser(context.Background(), &cognitoidentityprovider.AdminDeleteUserInput{Username: &email, UserPoolId: &cg.env.AWS.CognitoUserPoolID})
 		awsErr := utils.MapAWSError(cg.logger, delErr)
 		if awsErr != nil {
 			return "", awsErr
@@ -155,12 +155,12 @@ func (cg *CognitoAuthService) setCustomClaimToOneUser(user string, c map[string]
 
 	_, _ = cg.client.AddCustomAttributes(context.Background(), &cognitoidentityprovider.AddCustomAttributesInput{
 		CustomAttributes: create,
-		UserPoolId:       &cg.env.UserPoolID,
+		UserPoolId:       &cg.env.AWS.CognitoUserPoolID,
 	})
 
 	_, err := cg.client.AdminUpdateUserAttributes(context.Background(), &cognitoidentityprovider.AdminUpdateUserAttributesInput{
 		UserAttributes: claim,
-		UserPoolId:     &cg.env.UserPoolID,
+		UserPoolId:     &cg.env.AWS.CognitoUserPoolID,
 		Username:       &user,
 	})
 	if err != nil {
@@ -176,7 +176,7 @@ func (cg *CognitoAuthService) setCustomClaimToOneUser(user string, c map[string]
 func (cg *CognitoAuthService) GetUserByUsername(username string) (*cognitoidentityprovider.AdminGetUserOutput, error) {
 	user, err := cg.client.AdminGetUser(context.Background(), &cognitoidentityprovider.AdminGetUserInput{
 		Username:   &username,
-		UserPoolId: &cg.env.UserPoolID,
+		UserPoolId: &cg.env.AWS.CognitoUserPoolID,
 	})
 	if err != nil {
 		if awsErr := utils.MapAWSError(cg.logger, err); awsErr != nil {
@@ -191,7 +191,7 @@ func (cg *CognitoAuthService) GetUserByUsername(username string) (*cognitoidenti
 func (cg *CognitoAuthService) GetUserByEmail(email string) (*cognitoidentityprovider.AdminGetUserOutput, error) {
 	user, err := cg.client.AdminGetUser(context.Background(), &cognitoidentityprovider.AdminGetUserInput{
 		Username:   &email,
-		UserPoolId: &cg.env.UserPoolID,
+		UserPoolId: &cg.env.AWS.CognitoUserPoolID,
 	})
 	if err != nil {
 		if awsErr := utils.MapAWSError(cg.logger, err); awsErr != nil {
@@ -205,7 +205,7 @@ func (cg *CognitoAuthService) GetUserByEmail(email string) (*cognitoidentityprov
 
 func (cg *CognitoAuthService) CreateAdminUser(email, password string, isPermanent bool) (string, error) {
 	_, err := cg.client.AdminCreateUser(context.Background(), &cognitoidentityprovider.AdminCreateUserInput{
-		UserPoolId:    &cg.env.UserPoolID,
+		UserPoolId:    &cg.env.AWS.CognitoUserPoolID,
 		Username:      &email,
 		MessageAction: types.MessageActionTypeSuppress,
 		UserAttributes: []types.AttributeType{
@@ -231,11 +231,11 @@ func (cg *CognitoAuthService) CreateAdminUser(email, password string, isPermanen
 		Username:   &email,
 		Password:   &password,
 		Permanent:  true,
-		UserPoolId: &cg.env.UserPoolID,
+		UserPoolId: &cg.env.AWS.CognitoUserPoolID,
 	})
 
 	if err != nil {
-		_, err = cg.client.AdminDeleteUser(context.Background(), &cognitoidentityprovider.AdminDeleteUserInput{Username: &email, UserPoolId: &cg.env.UserPoolID})
+		_, err = cg.client.AdminDeleteUser(context.Background(), &cognitoidentityprovider.AdminDeleteUserInput{Username: &email, UserPoolId: &cg.env.AWS.CognitoUserPoolID})
 		awsErr := utils.MapAWSError(cg.logger, err)
 		if awsErr != nil {
 			return "", awsErr
@@ -291,7 +291,7 @@ func (cg *CognitoAuthService) DeleteCognitoUser(token *string) error {
 func (cg *CognitoAuthService) UpdateUserAttribute(username *string, attr []types.AttributeType) (*cognitoidentityprovider.AdminUpdateUserAttributesOutput, error) {
 	op, err := cg.client.AdminUpdateUserAttributes(context.Background(),
 		&cognitoidentityprovider.AdminUpdateUserAttributesInput{
-			UserPoolId:     &cg.env.UserPoolID,
+			UserPoolId:     &cg.env.AWS.CognitoUserPoolID,
 			Username:       username,
 			UserAttributes: attr,
 		},
@@ -335,7 +335,7 @@ func (cg *CognitoAuthService) SetUserPassword(email, password string) error {
 		Password:   &password,
 		Username:   &email,
 		Permanent:  true,
-		UserPoolId: &cg.env.UserPoolID,
+		UserPoolId: &cg.env.AWS.CognitoUserPoolID,
 	})
 	if err != nil {
 		if awsErr := utils.MapAWSError(cg.logger, err); awsErr != nil {
@@ -349,7 +349,7 @@ func (cg *CognitoAuthService) SetUserPassword(email, password string) error {
 func (cg *CognitoAuthService) DeleteUserAsAdmin(username string) error {
 	_, err := cg.client.AdminDeleteUser(context.Background(),
 		&cognitoidentityprovider.AdminDeleteUserInput{
-			UserPoolId: &cg.env.UserPoolID,
+			UserPoolId: &cg.env.AWS.CognitoUserPoolID,
 			Username:   &username,
 		},
 	)
@@ -378,7 +378,7 @@ func (cg *CognitoAuthService) UpdateUserRole(email, newRole string) error {
 func (cg *CognitoAuthService) DisableUser(username string) error {
 	_, err := cg.client.AdminDisableUser(context.Background(),
 		&cognitoidentityprovider.AdminDisableUserInput{
-			UserPoolId: &cg.env.UserPoolID,
+			UserPoolId: &cg.env.AWS.CognitoUserPoolID,
 			Username:   &username,
 		},
 	)
@@ -394,7 +394,7 @@ func (cg *CognitoAuthService) DisableUser(username string) error {
 func (cg *CognitoAuthService) EnableUser(username string) error {
 	_, err := cg.client.AdminEnableUser(context.Background(),
 		&cognitoidentityprovider.AdminEnableUserInput{
-			UserPoolId: &cg.env.UserPoolID,
+			UserPoolId: &cg.env.AWS.CognitoUserPoolID,
 			Username:   &username,
 		},
 	)

@@ -19,11 +19,11 @@ func NewAWSConfig(
 	env *framework.Env,
 ) aws.Config {
 	c := aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(
-		env.AWSAccessKey, env.AWSSecretAccessKey, ""),
+		env.AWS.AccessKey, env.AWS.SecretAccessKey, ""),
 	)
 	conf, _ := config.LoadDefaultConfig(
 		context.Background(),
-		config.WithRegion(env.AWSRegion),
+		config.WithRegion(env.AWS.Region),
 		config.WithCredentialsProvider(c),
 		config.WithClientLogMode(aws.LogRetries),
 	)

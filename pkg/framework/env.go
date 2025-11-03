@@ -4,32 +4,52 @@ import (
 	"github.com/spf13/viper"
 )
 
-type Env struct {
-	LogLevel    string `mapstructure:"LOG_LEVEL"`
-	ServerPort  string `mapstructure:"SERVER_PORT"`
+type AdminConfig struct {
+	Email    string `mapstructure:"ADMIN_EMAIL"`
+	Password string `mapstructure:"ADMIN_PASSWORD"`
+}
+
+type AWSConfig struct {
+	Region            string `mapstructure:"AWS_REGION"`
+	AccessKey         string `mapstructure:"AWS_ACCESS_KEY_ID"`
+	SecretAccessKey   string `mapstructure:"AWS_SECRET_ACCESS_KEY"`
+	StorageBucketName string `mapstructure:"STORAGE_BUCKET_NAME"`
+	CognitoClientID   string `mapstructure:"COGNITO_CLIENT_ID"`
+	CognitoUserPoolID string `mapstructure:"COGNITO_USER_POOL_ID"`
+}
+
+type SentryConfig struct {
+	DSN string `mapstructure:"SENTRY_DSN"`
+}
+
+type ServerConfig struct {
+	Port        string `mapstructure:"SERVER_PORT"`
 	Environment string `mapstructure:"ENVIRONMENT"`
+	LogLevel    string `mapstructure:"LOG_LEVEL"`
+	TimeZone    string `mapstructure:"TIMEZONE"`
+}
 
-	DBUsername string `mapstructure:"DB_USER"`
-	DBPassword string `mapstructure:"DB_PASS"`
-	DBHost     string `mapstructure:"DB_HOST"`
-	DBPort     string `mapstructure:"DB_PORT"`
-	DBName     string `mapstructure:"DB_NAME"`
-	DBType     string `mapstructure:"DB_TYPE"`
+type DatabaseConfig struct {
+	Username    string `mapstructure:"DB_USER"`
+	Password    string `mapstructure:"DB_PASS"`
+	Host        string `mapstructure:"DB_HOST"`
+	Port        string `mapstructure:"DB_PORT"`
+	Name        string `mapstructure:"DB_NAME"`
+	Type        string `mapstructure:"DB_TYPE"`
+	ForwardPort string `mapstructure:"DB_FORWARD_PORT"`
+}
 
-	SentryDSN          string `mapstructure:"SENTRY_DSN"`
-	MaxMultipartMemory int64  `mapstructure:"MAX_MULTIPART_MEMORY"`
-	StorageBucketName  string `mapstructure:"STORAGE_BUCKET_NAME"`
+type Env struct {
+	Server ServerConfig `mapstructure:",squash"`
 
-	TimeZone      string `mapstructure:"TIMEZONE"`
-	AdminEmail    string `mapstructure:"ADMIN_EMAIL"`
-	AdminPassword string `mapstructure:"ADMIN_PASSWORD"`
+	Database DatabaseConfig `mapstructure:",squash"`
 
-	AWSRegion          string `mapstructure:"AWS_REGION"`
-	AWSAccessKey       string `mapstructure:"AWS_ACCESS_KEY_ID"`
-	ClientID           string `mapstructure:"COGNITO_CLIENT_ID"`
-	UserPoolID         string `mapstructure:"COGNITO_USER_POOL_ID"`
-	AWSSecretAccessKey string `mapstructure:"AWS_SECRET_ACCESS_KEY"`
-	DBFORWARDPORT      string `mapstructure:"DB_FORWARD_PORT"`
+	Sentry             SentryConfig `mapstructure:",squash"`
+	MaxMultipartMemory int64        `mapstructure:"MAX_MULTIPART_MEMORY"`
+
+	Admin AdminConfig `mapstructure:",squash"`
+
+	AWS AWSConfig `mapstructure:",squash"`
 }
 
 var globalEnv = Env{

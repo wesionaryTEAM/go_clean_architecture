@@ -34,8 +34,8 @@ func NewAdminSeed(
 
 // Run the admin seed
 func (s AdminSeed) Setup() {
-	email := s.env.AdminEmail
-	password := s.env.AdminPassword
+	email := s.env.Admin.Email
+	password := s.env.Admin.Password
 
 	s.logger.Info("🌱 seeding admin data...")
 
