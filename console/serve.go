@@ -25,7 +25,7 @@ func (s *ServeCommand) Run() framework.CommandRunner {
 		env *framework.Env,
 		router infrastructure.Router,
 		logger framework.Logger,
-		database infrastructure.Database,
+		database *infrastructure.Database,
 		//seeds seeds.Seeds,
 
 	) {

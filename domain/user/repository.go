@@ -8,12 +8,12 @@ import (
 
 // UserRepository database structure
 type Repository struct {
-	infrastructure.Database
+	*infrastructure.Database
 	logger framework.Logger
 }
 
 // NewUserRepository creates a new user repository
-func NewRepository(db infrastructure.Database, logger framework.Logger) Repository {
+func NewRepository(db *infrastructure.Database, logger framework.Logger) Repository {
 	return Repository{db, logger}
 }
 

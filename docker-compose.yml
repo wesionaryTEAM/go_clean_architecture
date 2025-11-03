@@ -1,6 +1,26 @@
 version: "3.3"
 
 services:
+  database:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASS}"
+      POSTGRES_DB: "${DB_NAME}"
+    container_name: clean_db
+    ports:
+      - "54320:5432"
+    volumes:
+      - clean_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ${DB_NAME} -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 1s
+    networks:
+      - clean_web
+
   web:
     build:
       context: .
@@ -14,40 +34,29 @@ services:
     container_name: clean-web
     security_opt:
       - seccomp:unconfined
-    depends_on:
-      database:
-        condition: service_healthy
-
-  database:
-    build:
-      context: .
-      dockerfile: ./docker/db.Dockerfile
-    environment:
-      MYSQL_ROOT_PASSWORD: "${DB_PASS}"
-      MYSQL_DATABASE: "${DB_NAME}"
-      MYSQL_ROOT_HOST: "%"
-    container_name: clean-db
-    command:
-      [
-        "--character-set-server=utf8mb4",
-        "--collation-server=utf8mb4_unicode_ci",
-        "--default-authentication-plugin=mysql_native_password",
-      ]
-    ports:
-      - "${DB_FORWARD_PORT}:${DB_PORT}"
-    volumes:
-      - clean_db:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: "1s"
-      timeout: "10s"
-      retries: 10
-      start_period: "1s"
+    # depends_on:
+    #   database:
+    #     condition: service_healthy
+    networks:
+      - clean_web
 
   adminer:
     image: adminer
+    restart: always
     ports:
       - ${ADMINER_PORT}:8080
+    networks:
+      - clean_web
+    depends_on:
+      - database
+    environment:
+      ADMINER_DESIGN: pepa-linha
+      ADMINER_DEFAULT_SERVER: database
+      ADMINER_DEFAULT_DB_DRIVER: pgsql
 
 volumes:
   clean_db:
+
+networks:
+  clean_web:
+    driver: bridge

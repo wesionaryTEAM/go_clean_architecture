@@ -6,13 +6,13 @@ data "external_schema" "gorm" {
     "ariga.io/atlas-provider-gorm",
     "load",
     "--path", "./domain/models",
-    "--dialect", "mysql", // | postgres | sqlite | sqlserver
+    "--dialect", "postgres", // switched from mysql
   ]
 }
 
 env "gorm" {
   src = data.external_schema.gorm.url
-  dev = "docker://mysql/8/dev"
+  dev = "docker://postgres/17/dev?search_path=public"
   migration {
     dir = "file://migrations"
   }

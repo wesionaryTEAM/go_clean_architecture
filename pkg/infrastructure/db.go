@@ -4,9 +4,7 @@ import (
 	"clean-architecture/pkg/framework"
 	"fmt"
 	"regexp"
-	"time"
 
-	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -14,6 +12,8 @@ import (
 // Database modal
 type Database struct {
 	*gorm.DB
+	logger framework.Logger
+	env    *framework.Env
 }
 
 // validDBIdentifierRegex matches valid database identifiers (must start with letter or underscore,
@@ -36,48 +36,7 @@ func validateDBName(dbName string) error {
 	return nil
 }
 
-// MySQLConnect implements provided MySQL logic.
-func MySQLConnect(logger framework.Logger, env *framework.Env) (*gorm.DB, error) {
-	if err := validateDBName(env.Database.Name); err != nil {
-		return nil, fmt.Errorf("invalid database name: %w", err)
-	}
-	url := fmt.Sprintf("%s:%s@tcp(%s:%s)/?charset=utf8mb4&parseTime=True&loc=Local", env.Database.Username, env.Database.Password, env.Database.Host, env.Database.Port)
-	logger.Info("opening db connection (mysql)")
-	db, err := gorm.Open(mysql.Open(url), &gorm.Config{Logger: logger.GetGormLogger(), TranslateError: true})
-	if err != nil {
-		return nil, err
-	}
-	logger.Info("creating database if it doesn't exist (mysql)")
-	if err = db.Exec("CREATE DATABASE IF NOT EXISTS " + env.Database.Name).Error; err != nil {
-		logger.Info("couldn't create database (mysql)")
-		return nil, err
-	}
-	sqlDb, err := db.DB()
-	if err != nil {
-		return nil, err
-	}
-	if dbErr := sqlDb.Close(); dbErr != nil {
-		return nil, dbErr
-	}
-	logger.Info("using given database (mysql)")
-	urlWithDB := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", env.Database.Username, env.Database.Password, env.Database.Host, env.Database.Port, env.Database.Name)
-	db, err = gorm.Open(mysql.Open(urlWithDB), &gorm.Config{Logger: logger.GetGormLogger(), TranslateError: true})
-	if err != nil {
-		return nil, err
-	}
-	conn, err := db.DB()
-	if err != nil {
-		logger.Info("couldn't get db connection (mysql)")
-		return nil, err
-	}
-	conn.SetConnMaxLifetime(time.Minute * 5)
-	conn.SetMaxOpenConns(5)
-	conn.SetMaxIdleConns(1)
-	return db, nil
-}
-
-// PostgresConnect implements provided PostgreSQL logic.
-func PostgresConnect(logger framework.Logger, env *framework.Env) (*gorm.DB, error) {
+func NewDatabase(logger framework.Logger, env *framework.Env) (*Database, error) {
 	if err := validateDBName(env.Database.Name); err != nil {
 		return nil, fmt.Errorf("invalid database name: %w", err)
 	}
@@ -121,5 +80,10 @@ func PostgresConnect(logger framework.Logger, env *framework.Env) (*gorm.DB, err
 		return nil, fmt.Errorf("failed to connect to target database: %w", err)
 	}
 	logger.Info("database connection established (postgres)")
-	return db, nil
+	database := Database{
+		DB:     db,
+		logger: logger,
+		env:    env,
+	}
+	return &database, nil
 }
