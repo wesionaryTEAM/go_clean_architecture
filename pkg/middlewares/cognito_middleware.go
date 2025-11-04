@@ -7,7 +7,6 @@ import (
 	"clean-architecture/pkg/services"
 	"fmt"
 	"net/http"
-
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -27,7 +26,12 @@ func NewCognitoAuthMiddleware(service services.CognitoAuthService) CognitoAuthMi
 func (am CognitoAuthMiddleware) Handle() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		if err := am.addClaimsToContext(ctx); err != nil {
-			responses.ErrorJSON(ctx, http.StatusUnauthorized, err.Error())
+			api := errorz.From(err)
+			// ensure status
+			if api.StatusCode == http.StatusInternalServerError {
+				api = errorz.ErrUnauthorizedAccess.Wrap(err)
+			}
+			responses.Error(ctx, api)
 			ctx.Abort()
 			return
 		}

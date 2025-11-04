@@ -3,7 +3,6 @@ package user
 import (
 	"clean-architecture/domain/models"
 	"clean-architecture/pkg/framework"
-	"clean-architecture/pkg/types"
 )
 
 // UserService service layer
@@ -29,7 +28,7 @@ func (s Service) Create(user *models.User) error {
 }
 
 // GetOneUser gets one user
-func (s Service) GetUserByID(userID types.BinaryUUID) (user models.User, err error) {
+func (s Service) GetUserByID(userID uint) (user models.User, err error) {
 	return user, s.repository.First(&user, "id = ?", userID).Error
 }
 

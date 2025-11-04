@@ -11,45 +11,35 @@ import (
 	"gorm.io/gorm"
 )
 
+// HandleValidationError returns standardized validation error
 func HandleValidationError(logger framework.Logger, c *gin.Context, err error) {
 	logger.Error(err)
-	c.JSON(http.StatusBadRequest, gin.H{
-		"error": err.Error(),
-	})
+	Error(c, errorz.ErrBadRequest.WithDetail("VALIDATION_ERROR", err.Error()))
 }
 
+// HandleErrorWithStatus wraps arbitrary status into API error
 func HandleErrorWithStatus(logger framework.Logger, c *gin.Context, statusCode int, err error) {
 	logger.Error(err)
-	c.JSON(statusCode, gin.H{
-		"error": err.Error(),
-	})
+	api := errorz.New("CUSTOM_ERROR", statusCode, http.StatusText(statusCode)).Wrap(err)
+	Error(c, api)
 }
 
+// HandleError central error translator
 func HandleError(logger framework.Logger, c *gin.Context, err error) {
-	msgForUnhandledError := "An error occurred while processing your request. Please try again later."
-
-	var apiErr *errorz.APIError
-	msg := err.Error()
-	if ok := errors.As(err, &apiErr); ok {
-		if msg == "" {
-			msg = apiErr.Message
-		}
-		c.JSON(apiErr.StatusCode, gin.H{
-			"error": msg,
-		})
+	if err == nil {
+		Error(c, errorz.ErrInternal)
 		return
 	}
-
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": gorm.ErrRecordNotFound.Error(),
-		})
+		Error(c, errorz.ErrRecordNotFound.Wrap(err))
 		return
 	}
-
-	c.JSON(http.StatusInternalServerError, gin.H{
-		"error": msgForUnhandledError,
-	})
-
-	utils.CurrentSentryService.CaptureException(err)
+	api := errorz.From(err)
+	if api == errorz.ErrInternal && api.Cause != nil {
+		api.Details = nil
+	}
+	Error(c, api)
+	if api.StatusCode >= http.StatusInternalServerError {
+		utils.CurrentSentryService.CaptureException(err)
+	}
 }
