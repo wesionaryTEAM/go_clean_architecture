@@ -41,7 +41,10 @@ func (e *APIError) Wrap(err error) *APIError {
 	if err == nil || e == nil {
 		return e
 	}
-	clone := &APIError{Code: e.Code, Message: e.Message, StatusCode: e.StatusCode, Details: deepCopyDetails(e.Details)}
+	clone := &APIError{Code: e.Code, Message: e.Message, StatusCode: e.StatusCode, Details: map[string]any{}}
+	for k, v := range e.Details {
+		clone.Details[k] = v
+	}
 	clone.Cause = err
 	return clone
 }
