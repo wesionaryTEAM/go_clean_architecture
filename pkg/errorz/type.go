@@ -69,3 +69,15 @@ func From(err error) *APIError {
 	}
 	return ErrInternal.Wrap(err)
 }
+
+// deepCopyDetails creates a deep copy of the details map
+func deepCopyDetails(details map[string]any) map[string]any {
+	if details == nil {
+		return map[string]any{}
+	}
+	copy := make(map[string]any, len(details))
+	for k, v := range details {
+		copy[k] = v
+	}
+	return copy
+}
