@@ -35,7 +35,7 @@ func HandleError(logger framework.Logger, c *gin.Context, err error) {
 		return
 	}
 	api := errorz.From(err)
-	if api == errorz.ErrInternal && api.Cause != nil {
+	if api.Code == errorz.ErrInternal.Code && api.Cause != nil {
 		api.Details = nil
 	}
 	Error(c, api)
