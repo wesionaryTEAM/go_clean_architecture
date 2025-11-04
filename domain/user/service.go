@@ -3,6 +3,7 @@ package user
 import (
 	"clean-architecture/domain/models"
 	"clean-architecture/pkg/framework"
+	"clean-architecture/pkg/utils"
 )
 
 // UserService service layer
@@ -39,4 +40,10 @@ func (r *Repository) GetRawUserFromID(userID uint) (user *models.User, err error
 	query := r.Model(&models.User{}).Where("id = ?", userID).First(&user)
 
 	return user, query.Error
+}
+
+func (s Service) GetUsers(pagination utils.Pagination) (users []models.User, count int64, err error) {
+	s.logger.Info("[UserService...GetUsers]")
+
+	return s.repository.GetAllUsers(pagination)
 }

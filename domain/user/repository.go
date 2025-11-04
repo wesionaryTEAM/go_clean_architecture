@@ -4,6 +4,7 @@ import (
 	"clean-architecture/domain/models"
 	"clean-architecture/pkg/framework"
 	"clean-architecture/pkg/infrastructure"
+	"clean-architecture/pkg/utils"
 )
 
 // UserRepository database structure
@@ -25,4 +26,12 @@ func (r *Repository) ExistsByEmail(email string) (bool, error) {
 	query := r.DB.Where("email = ?", email).Limit(1).Find(&users)
 
 	return query.RowsAffected > 0, query.Error
+}
+
+func (r *Repository) GetAllUsers(pagination utils.Pagination) (users []models.User, count int64, err error) {
+	r.logger.Info("[UserRepository...GetAllUsers]")
+
+	query := r.Model(&models.User{}).Count(&count).Limit(pagination.Limit).Offset(pagination.Offset).Find(&users)
+
+	return users, count, query.Error
 }

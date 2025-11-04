@@ -4,6 +4,7 @@ import (
 	"clean-architecture/domain/models"
 	"clean-architecture/pkg/framework"
 	"clean-architecture/pkg/responses"
+	"clean-architecture/pkg/utils"
 	"net/http"
 	"strconv"
 
@@ -81,5 +82,17 @@ func (u *Controller) GetUserByID(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"data": user,
 	})
+
+}
+
+func (u *Controller) GetUsers(c *gin.Context) {
+	u.logger.Info("[UserController...GetUsers]")
+	pagination := utils.BuildPagination(c)
+	users, count, err := u.service.GetUsers(pagination)
+	if err != nil {
+		responses.HandleError(u.logger, c, err)
+		return
+	}
+	responses.PaginationSuccess(c, http.StatusOK, users, count)
 
 }
