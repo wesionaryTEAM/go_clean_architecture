@@ -16,8 +16,8 @@ func Success(c *gin.Context, status int, data any, meta map[string]any) {
 }
 
 func PaginationSuccess(c *gin.Context, status int, data any, total int64) {
-	limit, _ := c.MustGet(framework.Limit).(int64)
-	page, _ := c.MustGet(framework.Page).(int64)
+	limit, _ := c.MustGet(framework.Limit).(int)
+	page, _ := c.MustGet(framework.Page).(int)
 	hasNext := (total - int64(limit)*int64(page)) > 0
 	meta := map[string]any{"pagination": map[string]any{"page": page, "limit": limit, "total": total, "has_next": hasNext}}
 	Success(c, status, data, meta)
