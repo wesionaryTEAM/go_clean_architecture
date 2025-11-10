@@ -8,13 +8,34 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 )
 
 // HandleValidationError returns standardized validation error
 func HandleValidationError(logger framework.Logger, c *gin.Context, err error) {
 	logger.Error(err)
-	Error(c, errorz.ErrBadRequest.WithDetail("VALIDATION_ERROR", err.Error()))
+
+	var fieldErrors []map[string]any
+	if ve, ok := err.(validator.ValidationErrors); ok {
+		for _, fe := range ve {
+			fieldErrors = append(fieldErrors, map[string]any{
+				"field":      fe.Field(),
+				"error_type": fe.Tag(),
+				"message":    fe.Error(),
+			})
+		}
+	} else {
+		fieldErrors = append(fieldErrors, map[string]any{
+			"field":      "",
+			"error_type": "invalid",
+			"message":    err.Error(),
+		})
+	}
+
+	// BAD_REQUEST with our details
+	responsesError := errorz.ErrBadRequest.WithDetail("validation_errors", fieldErrors)
+	Error(c, responsesError)
 }
 
 // HandleErrorWithStatus wraps arbitrary status into API error

@@ -40,8 +40,8 @@ func NewController(
 func (u *Controller) CreateUser(c *gin.Context) {
 	var user models.User
 
-	if err := c.Bind(&user); err != nil {
-		responses.HandleError(u.logger, c, err)
+	if err := c.ShouldBindJSON(&user); err != nil {
+		responses.HandleValidationError(u.logger, c, err)
 		return
 	}
 
