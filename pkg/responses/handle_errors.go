@@ -20,7 +20,7 @@ func HandleValidationError(logger framework.Logger, c *gin.Context, err error) {
 // HandleErrorWithStatus wraps arbitrary status into API error
 func HandleErrorWithStatus(logger framework.Logger, c *gin.Context, statusCode int, err error) {
 	logger.Error(err)
-	api := errorz.New("CUSTOM_ERROR", statusCode, http.StatusText(statusCode)).Wrap(err)
+	api := errorz.New(errorz.CodeCustomError, statusCode, http.StatusText(statusCode)).Wrap(err)
 	Error(c, api)
 }
 

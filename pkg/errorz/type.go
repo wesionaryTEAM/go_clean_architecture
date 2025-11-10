@@ -61,6 +61,20 @@ func (e *APIError) WithDetail(key string, val any) *APIError {
 	return e
 }
 
+// WithData adds multiple key/value details from a map (supports gin.H)
+func (e *APIError) WithData(data map[string]any) *APIError {
+	if e == nil || data == nil {
+		return e
+	}
+	if e.Details == nil {
+		e.Details = make(map[string]any)
+	}
+	for k, v := range data {
+		e.Details[k] = v
+	}
+	return e
+}
+
 // From converts arbitrary error to APIError (fallback INTERNAL_ERROR)
 func From(err error) *APIError {
 	if err == nil {
@@ -71,16 +85,4 @@ func From(err error) *APIError {
 		return api
 	}
 	return ErrInternal.Wrap(err)
-}
-
-// deepCopyDetails creates a deep copy of the details map
-func deepCopyDetails(details map[string]any) map[string]any {
-	if details == nil {
-		return map[string]any{}
-	}
-	copy := make(map[string]any, len(details))
-	for k, v := range details {
-		copy[k] = v
-	}
-	return copy
 }

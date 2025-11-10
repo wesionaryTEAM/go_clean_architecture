@@ -6,6 +6,6 @@ import (
 )
 
 var (
-	ErrInvalidUserID     = errorz.New("INVALID_USER_ID", http.StatusBadRequest, "Invalid user ID")
-	ErrUserAlreadyExists = errorz.New("USER_ALREADY_EXISTS", http.StatusConflict, "User already exists")
+	ErrInvalidUserID     = errorz.New(errorz.CodeInvalidUserID, http.StatusBadRequest, "Invalid user ID")
+	ErrUserAlreadyExists = errorz.New(errorz.CodeUserAlreadyExists, http.StatusConflict, "User already exists")
 )

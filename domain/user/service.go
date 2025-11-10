@@ -33,13 +33,8 @@ func (s Service) GetUserByID(userID uint) (user models.User, err error) {
 	return user, s.repository.First(&user, "id = ?", userID).Error
 }
 
-// GetRawUserFromID gets the raw user from id
-func (r *Repository) GetRawUserFromID(userID uint) (user *models.User, err error) {
-	r.logger.Info("[UserRepository...GetRawUserFromID]")
-
-	query := r.Model(&models.User{}).Where("id = ?", userID).First(&user)
-
-	return user, query.Error
+func (r *Service) ExistsByEmail(email string) (bool, error) {
+	return r.repository.ExistsByEmail(email)
 }
 
 func (s Service) GetUsers(pagination utils.Pagination) (users []models.User, count int64, err error) {

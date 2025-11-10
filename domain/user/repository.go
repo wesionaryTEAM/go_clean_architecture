@@ -22,10 +22,19 @@ func NewRepository(db *infrastructure.Database, logger framework.Logger) Reposit
 func (r *Repository) ExistsByEmail(email string) (bool, error) {
 	r.logger.Info("[UserRepository...Exists]")
 
-	users := make([]models.User, 0, 1)
-	query := r.DB.Where("email = ?", email).Limit(1).Find(&users)
+	var count int64
+	err := r.DB.Model(&models.User{}).Where("email = ?", email).Count(&count).Error
 
-	return query.RowsAffected > 0, query.Error
+	return count > 0, err
+}
+
+// GetRawUserFromID gets the raw user from id
+func (r *Repository) GetRawUserFromID(userID uint) (user *models.User, err error) {
+	r.logger.Info("[UserRepository...GetRawUserFromID]")
+
+	query := r.Model(&models.User{}).Where("id = ?", userID).First(&user)
+
+	return user, query.Error
 }
 
 func (r *Repository) GetAllUsers(pagination utils.Pagination) (users []models.User, count int64, err error) {

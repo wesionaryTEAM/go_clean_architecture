@@ -46,7 +46,7 @@ func (u *Controller) CreateUser(c *gin.Context) {
 	}
 
 	// check if the user already exists
-	exists, err := u.service.repository.ExistsByEmail(user.Email)
+	exists, err := u.service.ExistsByEmail(user.Email)
 	if err != nil {
 		responses.HandleError(u.logger, c, err)
 		return
