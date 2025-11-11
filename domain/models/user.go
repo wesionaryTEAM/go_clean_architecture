@@ -4,6 +4,8 @@ import (
 	"clean-architecture/domain/constants"
 
 	_ "ariga.io/atlas-provider-gorm/gormschema"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 
 	"gorm.io/gorm"
 )
@@ -27,4 +29,12 @@ type User struct {
 
 func (*User) TableName() string {
 	return "users"
+}
+
+// custom validation for User model
+func (u *User) Validate() error {
+	return validation.Errors{
+		"FirstName": validation.Validate(u.FirstName, validation.Required),
+		"Email":     validation.Validate(u.Email, validation.Required, is.Email),
+	}
 }

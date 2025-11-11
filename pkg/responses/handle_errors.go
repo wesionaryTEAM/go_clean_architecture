@@ -8,21 +8,22 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"gorm.io/gorm"
 )
 
 // HandleValidationError returns standardized validation error
 func HandleValidationError(logger framework.Logger, c *gin.Context, err error) {
 	logger.Error(err)
-
 	var fieldErrors []map[string]any
-	if ve, ok := err.(validator.ValidationErrors); ok {
-		for _, fe := range ve {
+	if errs, ok := err.(validation.Errors); ok {
+		for field, ferr := range errs {
+			if ferr == nil {
+				continue
+			}
 			fieldErrors = append(fieldErrors, map[string]any{
-				"field":      fe.Field(),
-				"error_type": fe.Tag(),
-				"message":    fe.Error(),
+				"field":   field,
+				"message": ferr.Error(),
 			})
 		}
 	} else {
@@ -33,9 +34,7 @@ func HandleValidationError(logger framework.Logger, c *gin.Context, err error) {
 		})
 	}
 
-	// BAD_REQUEST with our details
-	responsesError := errorz.ErrBadRequest.WithDetail("validation_errors", fieldErrors)
-	Error(c, responsesError)
+	Error(c, errorz.ErrBadRequest.WithDetail("validation_errors", fieldErrors))
 }
 
 // HandleErrorWithStatus wraps arbitrary status into API error

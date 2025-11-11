@@ -34,6 +34,8 @@ require (
 	gorm.io/gorm v1.25.10
 )
 
+require github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496 // indirect
+
 require (
 	ariga.io/atlas-go-sdk v0.5.3 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
@@ -59,6 +61,8 @@ require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.4 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
+	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible // indirect
+	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-sql-driver/mysql v1.8.1 // indirect
