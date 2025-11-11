@@ -1,26 +1,21 @@
 package errorz
 
-import (
-	"fmt"
-	"net/http"
-)
+import "net/http"
 
+// Canonical base errors
 var (
-	ErrBadRequest         = NewAPIError(http.StatusBadRequest, "Bad Request")
-	ErrUnauthorized       = NewAPIError(http.StatusUnauthorized, "Unauthorized")
-	ErrForbidden          = NewAPIError(http.StatusForbidden, "Forbidden")
-	ErrNotFound           = NewAPIError(http.StatusNotFound, "Not Found")
-	ErrConflict           = NewAPIError(http.StatusConflict, "Conflict")
-	ErrUnprocessable      = NewAPIError(http.StatusUnprocessableEntity, "Unable to process the contained instructions")
-	ErrInternal           = NewAPIError(http.StatusInternalServerError, "Internal Server Error")
-	ErrServiceUnavailable = NewAPIError(http.StatusServiceUnavailable, "Service Unavailable")
-	ErrAlreadyExists      = JoinError("Already Exists", ErrConflict)
-	ErrSomethingWentWrong = JoinError("something went wrong", ErrInternal)
+	ErrBadRequest         = New(CodeBadRequest, http.StatusBadRequest, http.StatusText(http.StatusBadRequest))
+	ErrUnauthorized       = New(CodeUnauthorized, http.StatusUnauthorized, http.StatusText(http.StatusUnauthorized))
+	ErrForbidden          = New(CodeForbidden, http.StatusForbidden, http.StatusText(http.StatusForbidden))
+	ErrNotFound           = New(CodeNotFound, http.StatusNotFound, http.StatusText(http.StatusNotFound))
+	ErrConflict           = New(CodeConflict, http.StatusConflict, http.StatusText(http.StatusConflict))
+	ErrUnprocessable      = New(CodeUnprocessable, http.StatusUnprocessableEntity, http.StatusText(http.StatusUnprocessableEntity))
+	ErrInternal           = New(CodeInternalError, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+	ErrServiceUnavailable = New(CodeServiceUnavailable, http.StatusServiceUnavailable, http.StatusText(http.StatusServiceUnavailable))
 )
 
-func JoinError(message string, base error) error {
-	if base.Error() == "" {
-		return fmt.Errorf("%v%w", message, base)
-	}
-	return fmt.Errorf("%v %w", message, base)
-}
+// Derived semantic errors
+var (
+	ErrAlreadyExists      = New(CodeAlreadyExists, http.StatusConflict, http.StatusText(http.StatusConflict))
+	ErrSomethingWentWrong = New(CodeSomethingWentWrong, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+)

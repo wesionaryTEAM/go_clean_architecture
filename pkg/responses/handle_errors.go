@@ -8,48 +8,55 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"gorm.io/gorm"
 )
 
+// HandleValidationError returns standardized validation error
 func HandleValidationError(logger framework.Logger, c *gin.Context, err error) {
 	logger.Error(err)
-	c.JSON(http.StatusBadRequest, gin.H{
-		"error": err.Error(),
-	})
+	var fieldErrors []map[string]any
+	if errs, ok := err.(validation.Errors); ok {
+		for field, ferr := range errs {
+			if ferr == nil {
+				continue
+			}
+			fieldErrors = append(fieldErrors, map[string]any{
+				"field":      field,
+				"error_type": "validation",
+				"message":    ferr.Error(),
+			})
+		}
+		Error(c, errorz.ErrBadRequest.WithDetail("validation_errors", fieldErrors))
+	} else {
+
+		Error(c, errorz.ErrInternal.Wrap(err))
+	}
 }
 
+// HandleErrorWithStatus wraps arbitrary status into API error
 func HandleErrorWithStatus(logger framework.Logger, c *gin.Context, statusCode int, err error) {
 	logger.Error(err)
-	c.JSON(statusCode, gin.H{
-		"error": err.Error(),
-	})
+	api := errorz.New(errorz.CodeCustomError, statusCode, http.StatusText(statusCode)).Wrap(err)
+	Error(c, api)
 }
 
+// HandleError central error translator
 func HandleError(logger framework.Logger, c *gin.Context, err error) {
-	msgForUnhandledError := "An error occurred while processing your request. Please try again later."
-
-	var apiErr *errorz.APIError
-	msg := err.Error()
-	if ok := errors.As(err, &apiErr); ok {
-		if msg == "" {
-			msg = apiErr.Message
-		}
-		c.JSON(apiErr.StatusCode, gin.H{
-			"error": msg,
-		})
+	if err == nil {
+		Error(c, errorz.ErrInternal)
 		return
 	}
-
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": gorm.ErrRecordNotFound.Error(),
-		})
+		Error(c, errorz.ErrRecordNotFound.Wrap(err))
 		return
 	}
-
-	c.JSON(http.StatusInternalServerError, gin.H{
-		"error": msgForUnhandledError,
-	})
-
-	utils.CurrentSentryService.CaptureException(err)
+	api := errorz.From(err)
+	if api.Code == errorz.ErrInternal.Code && api.Cause != nil {
+		api.Details = nil
+	}
+	Error(c, api)
+	if api.StatusCode >= http.StatusInternalServerError {
+		utils.CurrentSentryService.CaptureException(err)
+	}
 }

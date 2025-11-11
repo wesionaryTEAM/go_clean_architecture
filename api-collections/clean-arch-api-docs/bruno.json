@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "clean-arch-api-docs",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

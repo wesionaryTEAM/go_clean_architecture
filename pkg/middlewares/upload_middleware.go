@@ -15,7 +15,6 @@ import (
 	"image/png"
 	"io"
 	"mime/multipart"
-	"net/http"
 	"path/filepath"
 	"strings"
 
@@ -135,7 +134,7 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 				for _, fileHeader := range files {
 					file, err := fileHeader.Open()
 					if err != nil {
-						responses.ErrorJSON(c, http.StatusInternalServerError, err)
+						responses.Error(c, errorz.ErrInternal.Wrap(err))
 						c.Abort()
 						return
 					}
@@ -144,7 +143,7 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 					err = u.uploadFile(ctx, errGroup, conf, file, fileHeader, &uploadedFiles)
 					if err != nil {
 						u.logger.Error("file-upload-error: ", err.Error())
-						responses.ErrorJSON(c, http.StatusInternalServerError, err.Error())
+						responses.Error(c, errorz.ErrInternal.Wrap(err))
 						c.Abort()
 						return
 					}
@@ -154,7 +153,7 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 				err := u.uploadFile(ctx, errGroup, conf, file, fileHeader, &uploadedFiles)
 				if err != nil {
 					u.logger.Error("file-upload-error: ", err.Error())
-					responses.ErrorJSON(c, http.StatusInternalServerError, err.Error())
+					responses.Error(c, errorz.ErrInternal.Wrap(err))
 					c.Abort()
 					return
 				}
@@ -164,9 +163,9 @@ func (u UploadMiddleware) Handle() gin.HandlerFunc {
 		if err := errGroup.Wait(); err != nil {
 			u.logger.Error("file-upload-error: ", err.Error())
 			if errors.Is(err, errorz.ErrThumbExtensionMismatch) {
-				responses.ErrorJSON(c, http.StatusBadRequest, err)
+				responses.Error(c, errorz.ErrThumbExtensionMismatch.Wrap(err))
 			} else {
-				responses.ErrorJSON(c, http.StatusInternalServerError, err)
+				responses.Error(c, errorz.ErrInternal.Wrap(err))
 			}
 			c.Abort()
 			return

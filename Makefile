@@ -1,19 +1,22 @@
 include .env
 export
 
-MIGRATE=atlas migrate
+MIGRATE = atlas migrate
+
+DB_URL := postgres://$(DB_USER):$(DB_PASS)@localhost:$(DB_FORWARD_PORT)/$(DB_NAME)?sslmode=disable
+DEV_URL := docker://postgres/17/dev?search_path=public
 
 migrate-status:
-	$(MIGRATE) status --url "mysql://$(DB_USER):$(DB_PASS)@:$(DB_FORWARD_PORT)/$(DB_NAME)"
+	$(MIGRATE) status --url "${DB_URL}" --dir "file://migrations"
 
 migrate-diff:
 	$(MIGRATE) diff --env gorm
 
 migrate-apply:
-	$(MIGRATE) apply --url "mysql://$(DB_USER):$(DB_PASS)@:$(DB_FORWARD_PORT)/$(DB_NAME)"
+	$(MIGRATE) apply --url "${DB_URL}" --allow-dirty --exec-order non-linear
 
 migrate-down:
-	$(MIGRATE) down --url "mysql://$(DB_USER):$(DB_PASS)@:$(DB_FORWARD_PORT)/$(DB_NAME)" --env gorm
+	$(MIGRATE) down --url "${DB_URL}" --dev-url "${DEV_URL}"
 
 migrate-hash:
 	$(MIGRATE) hash

@@ -33,5 +33,6 @@ func RegisterRoute(r *Route) {
 
 	api.POST("/user", r.controller.CreateUser)
 	api.GET("/user/:id", r.controller.GetUserByID)
+	api.GET("/users", r.controller.GetUsers)
 
 }

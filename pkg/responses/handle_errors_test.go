@@ -40,7 +40,7 @@ func TestHandleError(t *testing.T) {
 		},
 		{
 			name:                "Handle API Error With Custom Message",
-			err:                 errorz.ErrBadRequest.JoinError("Bad Request"),
+			err:                 errorz.ErrBadRequest.Wrap(errors.New("Bad Request")),
 			expectedStatusCode:  http.StatusBadRequest,
 			expectedBody:        `{"error":"Bad Request"}`,
 			expectSentryCapture: false,

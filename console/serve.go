@@ -25,7 +25,7 @@ func (s *ServeCommand) Run() framework.CommandRunner {
 		env *framework.Env,
 		router infrastructure.Router,
 		logger framework.Logger,
-		database infrastructure.Database,
+		database *infrastructure.Database,
 		//seeds seeds.Seeds,
 
 	) {
@@ -34,16 +34,16 @@ func (s *ServeCommand) Run() framework.CommandRunner {
 		logger.Info(`+-----------------------+`)
 
 		// Using time zone as specified in env file
-		loc, _ := time.LoadLocation(env.TimeZone)
+		loc, _ := time.LoadLocation(env.Server.TimeZone)
 		time.Local = loc
 
 		middleware.Setup()
 		//seeds.Setup()
 
-		if env.Environment != "local" && env.SentryDSN != "" {
+		if env.Server.Environment != "local" && env.Sentry.DSN != "" {
 			err := sentry.Init(sentry.ClientOptions{
-				Dsn:              env.SentryDSN,
-				Environment:      env.Environment,
+				Dsn:              env.Sentry.DSN,
+				Environment:      env.Server.Environment,
 				AttachStacktrace: true,
 			})
 			if err != nil {
@@ -52,13 +52,13 @@ func (s *ServeCommand) Run() framework.CommandRunner {
 			}
 		}
 		logger.Info("Running server")
-		if env.ServerPort == "" {
+		if env.Server.Port == "" {
 			if err := router.Run(); err != nil {
 				logger.Fatal(err)
 				return
 			}
 		} else {
-			if err := router.Run(":" + env.ServerPort); err != nil {
+			if err := router.Run(":" + env.Server.Port); err != nil {
 				logger.Fatal(err)
 				return
 			}

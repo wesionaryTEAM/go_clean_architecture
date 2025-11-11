@@ -1,13 +1,15 @@
 package errorz
 
+import "net/http"
+
 var (
-	ErrUnauthorizedAccess        = ErrUnauthorized.JoinError("Unauthorized access")
-	ErrForbiddenAccess           = ErrForbidden.JoinError("Forbidden access")
-	ErrInvalidToken              = ErrBadRequest.JoinError("Invalid token")
-	ErrInvalidUUID               = ErrBadRequest.JoinError("Invalid UUID")
-	ErrRecordNotFound            = ErrNotFound.JoinError("Record not found")
-	ErrInvalidUserNameOrPassword = ErrBadRequest.JoinError("Invalid username and password")
-	ErrExtensionMismatch         = ErrBadRequest.JoinError("file extension not supported")
-	ErrThumbExtensionMismatch    = ErrBadRequest.JoinError("file extension not supported for thumbnail")
-	ErrFileRead                  = ErrBadRequest.JoinError("file read error")
+	ErrUnauthorizedAccess        = New(CodeUnauthorizedAccess, ErrUnauthorized.StatusCode, http.StatusText(ErrUnauthorized.StatusCode))
+	ErrForbiddenAccess           = New(CodeForbiddenAccess, ErrForbidden.StatusCode, http.StatusText(ErrForbidden.StatusCode))
+	ErrInvalidToken              = New(CodeInvalidToken, ErrBadRequest.StatusCode, http.StatusText(ErrBadRequest.StatusCode))
+	ErrInvalidUUID               = New(CodeInvalidUUID, ErrBadRequest.StatusCode, http.StatusText(ErrBadRequest.StatusCode))
+	ErrRecordNotFound            = New(CodeRecordNotFound, ErrNotFound.StatusCode, http.StatusText(ErrNotFound.StatusCode))
+	ErrInvalidUserNameOrPassword = New(CodeInvalidUserNameOrPassword, ErrBadRequest.StatusCode, http.StatusText(ErrBadRequest.StatusCode))
+	ErrExtensionMismatch         = New(CodeExtensionMismatch, ErrBadRequest.StatusCode, http.StatusText(ErrBadRequest.StatusCode))
+	ErrThumbExtensionMismatch    = New(CodeThumbExtensionMismatch, ErrBadRequest.StatusCode, http.StatusText(ErrBadRequest.StatusCode))
+	ErrFileRead                  = New(CodeFileRead, ErrBadRequest.StatusCode, http.StatusText(ErrBadRequest.StatusCode))
 )

@@ -3,7 +3,7 @@ package user
 import (
 	"clean-architecture/domain/models"
 	"clean-architecture/pkg/framework"
-	"clean-architecture/pkg/types"
+	"clean-architecture/pkg/utils"
 )
 
 // UserService service layer
@@ -29,15 +29,16 @@ func (s Service) Create(user *models.User) error {
 }
 
 // GetOneUser gets one user
-func (s Service) GetUserByID(userID types.BinaryUUID) (user models.User, err error) {
+func (s Service) GetUserByID(userID uint) (user models.User, err error) {
 	return user, s.repository.First(&user, "id = ?", userID).Error
 }
 
-// GetRawUserFromID gets the raw user from id
-func (r *Repository) GetRawUserFromID(userID uint) (user *models.User, err error) {
-	r.logger.Info("[UserRepository...GetRawUserFromID]")
+func (r *Service) ExistsByEmail(email string) (bool, error) {
+	return r.repository.ExistsByEmail(email)
+}
 
-	query := r.Model(&models.User{}).Where("id = ?", userID).First(&user)
+func (s Service) GetUsers(pagination utils.Pagination) (users []models.User, count int64, err error) {
+	s.logger.Info("[UserService...GetUsers]")
 
-	return user, query.Error
+	return s.repository.GetAllUsers(pagination)
 }
