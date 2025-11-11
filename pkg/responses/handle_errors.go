@@ -22,19 +22,16 @@ func HandleValidationError(logger framework.Logger, c *gin.Context, err error) {
 				continue
 			}
 			fieldErrors = append(fieldErrors, map[string]any{
-				"field":   field,
-				"message": ferr.Error(),
+				"field":      field,
+				"error_type": "validation",
+				"message":    ferr.Error(),
 			})
 		}
+		Error(c, errorz.ErrBadRequest.WithDetail("validation_errors", fieldErrors))
 	} else {
-		fieldErrors = append(fieldErrors, map[string]any{
-			"field":      "",
-			"error_type": "invalid",
-			"message":    err.Error(),
-		})
-	}
 
-	Error(c, errorz.ErrBadRequest.WithDetail("validation_errors", fieldErrors))
+		Error(c, errorz.ErrInternal.Wrap(err))
+	}
 }
 
 // HandleErrorWithStatus wraps arbitrary status into API error
