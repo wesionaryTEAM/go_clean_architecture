@@ -23,14 +23,29 @@ func PaginationSuccess(c *gin.Context, status int, data any, total int64) {
 	Success(c, status, data, meta)
 }
 
-// Error standardized error response
+// ErrorBody is the serialized form of an APIError.
+// APIError.StatusCode (transport) and APIError.Cause (internal) are intentionally omitted.
+type ErrorBody struct {
+	Code     string          `json:"code"`
+	Severity errorz.Severity `json:"severity"`
+	Params   map[string]any  `json:"params,omitempty"`
+	Message  string          `json:"message,omitempty"`
+}
+
+// ErrorResponse is the standardized error envelope.
+type ErrorResponse struct {
+	Error ErrorBody `json:"error"`
+}
+
+// Error writes a standardized error response.
 func Error(c *gin.Context, api *errorz.APIError) {
 	if api == nil {
 		api = errorz.ErrInternal
 	}
-	body := gin.H{"success": false, "code": api.Code, "message": api.Message}
-	if len(api.Details) > 0 {
-		body["details"] = api.Details
-	}
-	c.JSON(api.StatusCode, body)
+	c.JSON(api.StatusCode, ErrorResponse{Error: ErrorBody{
+		Code:     api.Code,
+		Severity: api.Severity,
+		Params:   api.Params,
+		Message:  api.Message,
+	}})
 }

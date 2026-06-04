@@ -1,171 +1,156 @@
-### `responses` package
+# Handling Errors
 
-The `responses` package provides utility functions to standardize the structure of HTTP responses in the application. It includes functions for handling both success and error responses, ensuring consistency and clarity in API responses.
+Error handling is split across two packages:
 
-#### Key Functions:
+- **`errorz`** — defines the canonical application error type (`APIError`) and a set of
+  reusable, predefined errors.
+- **`responses`** — serializes errors (and successes) into a consistent HTTP response shape
+  and provides handler helpers that translate Go errors into `APIError`s.
 
-1. **JSON**: Sends a JSON response with a given status code and data payload.
-2. **ErrorJSON**: Sends a JSON response specifically for errors, with a given status code and error message.
-3. **SuccessJSON**: Sends a JSON response for successful operations, with a given status code and success message.
-4. **JSONWithPagination**: Sends a JSON response with pagination details, including data and pagination metadata like `has_next` and `count`.
+## The `APIError` type (`errorz`)
 
-#### Error Handling:
-
-The `responses` package also includes functions for handling errors effectively:
-
-1. **HandleValidationError**: Logs and sends a `400 Bad Request` response for validation errors.
-2. **HandleErrorWithStatus**: Logs and sends a response with a custom status code for specific errors.
-3. **HandleError**: A comprehensive error handler that:
-   - Handles custom `APIError` types.
-   - Handles `gorm.ErrRecordNotFound` with a `404 Not Found` response.
-   - Logs and sends a generic `500 Internal Server Error` response for unhandled errors.
-   - Captures unhandled exceptions using Sentry for further analysis.
-
-### Examples for `responses` package
-
-#### Example: Sending a JSON Response
 ```go
-import (
-	"github.com/gin-gonic/gin"
-	"clean-architecture/pkg/responses"
-)
-
-func ExampleHandler(c *gin.Context) {
-	data := map[string]string{"message": "Hello, World!"}
-	responses.JSON(c, http.StatusOK, data)
+type APIError struct {
+    Code       string         // machine-readable identifier (UPPER_SNAKE); the client localizes from this
+    StatusCode int            // HTTP status for transport; never serialized into the body
+    Severity   Severity       // info | warn | error
+    Message    string         // optional human-readable message set by the backend; omitted when empty
+    Params     map[string]any // optional context / i18n interpolation values; omitted when empty
+    Cause      error          // internal wrapped error for logging/Sentry/Unwrap; never serialized
 }
 ```
 
-#### Example: Sending an Error Response
-```go
-import (
-	"github.com/gin-gonic/gin"
-	"clean-architecture/pkg/responses"
-)
+`Severity` is one of:
 
-func ErrorHandler(c *gin.Context) {
-	err := "Something went wrong"
-	responses.ErrorJSON(c, http.StatusBadRequest, err)
+```go
+errorz.SeverityInfo  // "info"
+errorz.SeverityWarn  // "warn"
+errorz.SeverityError // "error"
+```
+
+### Creating errors
+
+Use `New`. The message is optional — omit it to let the client localize from `Code`:
+
+```go
+// no default message
+errorz.New(errorz.CodeInvalidUUID, http.StatusBadRequest, errorz.SeverityWarn)
+
+// with an optional default message
+errorz.New(errorz.CodeInvalidUUID, http.StatusBadRequest, errorz.SeverityWarn, "Invalid UUID")
+```
+
+### Builder methods (clone-on-write)
+
+The builders never mutate the receiver, so it is safe to derive from the shared
+package-level errors. Each returns a new `*APIError`:
+
+```go
+errorz.ErrBadRequest.WithMessage("Email is already taken")     // set a custom message
+errorz.ErrBadRequest.WithParam("field", "email")               // set a single param
+errorz.ErrBadRequest.WithParams(map[string]any{"field": "email"}) // merge params
+errorz.ErrInternal.Wrap(err)                                   // attach an internal cause (not serialized)
+```
+
+They chain:
+
+```go
+return errorz.ErrConflict.
+    WithMessage("User already exists").
+    WithParam("email", user.Email)
+```
+
+### Predefined errors
+
+Reusable errors are declared centrally so codes, statuses, and severities stay consistent:
+
+- `pkg/errorz/base.go` — canonical HTTP errors (`ErrBadRequest`, `ErrNotFound`,
+  `ErrInternal`, …) and derived ones (`ErrAlreadyExists`, `ErrSomethingWentWrong`). Their
+  default message is the standard `http.StatusText(...)`.
+- `pkg/errorz/common_errors.go` — cross-cutting semantic errors (`ErrRecordNotFound`,
+  `ErrInvalidToken`, `ErrUnauthorizedAccess`, …).
+- Domain packages declare their own (e.g. `domain/user/api_error.go` →
+  `ErrInvalidUserID`, `ErrUserAlreadyExists`).
+
+### `From`
+
+`From` converts an arbitrary error into an `*APIError`, returning it unchanged if it already
+is (or wraps) one, and falling back to `ErrInternal` otherwise:
+
+```go
+api := errorz.From(err)
+```
+
+## Response shape (`responses`)
+
+### Success
+
+```go
+responses.Success(c, http.StatusOK, data, nil)            // {"success": true, "data": ...}
+responses.PaginationSuccess(c, http.StatusOK, data, total) // adds {"meta": {"pagination": {...}}}
+```
+
+### Error envelope
+
+`responses.Error` writes the `APIError` using its `StatusCode` as the HTTP status. The body is:
+
+```json
+{
+  "error": {
+    "code": "USER_ALREADY_EXISTS",
+    "severity": "warn",
+    "params": { "email": "a@b.com" },
+    "message": "User already exists"
+  }
 }
 ```
 
-#### Example: Sending a Success Response
-```go
-import (
-	"github.com/gin-gonic/gin"
-	"clean-architecture/pkg/responses"
-)
+`params` and `message` are omitted when empty. `StatusCode` and `Cause` are never included in
+the body.
 
-func SuccessHandler(c *gin.Context) {
-	msg := "Operation successful"
-	responses.SuccessJSON(c, http.StatusOK, msg)
+## Handler helpers (`responses`)
+
+| Function | Behavior |
+|---|---|
+| `HandleError(logger, c, err)` | If `err` is/wraps an `*APIError`, writes it as-is. Else if it is/wraps `gorm.ErrRecordNotFound`, returns `404`. Otherwise logs the error, captures it to Sentry, and returns a generic `500`. |
+| `HandleErrorWithParams(logger, c, apiErr, params)` | Writes `apiErr` with the given `params` attached. |
+| `HandleErrorWithStatus(logger, c, statusCode, err)` | Logs `err` and returns it under `CodeCustomError` with the given status (severity `error` and a Sentry capture when `statusCode >= 500`). |
+| `HandleValidationError(logger, c, err)` | Passes an `*APIError` through unchanged (no error log). For ozzo `validation.Errors`, returns `400` with a `validation_errors` param (sorted by field). Otherwise delegates to `HandleError`. |
+
+### Example: central error handling
+
+```go
+func (u *Controller) GetUserByID(c *gin.Context) {
+    uid, err := strconv.ParseUint(c.Param("id"), 10, 64)
+    if err != nil {
+        responses.HandleValidationError(u.logger, c, ErrInvalidUserID) // 400, code INVALID_USER_ID
+        return
+    }
+
+    user, err := u.service.GetUserByID(uint(uid))
+    if err != nil {
+        responses.HandleError(u.logger, c, err) // gorm not-found → 404; anything else → 500 + Sentry
+        return
+    }
+
+    responses.Success(c, http.StatusOK, user, nil)
 }
 ```
 
-### Examples for `HandleValidationError` and `HandleError`
+### Example: returning a known error with context and a custom message
 
-#### Example: Using `HandleValidationError`
 ```go
-import (
-	"github.com/gin-gonic/gin"
-	"clean-architecture/pkg/framework"
-	"clean-architecture/pkg/responses"
-)
-
-func ValidationErrorHandler(c *gin.Context) {
-	logger := framework.NewLogger()
-	err := errors.New("Invalid input data")
-	responses.HandleValidationError(logger, c, err)
+if exists {
+    responses.Error(c, ErrUserAlreadyExists.
+        WithParam("email", user.Email).
+        WithMessage("User already exists"))
+    return
 }
 ```
 
-#### Example: Using `HandleError` with `errorz` package
-```go
-import (
-	"github.com/gin-gonic/gin"
-	"clean-architecture/pkg/errorz"
-	"clean-architecture/pkg/framework"
-	"clean-architecture/pkg/responses"
-)
+## Why centralized error definitions
 
-func APIErrorHandler(c *gin.Context) {
-	logger := framework.NewLogger()
-
-	// Example of a custom API error
-	apiErr := &errorz.APIError{
-		StatusCode: 404,
-		Message:    "Resource not found",
-	}
-
-	responses.HandleError(logger, c, apiErr)
-}
-
-func GenericErrorHandler(c *gin.Context) {
-	logger := framework.NewLogger()
-
-	// Example of a generic error
-	err := errors.New("Something went wrong")
-	responses.HandleError(logger, c, err)
-}
-```
-
-### Defining Common Errors with `errorz` Package
-
-The `errorz` package allows you to define commonly used errors in a centralized manner, making it easier to reuse them across different parts of the application. This approach ensures consistency in error handling and reduces duplication.
-
-#### Steps to Define and Use Common Errors:
-
-1. **Define Common Errors**:
-   Use the `errorz` package to define errors that are frequently used, such as validation errors, authentication errors, or resource not found errors.
-
-   ```go
-   package errorz
-
-   import "net/http"
-
-   var (
-       ErrUnauthorized = &APIError{
-           StatusCode: http.StatusUnauthorized,
-           Message:    "Unauthorized access",
-       }
-
-       ErrResourceNotFound = &APIError{
-           StatusCode: http.StatusNotFound,
-           Message:    "The requested resource was not found",
-       }
-
-       ErrInvalidInput = &APIError{
-           StatusCode: http.StatusBadRequest,
-           Message:    "Invalid input provided",
-       }
-   )
-   ```
-
-2. **Use Defined Errors in Handlers**:
-   Use these predefined errors in your handlers or services to ensure consistent error responses.
-
-   ```go
-   import (
-       "github.com/gin-gonic/gin"
-       "clean-architecture/pkg/errorz"
-       "clean-architecture/pkg/framework"
-       "clean-architecture/pkg/responses"
-   )
-
-   func ExampleHandler(c *gin.Context) {
-       logger := framework.NewLogger()
-
-       // Simulate an error condition
-       if true { // Replace with actual condition
-           responses.HandleError(logger, c, errorz.ErrInvalidInput)
-           return
-       }
-
-       responses.SuccessJSON(c, http.StatusOK, "Operation successful")
-   }
-   ```
-
-3. **Benefits of Centralized Error Definitions**:
-   - **Consistency**: Ensures that the same error messages and status codes are used across the application.
-   - **Maintainability**: Makes it easier to update error messages or status codes in one place.
-   - **Reusability**: Reduces duplication by allowing the same error definitions to be reused in multiple places.
+- **Consistency** — the same code, status, and severity are reused everywhere.
+- **Maintainability** — change a code/status/severity in one place.
+- **Localization-friendly** — clients translate from `code` (+ `params`); `message` is an
+  optional backend override, not a requirement.

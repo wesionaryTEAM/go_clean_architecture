@@ -2,6 +2,7 @@ package user
 
 import (
 	"clean-architecture/domain/models"
+	"clean-architecture/pkg/errorz"
 	"clean-architecture/pkg/framework"
 	"clean-architecture/pkg/responses"
 	"clean-architecture/pkg/utils"
@@ -41,10 +42,12 @@ func (u *Controller) CreateUser(c *gin.Context) {
 	var user models.User
 
 	if err := c.ShouldBindJSON(&user); err != nil {
-		if err := user.Validate(); err != nil {
-			responses.HandleValidationError(u.logger, c, err)
-			return
-		}
+		responses.HandleError(u.logger, c, errorz.ErrBadRequest.Wrap(err))
+		return
+	}
+
+	if err := user.Validate(); err != nil {
+		responses.HandleValidationError(u.logger, c, err)
 		return
 	}
 
@@ -55,7 +58,7 @@ func (u *Controller) CreateUser(c *gin.Context) {
 		return
 	}
 	if exists {
-		responses.Error(c, ErrUserAlreadyExists.WithDetail("email", user.Email))
+		responses.Error(c, ErrUserAlreadyExists.WithParam("email", user.Email).WithMessage("User already exists"))
 		return
 	}
 
